@@ -1,0 +1,5 @@
+GOPATH=`pwd`
+GITHUB=github.com/cybergarage/go-graphite-server
+
+export GOPATH=${GOPATH}
+go get -u ${GITHUB}/net/graphite/server

@@ -23,10 +23,14 @@ ${VERSION_GO}: ./net/graphite/server/version.gen
 version: ${VERSION_GO}
 
 setup:
+	export GOPATH=${GOPATH}
 	go get -u ${GITHUB}/net/graphite/server
 
+commit:
+	cd src/${GITHUB} && git commit
+
 format:
-	gofmt -w src net
+	gofmt -w src/${GITHUB} net
 
 package: format $(shell find . -type f -name '*.go')
 	go build -v ${PACKAGES}
