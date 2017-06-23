@@ -15,7 +15,7 @@ VERSION_GO="./net/graphite/server/version.go"
 
 GITHUB=github.com/cybergarage/go-graphite-server
 
-PACKAGES=${GITHUB}/graphite/server
+PACKAGES=${GITHUB}/net/graphite/server
 	
 ${VERSION_GO}: ./net/graphite/server/version.gen
 	$< > $@
@@ -23,7 +23,7 @@ ${VERSION_GO}: ./net/graphite/server/version.gen
 version: ${VERSION_GO}
 
 setup:
-	go get -u ${GITHUB}/graphite/server
+	go get -u ${GITHUB}/net/graphite/server
 
 format:
 	gofmt -w src net
