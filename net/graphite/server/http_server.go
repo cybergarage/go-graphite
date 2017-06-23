@@ -5,6 +5,12 @@
 // Package server provides interfaces for Graphite protocols.
 package server
 
-const (
-	Version = ""
-)
+// HTTPServer is an instance for Graphite Web protocols.
+type HTTPServer struct {
+}
+
+// NewHTTPServer returns a new HTTPServer.
+func NewHTTPServer() *HTTPServer {
+	server := &HTTPServer{}
+	return server
+}
