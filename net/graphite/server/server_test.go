@@ -2,9 +2,12 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package server provides interfaces for Graphite protocols.
 package server
 
-const (
-	Version = ""
+import (
+	"testing"
 )
+
+func TestNewServer(t *testing.T) {
+	NewServer()
+}
