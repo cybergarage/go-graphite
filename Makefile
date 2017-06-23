@@ -11,20 +11,25 @@
 PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
+GITHUB=github.com/cybergarage/go-graphite-server
+PACKAGES=${GITHUB}/net/graphite/server
+
+.PHONY: setup
+
 VERSION_GO="./net/graphite/server/version.go"
 
-GITHUB=github.com/cybergarage/go-graphite-server
-
-PACKAGES=${GITHUB}/net/graphite/server
-	
 ${VERSION_GO}: ./net/graphite/server/version.gen
 	$< > $@
 
 version: ${VERSION_GO}
 
+SETUP_CMD="./setup"
+
 setup:
-	export GOPATH=${GOPATH}
-	go get -u ${GITHUB}/net/graphite/server
+	@echo "export GOPATH=${GOPATH}" > ${SETUP_CMD}
+	@echo "go get -u ${GITHUB}/net/graphite/server" >> ${SETUP_CMD}
+	@chmod a+x ${SETUP_CMD}
+	@./${SETUP_CMD}
 
 commit:
 	cd src/${GITHUB} && git commit
