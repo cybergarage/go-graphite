@@ -30,16 +30,21 @@ func NewMetric() *Metric {
 	return Metric
 }
 
-// ParsePlainText parses the specified line string of the following plain text protocol.
+// Parse parses the specified context.
+func (self *Metric) Parse(line string) error {
+	strs := strings.Split(line, " ")
+	if len(strs) == 3 {
+		return self.parsePlainText(strs)
+	}
+
+	return errors.New(fmt.Sprintf(metricParseError, line))
+}
+
+// parsePlainText parses the specified line string of the following plain text protocol.
 // Feeding In Your Data — Graphite 0.10.0 documentation
 // http://graphite.readthedocs.io/en/latest/feeding-carbon.html
-func (self *Metric) ParsePlainText(line string) error {
+func (self *Metric) parsePlainText(strs []string) error {
 	var err error
-
-	strs := strings.Split(line, " ")
-	if len(strs) < 3 {
-		return errors.New(fmt.Sprintf(metricParseError, line))
-	}
 
 	self.Path = strs[0]
 
