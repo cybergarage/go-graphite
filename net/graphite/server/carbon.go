@@ -25,3 +25,17 @@ func NewCarbon() *Carbon {
 	carbon := &Carbon{}
 	return carbon
 }
+
+// Parse returns a metrics array of the specified context.
+// Feeding In Your Data — Graphite 0.10.0 documentation
+// http://graphite.readthedocs.io/en/latest/feeding-carbon.html
+func (self *Carbon) Parse(context string) (bool, []Metric) {
+	return true, nil
+}
+
+// Parse returns a metrics array of the specified context.
+// Feeding In Your Data — Graphite 0.10.0 documentation
+// http://graphite.readthedocs.io/en/latest/feeding-carbon.html
+func (self *Carbon) parsePlainText(context string) (bool, *Metric) {
+	return true, nil
+}
