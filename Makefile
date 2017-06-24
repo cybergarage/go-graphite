@@ -38,7 +38,7 @@ push:
 	pushd src/${GITHUB} && git push && popd
 
 pull:
-	pushd src/${GITHUB} && git push && popd
+	pushd src/${GITHUB} && git pull && popd
 
 format:
 	gofmt -w src/${GITHUB} net
