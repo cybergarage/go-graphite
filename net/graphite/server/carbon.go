@@ -5,14 +5,14 @@
 // Package server provides interfaces for Graphite protocols.
 package server
 
-// PlaintextListener represents a listener for plain text protocol of Carbon.
-type PlaintextListener interface {
+// PlaintextRequestListener represents a listener for plain text protocol of Carbon.
+type PlaintextRequestListener interface {
 	MetricRequestReceived(*Metric)
 }
 
 // CarbonListener represents a listener for all requests of Carbon.
 type CarbonListener interface {
-	PlaintextListener
+	PlaintextRequestListener
 }
 
 // Carbon is an instance for Carbon protocols.
@@ -26,16 +26,17 @@ func NewCarbon() *Carbon {
 	return carbon
 }
 
-// Parse returns a metrics array of the specified context.
-// Feeding In Your Data — Graphite 0.10.0 documentation
-// http://graphite.readthedocs.io/en/latest/feeding-carbon.html
-func (self *Carbon) Parse(context string) (bool, []Metric) {
-	return true, nil
-}
+// Parse returns a metrics of the specified context.
+func (self *Carbon) ParseRequest(context string) (*Metric, error) {
+	m := NewMetric()
+	err := m.Parse(context)
+	if err != nil {
+		return nil, err
+	}
 
-// Parse returns a metrics array of the specified context.
-// Feeding In Your Data — Graphite 0.10.0 documentation
-// http://graphite.readthedocs.io/en/latest/feeding-carbon.html
-func (self *Carbon) parsePlainText(context string) (bool, *Metric) {
-	return true, nil
+	if self.Listener != nil {
+		self.Listener.MetricRequestReceived(m)
+	}
+
+	return m, nil
 }
