@@ -5,9 +5,40 @@
 package server
 
 import (
+	"errors"
+	"fmt"
 	"testing"
+	"time"
 )
 
 func TestNewMetric(t *testing.T) {
 	NewMetric()
+}
+
+func TestMetricParsePlaintext(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		path := fmt.Sprintf("path%d", i)
+		value := float64(i) * 100
+		ts := time.Now().Unix() + int64(i)
+
+		line := fmt.Sprintf("%s %f %d", path, value, ts)
+
+		m := NewMetric()
+		err := m.ParsePlainText(line)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if m.Path != path {
+			t.Error(errors.New(fmt.Sprintf("%s != %s", m.Path, path)))
+		}
+
+		if int64(m.Value) != int64(value) {
+			t.Error(errors.New(fmt.Sprintf("%f != %f", m.Value, value)))
+		}
+
+		if m.Timestamp.Unix() != ts {
+			t.Error(errors.New(fmt.Sprintf("%d != %d", m.Timestamp.Unix(), ts)))
+		}
+	}
 }
