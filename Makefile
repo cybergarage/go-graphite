@@ -32,13 +32,13 @@ setup:
 	@./${SETUP_CMD}
 
 commit:
-	cd src/${GITHUB} && git commit -a
+	pushd src/${GITHUB} && git commit -a && popd
 
 push:
-	cd src/${GITHUB} && git push
+	pushd src/${GITHUB} && git push && popd
 
 pull:
-	cd src/${GITHUB} && git push
+	pushd src/${GITHUB} && git push && popd
 
 format:
 	gofmt -w src/${GITHUB} net
