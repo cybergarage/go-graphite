@@ -40,6 +40,9 @@ push:
 pull:
 	pushd src/${GITHUB} && git pull && popd
 
+diff:
+	pushd src/${GITHUB} && git diff && popd
+
 format:
 	gofmt -w src/${GITHUB} net
 
