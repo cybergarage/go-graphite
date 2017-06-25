@@ -18,3 +18,35 @@ func NewServer() *Server {
 	server.httpServer = NewHTTPServer()
 	return server
 }
+
+// Start starts the server.
+func (self *Server) Start() error {
+	err := self.carbon.Start()
+	if err != nil {
+		self.Stop()
+		return err
+	}
+
+	err = self.httpServer.Start()
+	if err != nil {
+		self.Stop()
+		return err
+	}
+
+	return nil
+}
+
+// Stop stops the server.
+func (self *Server) Stop() error {
+	err := self.carbon.Stop()
+	if err != nil {
+		return err
+	}
+
+	err = self.httpServer.Stop()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
