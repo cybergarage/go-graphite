@@ -7,6 +7,7 @@ package server
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net"
 )
 
@@ -17,7 +18,7 @@ const (
 
 // PlaintextRequestListener represents a listener for plain text protocol of Carbon.
 type PlaintextRequestListener interface {
-	MetricRequestReceived(*Metric)
+	MetricRequestReceived(*Metric, error)
 }
 
 // CarbonListener represents a listener for all requests of Carbon.
@@ -27,8 +28,9 @@ type CarbonListener interface {
 
 // Carbon is an instance for Carbon protocols.
 type Carbon struct {
-	Port     int
-	Listener CarbonListener
+	Port        int
+	Listener    CarbonListener
+	tcpListener net.Listener
 }
 
 // NewCarbon returns a new Carbon.
@@ -37,34 +39,37 @@ func NewCarbon() *Carbon {
 	return carbon
 }
 
-// ParseRequest returns a metrics of the specified context.
-func (self *Carbon) ParseRequest(context string) (*Metric, error) {
+// ParseRequestString returns a metrics of the specified context.
+func (self *Carbon) ParseRequestString(context string) (*Metric, error) {
 	m := NewMetric()
 	err := m.Parse(context)
+
 	if err != nil {
-		return nil, err
+		m = nil
 	}
 
 	if self.Listener != nil {
-		self.Listener.MetricRequestReceived(m)
+		self.Listener.MetricRequestReceived(m, err)
 	}
 
-	return m, nil
+	return m, err
+}
+
+// ParseRequestBytes returns a metrics of the specified bytes.
+func (self *Carbon) ParseRequestBytes(bytes []byte) (*Metric, error) {
+	return self.ParseRequestString(string(bytes))
 }
 
 // Start starts the Carbon server.
 func (self *Carbon) Start() error {
-
-	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", self.Port))
+	err := self.Stop()
 	if err != nil {
 		return err
 	}
 
-	for {
-		_, err := ln.Accept()
-		if err != nil {
-			return err
-		}
+	err := self.open()
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -72,5 +77,56 @@ func (self *Carbon) Start() error {
 
 // Stop stops the Carbon server.
 func (self *Carbon) Stop() error {
+	err := self.close()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// open opens a socket for the Carbon server.
+func (self *Carbon) open() error {
+	var err error
+	self.tcpListener, err = net.Listen("tcp", fmt.Sprintf(":%d", self.Port))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// close closes a socket for the Carbon server.
+func (self *Carbon) close() error {
+	if self.tcpListener != nil {
+		err := self.tcpListener.Close()
+		if err != nil {
+			return err
+		}
+	}
+
+	self.tcpListener = nil
+
+	return nil
+}
+
+// serve handles client requests.
+func (self *Carbon) serve() error {
+	defer self.close()
+
+	for {
+		conn, err := self.tcpListener.Accept()
+		if err != nil {
+			return err
+		}
+
+		reqBytes, err := ioutil.ReadAll(conn)
+		if err != nil {
+			return err
+		}
+
+		self.ParseRequestBytes(reqBytes)
+	}
+
 	return nil
 }

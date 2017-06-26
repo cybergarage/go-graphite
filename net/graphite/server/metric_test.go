@@ -5,7 +5,6 @@
 package server
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -30,15 +29,15 @@ func TestMetricParsePlaintext(t *testing.T) {
 		}
 
 		if m.Path != path {
-			t.Error(errors.New(fmt.Sprintf("%s != %s", m.Path, path)))
+			t.Error(fmt.Errorf("%s != %s", m.Path, path))
 		}
 
 		if int64(m.Value) != int64(value) {
-			t.Error(errors.New(fmt.Sprintf("%f != %f", m.Value, value)))
+			t.Error(fmt.Errorf("%f != %f", m.Value, value))
 		}
 
 		if m.Timestamp.Unix() != ts {
-			t.Error(errors.New(fmt.Sprintf("%d != %d", m.Timestamp.Unix(), ts)))
+			t.Error(fmt.Errorf("%d != %d", m.Timestamp.Unix(), ts))
 		}
 	}
 }
