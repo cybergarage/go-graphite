@@ -5,6 +5,13 @@
 // Package client provides interfaces for Graphite protocols.
 package client
 
+import (
+	"fmt"
+	"net"
+
+	"github.com/cybergarage/go-graphite/net/graphite"
+)
+
 const (
 	// CarbonDefaultPort is the default port number for Carbon Server
 	CarbonDefaultPort int = 2003
@@ -14,10 +21,28 @@ const (
 
 // Client is an instance for Graphite protocols.
 type Client struct {
+	Host       string
+	CarbonPort int
 }
 
 // NewClient returns a new Client.
 func NewClient() *Client {
-	client := &Client{}
+	client := &Client{CarbonDefaultHost, CarbonDefaultPort}
 	return client
+}
+
+// PostMetric returns a metrics of the specified bytes.
+func (self *Client) PostMetric(m *graphite.Metric) error {
+	addr := fmt.Sprintf("%s:%d", self.Host, self.CarbonPort)
+	conn, err := net.Dial("tcp", addr)
+	if err != nil {
+		return err
+	}
+
+	_, err = fmt.Fprintf(conn, "%v", m)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

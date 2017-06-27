@@ -19,7 +19,7 @@ type TestCarbon struct {
 
 func NewTestCarbon() *TestCarbon {
 	carbon := &TestCarbon{NewCarbon(), 0}
-	carbon.Listener = carbon
+	carbon.CarbonListener = carbon
 	return carbon
 }
 
@@ -38,10 +38,10 @@ func TestCarbonParseMetric(t *testing.T) {
 	carbon := NewTestCarbon()
 
 	loopCount := 0
-	for i := 0; i < 10; i++ {
-		path := fmt.Sprintf("path%d", i)
-		value := float64(i)
-		ts := time.Now().Unix() + int64(i)
+	for n := 0; n < 10; n++ {
+		path := fmt.Sprintf("path%d", n)
+		value := float64(n)
+		ts := time.Now().Unix() + int64(n)
 
 		line := fmt.Sprintf("%s %f %d", path, value, ts)
 
