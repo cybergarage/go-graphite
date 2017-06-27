@@ -1,6 +1,6 @@
 ###################################################################
 #
-# go-grapite-server
+# go-grapite
 #
 # Copyright (C) The go-graphite Authors 2017
 #
@@ -11,7 +11,7 @@
 PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
-GITHUB=github.com/cybergarage/go-graphite-server
+GITHUB=github.com/cybergarage/go-graphite
 PACKAGES=${GITHUB}/net/graphite/server
 
 .PHONY: setup

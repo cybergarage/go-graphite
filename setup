@@ -1,2 +1,2 @@
-export GOPATH=/Users/skonno/Src/go-graphite-server
-go get -u github.com/cybergarage/go-graphite-server/net/graphite/server
+export GOPATH=/Users/skonno/Src/go-graphite
+go get -u github.com/cybergarage/go-graphite/net/graphite/server
