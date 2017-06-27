@@ -27,7 +27,7 @@ SETUP_CMD="./setup"
 
 setup:
 	@echo "export GOPATH=${GOPATH}" > ${SETUP_CMD}
-	@echo "go get -u ${GITHUB}/net/graphite/server" >> ${SETUP_CMD}
+	@echo "go get -u ${GITHUB}/net/graphite/" >> ${SETUP_CMD}
 	@chmod a+x ${SETUP_CMD}
 	@./${SETUP_CMD}
 
