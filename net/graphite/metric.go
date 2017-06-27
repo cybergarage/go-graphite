@@ -62,3 +62,8 @@ func (self *Metric) parsePlainText(strs []string) error {
 
 	return nil
 }
+
+// GoString returns a string representation value.
+func (self *Metric) GoString() string {
+	return fmt.Sprintf("%s %f %d", self.Parse, self.Value, self.Timestamp.Unix())
+}
