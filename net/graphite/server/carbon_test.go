@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"testing"
 	"time"
+
+	"github.com/cybergarage/go-graphite/net/graphite"
 )
 
 type TestCarbon struct {
@@ -21,7 +23,7 @@ func NewTestCarbon() *TestCarbon {
 	return carbon
 }
 
-func (self *TestCarbon) MetricRequestReceived(m *Metric, err error) {
+func (self *TestCarbon) MetricRequestReceived(m *graphite.Metric, err error) {
 	if err != nil {
 		return
 	}

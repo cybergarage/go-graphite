@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
+
+	"github.com/cybergarage/go-graphite/net/graphite"
 )
 
 const (
@@ -18,7 +20,7 @@ const (
 
 // PlaintextRequestListener represents a listener for plain text protocol of Carbon.
 type PlaintextRequestListener interface {
-	MetricRequestReceived(*Metric, error)
+	MetricRequestReceived(*graphite.Metric, error)
 }
 
 // CarbonListener represents a listener for all requests of Carbon.
@@ -40,8 +42,8 @@ func NewCarbon() *Carbon {
 }
 
 // ParseRequestString returns a metrics of the specified context.
-func (self *Carbon) ParseRequestString(context string) (*Metric, error) {
-	m := NewMetric()
+func (self *Carbon) ParseRequestString(context string) (*graphite.Metric, error) {
+	m := graphite.NewMetric()
 	err := m.Parse(context)
 
 	if err != nil {
@@ -56,7 +58,7 @@ func (self *Carbon) ParseRequestString(context string) (*Metric, error) {
 }
 
 // ParseRequestBytes returns a metrics of the specified bytes.
-func (self *Carbon) ParseRequestBytes(bytes []byte) (*Metric, error) {
+func (self *Carbon) ParseRequestBytes(bytes []byte) (*graphite.Metric, error) {
 	return self.ParseRequestString(string(bytes))
 }
 
@@ -67,7 +69,7 @@ func (self *Carbon) Start() error {
 		return err
 	}
 
-	err := self.open()
+	err = self.open()
 	if err != nil {
 		return err
 	}
