@@ -16,9 +16,9 @@ PACKAGES=${GITHUB}/net/graphite/server
 
 .PHONY: setup
 
-VERSION_GO="./net/graphite/server/version.go"
+VERSION_GO="./net/graphite/version.go"
 
-${VERSION_GO}: ./net/graphite/server/version.gen
+${VERSION_GO}: ./net/graphite/version.gen
 	$< > $@
 
 version: ${VERSION_GO}
