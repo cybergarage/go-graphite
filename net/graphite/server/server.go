@@ -7,27 +7,27 @@ package server
 
 // Server is an instance for Graphite protocols.
 type Server struct {
-	carbon     *Carbon
-	httpServer *HTTPServer
+	*Carbon
+	*HTTPServer
 }
 
 // NewServer returns a new Server.
 func NewServer() *Server {
 	server := &Server{}
-	server.carbon = NewCarbon()
-	server.httpServer = NewHTTPServer()
+	server.Carbon = NewCarbon()
+	server.HTTPServer = NewHTTPServer()
 	return server
 }
 
 // Start starts the server.
 func (self *Server) Start() error {
-	err := self.carbon.Start()
+	err := self.Carbon.Start()
 	if err != nil {
 		self.Stop()
 		return err
 	}
 
-	err = self.httpServer.Start()
+	err = self.HTTPServer.Start()
 	if err != nil {
 		self.Stop()
 		return err
@@ -38,12 +38,12 @@ func (self *Server) Start() error {
 
 // Stop stops the server.
 func (self *Server) Stop() error {
-	err := self.carbon.Stop()
+	err := self.Carbon.Stop()
 	if err != nil {
 		return err
 	}
 
-	err = self.httpServer.Stop()
+	err = self.HTTPServer.Stop()
 	if err != nil {
 		return err
 	}

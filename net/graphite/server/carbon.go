@@ -30,9 +30,9 @@ type CarbonListener interface {
 
 // Carbon is an instance for Carbon protocols.
 type Carbon struct {
-	Port        int
-	Listener    CarbonListener
-	tcpListener net.Listener
+	Port           int
+	CarbonListener CarbonListener
+	tcpListener    net.Listener
 }
 
 // NewCarbon returns a new Carbon.
@@ -50,8 +50,8 @@ func (self *Carbon) ParseRequestString(context string) (*graphite.Metric, error)
 		m = nil
 	}
 
-	if self.Listener != nil {
-		self.Listener.MetricRequestReceived(m, err)
+	if self.CarbonListener != nil {
+		self.CarbonListener.MetricRequestReceived(m, err)
 	}
 
 	return m, err
@@ -74,6 +74,8 @@ func (self *Carbon) Start() error {
 		return err
 	}
 
+	go self.serve()
+
 	return nil
 }
 
@@ -90,7 +92,8 @@ func (self *Carbon) Stop() error {
 // open opens a socket for the Carbon server.
 func (self *Carbon) open() error {
 	var err error
-	self.tcpListener, err = net.Listen("tcp", fmt.Sprintf(":%d", self.Port))
+	addr := fmt.Sprintf(":%d", self.Port)
+	self.tcpListener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return err
 	}
