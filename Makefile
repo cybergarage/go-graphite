@@ -12,7 +12,7 @@ PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
 GITHUB=github.com/cybergarage/go-graphite
-PACKAGES=${GITHUB}/net/graphite/server
+PACKAGES=${GITHUB}/net/graphite
 
 .PHONY: setup
 
@@ -27,7 +27,7 @@ SETUP_CMD="./setup"
 
 setup:
 	@echo "export GOPATH=${GOPATH}" > ${SETUP_CMD}
-	@echo "go get -u ${GITHUB}/net/graphite/" >> ${SETUP_CMD}
+	@echo "go get -u ${PACKAGES}" >> ${SETUP_CMD}
 	@chmod a+x ${SETUP_CMD}
 	@./${SETUP_CMD}
 
