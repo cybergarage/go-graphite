@@ -12,7 +12,8 @@ PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
 GITHUB=github.com/cybergarage/go-graphite
-PACKAGES=${GITHUB}/net/graphite
+PACKAGE_ID=${GITHUB}/net/graphite
+PACKAGES=${PACKAGE_ID} ${PACKAGE_ID}/client ${PACKAGE_ID}/server
 
 .PHONY: setup
 
