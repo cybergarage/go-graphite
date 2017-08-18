@@ -44,9 +44,9 @@ diff:
 	pushd src/${GITHUB} && git diff && popd
 
 format:
-	gofmt -w src/${GITHUB} net
+	gofmt -w src/${GITHUB}
 
-package: format $(shell find . -type f -name '*.go')
+package: format $(shell find src/${GITHUB}  -type f -name '*.go')
 	go build -v ${PACKAGES}
 
 test: package
