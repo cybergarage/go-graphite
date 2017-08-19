@@ -119,13 +119,16 @@ func (self *Carbon) close() error {
 func (self *Carbon) serve() error {
 	defer self.close()
 
+	l := self.tcpListener
 	for {
-		conn, err := self.tcpListener.Accept()
+		conn, err := l.Accept()
 		if err != nil {
 			return err
 		}
 
 		reqBytes, err := ioutil.ReadAll(conn)
+
+		fmt.Printf("%s\n", string(reqBytes))
 		if err != nil {
 			return err
 		}
