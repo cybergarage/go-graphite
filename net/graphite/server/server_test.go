@@ -29,6 +29,7 @@ func (self *TestServer) MetricRequestReceived(m *graphite.Metric, err error) {
 	if err != nil {
 		return
 	}
+	//fmt.Printf("MetricRequestReceived = %v\n", m)
 	self.MetricsCount++
 }
 
@@ -38,8 +39,6 @@ func TestNewServer(t *testing.T) {
 
 func TestServerThread(t *testing.T) {
 	server := NewTestServer()
-
-	fmt.Printf("listener = %v\n", server.CarbonListener)
 
 	err := server.Start()
 	if err != nil {
@@ -62,6 +61,8 @@ func TestServerThread(t *testing.T) {
 
 		loopCount++
 	}
+
+	time.Sleep(1 * time.Second)
 
 	if server.MetricsCount != loopCount {
 		t.Error(fmt.Errorf("%d != %d", server.MetricsCount, loopCount))

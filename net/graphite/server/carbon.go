@@ -127,8 +127,6 @@ func (self *Carbon) serve() error {
 		}
 
 		reqBytes, err := ioutil.ReadAll(conn)
-
-		fmt.Printf("%s\n", string(reqBytes))
 		if err != nil {
 			return err
 		}
