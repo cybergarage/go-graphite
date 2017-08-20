@@ -39,12 +39,17 @@ func (self *Client) PostMetric(m *graphite.Metric) error {
 		return err
 	}
 
-	nWrote, err := fmt.Fprintf(conn, "%v", m)
+	nWrote, err := fmt.Fprintf(conn, "%s", m.GoString())
 	if err != nil {
 		return err
 	}
 	if nWrote <= 0 {
 		return fmt.Errorf("Couldn't write metric [%d] : %v", nWrote, m)
+	}
+
+	err = conn.Close()
+	if err != nil {
+		return err
 	}
 
 	return nil
