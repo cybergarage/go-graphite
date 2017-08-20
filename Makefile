@@ -12,7 +12,8 @@ PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
 GITHUB=github.com/cybergarage/go-graphite
-PACKAGES=${GITHUB}/net/graphite/server
+PACKAGE_ID=${GITHUB}/net/graphite
+PACKAGES=${PACKAGE_ID} ${PACKAGE_ID}/client ${PACKAGE_ID}/server
 
 .PHONY: setup
 
@@ -27,7 +28,7 @@ SETUP_CMD="./setup"
 
 setup:
 	@echo "export GOPATH=${GOPATH}" > ${SETUP_CMD}
-	@echo "go get -u ${GITHUB}/net/graphite/" >> ${SETUP_CMD}
+	@echo "go get -u ${PACKAGES}" >> ${SETUP_CMD}
 	@chmod a+x ${SETUP_CMD}
 	@./${SETUP_CMD}
 
@@ -44,9 +45,9 @@ diff:
 	pushd src/${GITHUB} && git diff && popd
 
 format:
-	gofmt -w src/${GITHUB} net
+	gofmt -w src/${GITHUB}
 
-package: format $(shell find . -type f -name '*.go')
+package: format $(shell find src/${GITHUB}  -type f -name '*.go')
 	go build -v ${PACKAGES}
 
 test: package

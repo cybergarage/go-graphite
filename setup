@@ -1,4 +1,4 @@
 #!/bin/bash
 export GOPATH=`pwd`
 git pull
-go get -u github.com/cybergarage/go-graphite/net/graphite/
+go get -u github.com/cybergarage/go-graphite/net/graphite
