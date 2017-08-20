@@ -39,6 +39,8 @@ func TestNewServer(t *testing.T) {
 func TestServerThread(t *testing.T) {
 	server := NewTestServer()
 
+	fmt.Printf("listener = %v\n", server.CarbonListener)
+
 	err := server.Start()
 	if err != nil {
 		t.Error(err)
