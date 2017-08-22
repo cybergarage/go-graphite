@@ -26,8 +26,8 @@ type Metric struct {
 
 // NewMetric returns a new Metric.
 func NewMetric() *Metric {
-	Metric := &Metric{}
-	return Metric
+	m := &Metric{}
+	return m
 }
 
 // Parse parses the specified context.
