@@ -20,20 +20,20 @@ const (
 	QueryFormatJSON string = "json"
 )
 
-// HTTPServer is an instance for Graphite Web protocols.
-type HTTPServer struct {
+// Render is an instance for Graphite render protocols.
+type Render struct {
 	Port   int
 	server http.Server
 }
 
-// NewHTTPServer returns a new HTTPServer.
-func NewHTTPServer() *HTTPServer {
-	server := &HTTPServer{Port: HTTPDefaultPort}
+// NewRender returns a new Render.
+func NewRender() *Render {
+	server := &Render{Port: HTTPDefaultPort}
 	return server
 }
 
 // Start starts the HTTP server.
-func (self *HTTPServer) Start() error {
+func (self *Render) Start() error {
 	err := self.Stop()
 	if err != nil {
 		return err
@@ -43,13 +43,13 @@ func (self *HTTPServer) Start() error {
 }
 
 // Stop stops the HTTP server.
-func (self *HTTPServer) Stop() error {
+func (self *Render) Stop() error {
 	return nil
 }
 
 // ServeHTTP handles HTTP requests.
 // Support The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
-func (self *HTTPServer) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Request) {
+func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Request) {
 
 }
