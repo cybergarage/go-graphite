@@ -19,7 +19,7 @@ type TestCarbon struct {
 
 func NewTestCarbon() *TestCarbon {
 	carbon := &TestCarbon{NewCarbon(), 0}
-	carbon.CarbonListener = carbon
+	carbon.Listener = carbon
 	return carbon
 }
 
