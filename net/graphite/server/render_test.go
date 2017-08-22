@@ -8,6 +8,6 @@ import (
 	"testing"
 )
 
-func TestNewHTTPServer(t *testing.T) {
-	NewHTTPServer()
+func TestNewRender(t *testing.T) {
+	NewRender()
 }
