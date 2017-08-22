@@ -21,7 +21,7 @@ type TestServer struct {
 
 func NewTestServer() *TestServer {
 	server := &TestServer{NewServer(), 0}
-	server.CarbonListener = server
+	server.Listener = server
 	return server
 }
 
