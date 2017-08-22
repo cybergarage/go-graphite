@@ -21,7 +21,7 @@ const (
 
 // RenderRequestListener represents a listener for Render protocol.
 type RenderRequestListener interface {
-	QueryRequestReceived(*graphite.Query, error)
+	QueryRequestReceived(*graphite.Query, error) ([]*graphite.Metric, error)
 }
 
 // RenderListener represents a listener for all requests of Render.
@@ -91,7 +91,6 @@ func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Requ
 	switch httpReq.URL.Path {
 	case DefaultPath:
 		self.handleRenderRequest(httpWriter, httpReq)
-
 	}
 
 	http.NotFound(httpWriter, httpReq)
@@ -101,12 +100,47 @@ func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Requ
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
 func (self *Render) handleRenderRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
-	q := graphite.NewQuery()
-	err := q.Parse(httpReq.URL)
+	query := graphite.NewQuery()
+	err := query.Parse(httpReq.URL)
 	if err != nil {
-		http.NotFound(httpWriter, httpReq)
+		self.responseBadRequest(httpWriter, httpReq)
 		return
 	}
 
-	http.NotFound(httpWriter, httpReq)
+	if self.Listener == nil {
+	}
+
+	metrics, err := self.Listener.QueryRequestReceived(query, nil)
+	if err != nil {
+		self.responseBadRequest(httpWriter, httpReq)
+		return
+	}
+	self.responseQueryMetrics(httpWriter, httpReq, query, metrics)
+}
+
+func (self *Render) responseBadRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
+	http.Error(httpWriter, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+}
+
+func (self *Render) responseInternalServerError(httpWriter http.ResponseWriter, httpReq *http.Request) {
+	http.Error(httpWriter, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+}
+
+func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *graphite.Query, metrics []*graphite.Metric) {
+	switch query.Format {
+	case graphite.QueryFormatTypeCSV:
+		self.responseQueryCSVMetrics(httpWriter, httpReq, query, metrics)
+		return
+	case graphite.QueryFormatTypeJSON:
+		self.responseQueryJSONMetrics(httpWriter, httpReq, query, metrics)
+		return
+	}
+
+	self.responseBadRequest(httpWriter, httpReq)
+}
+
+func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *graphite.Query, metrics []*graphite.Metric) {
+}
+
+func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *graphite.Query, metrics []*graphite.Metric) {
 }
