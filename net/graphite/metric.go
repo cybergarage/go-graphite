@@ -6,7 +6,6 @@
 package graphite
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -14,7 +13,8 @@ import (
 )
 
 const (
-	metricParseError = "Could not parse %s"
+	metricParseError       = "Could not parse %s"
+	metricsTimestampFormat = "20060102 15:04:05"
 )
 
 // Metric is an instance for Metric of Carbon protocol.
@@ -30,20 +30,15 @@ func NewMetric() *Metric {
 	return m
 }
 
-// Parse parses the specified context.
-func (self *Metric) Parse(line string) error {
-	strs := strings.Split(line, " ")
-	if len(strs) == 3 {
-		return self.parsePlainText(strs)
-	}
-
-	return errors.New(fmt.Sprintf(metricParseError, line))
-}
-
-// parsePlainText parses the specified line string of the following plain text protocol.
+// ParsePlainText parses the specified line string of the following plain text protocol.
 // Feeding In Your Data — Graphite 0.10.0 documentation
 // http://graphite.readthedocs.io/en/latest/feeding-carbon.html
-func (self *Metric) parsePlainText(strs []string) error {
+func (self *Metric) ParsePlainText(line string) error {
+	strs := strings.Split(line, " ")
+	if len(strs) != 3 {
+		return fmt.Errorf(metricParseError, line)
+	}
+
 	var err error
 
 	self.Path = strs[0]
@@ -63,7 +58,38 @@ func (self *Metric) parsePlainText(strs []string) error {
 	return nil
 }
 
+// ParseRenderCSV parses the specified line string of the following Render CSV protocol.
+// The Render URL API
+// http://graphite.readthedocs.io/en/latest/render_api.html
+func (self *Metric) ParseRenderCSV(line string) error {
+	strs := strings.Split(line, ", ")
+	if len(strs) != 3 {
+		return fmt.Errorf(metricParseError, line)
+	}
+
+	var err error
+
+	self.Path = strs[0]
+
+	self.Timestamp, err = time.Parse(metricsTimestampFormat, strs[1])
+	if err != nil {
+		return err
+	}
+
+	self.Value, err = strconv.ParseFloat(strs[1], 64)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GoString returns a string representation value.
 func (self *Metric) GoString() string {
 	return fmt.Sprintf("%s %f %d", self.Path, self.Value, self.Timestamp.Unix())
+}
+
+// TimestampString returns a string for the Render API format.
+func (self *Metric) TimestampString() string {
+	return self.Timestamp.Format(metricsTimestampFormat)
 }

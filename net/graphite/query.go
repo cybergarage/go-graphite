@@ -21,10 +21,18 @@ const (
 	QueryUntil string = "until"
 	// QueryFormat is 'format' parameter identifier for Render
 	QueryFormat string = "format"
-	// QueryFormatCSV is a format type for Render
+	// QueryFormatTypeCSV is a format type for Render
 	QueryFormatTypeCSV string = "csv"
 	// QueryFormatJSON is a format type for Render
 	QueryFormatTypeJSON string = "json"
+	// QueryContentTypeCSV is a content type for the CSV format
+	QueryContentTypeCSV string = "text/csv"
+	// QueryContentTypeJSON is a content type for the JSON format
+	QueryContentTypeJSON string = "application/json"
+)
+
+const (
+	queryAbsoluteTimeFormat = "15:04_20060102"
 )
 
 // Query is an instance for Render query protocol.
@@ -69,7 +77,7 @@ func (self *Query) Parse(u *url.URL) error {
 			}
 		case QueryFormat:
 			if 0 < len(values) {
-				self.Target = values[0]
+				self.Format = values[0]
 			}
 		}
 	}
@@ -99,4 +107,43 @@ func (self *Query) parseAbsoluteTimeString(timeStr string) (*time.Time, error) {
 func (self *Query) parseRelativeTimeString(timeStr string) (*time.Time, error) {
 
 	return nil, nil
+}
+
+// URLString returns a path for Render URL API
+// The Render URL API
+// http://graphite.readthedocs.io/en/latest/render_api.html
+func (self *Query) URLString(host string, port int) (string, error) {
+	if len(self.Target) <= 0 {
+		return "", fmt.Errorf("%s is not specified", QueryTarget)
+	}
+
+	params := make(map[string]string)
+
+	params[QueryTarget] = self.Target
+
+	if self.From != nil {
+		params[QueryFrom] = self.From.Format(queryAbsoluteTimeFormat)
+	}
+
+	if self.Until != nil {
+		params[QueryUntil] = self.Until.Format(queryAbsoluteTimeFormat)
+	}
+
+	if 0 < len(self.Format) {
+		params[QueryFormat] = self.Format
+	} else {
+		params[QueryFormat] = QueryFormatTypeCSV
+	}
+
+	query := ""
+	for key, value := range params {
+		if 0 < len(query) {
+			query += "&"
+		}
+		query += fmt.Sprintf("%s=%s", key, value)
+	}
+
+	url := fmt.Sprintf("http://%s:%d%s?%s", host, port, RenderDefaultPath, query)
+
+	return url, nil
 }

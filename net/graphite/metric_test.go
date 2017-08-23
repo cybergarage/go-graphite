@@ -23,7 +23,7 @@ func TestMetricParsePlaintext(t *testing.T) {
 		line := fmt.Sprintf("%s %f %d", path, value, ts)
 
 		m := NewMetric()
-		err := m.Parse(line)
+		err := m.ParsePlainText(line)
 		if err != nil {
 			t.Error(err)
 		}
