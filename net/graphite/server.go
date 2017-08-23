@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // Package server provides interfaces for Graphite protocols.
-package server
+package graphite
 
 // Server is an instance for Graphite protocols.
 type Server struct {

@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // Package client provides interfaces for Graphite protocols.
-package client
+package graphite
 
 import (
 	"bufio"
@@ -11,8 +11,6 @@ import (
 	"io"
 	"net"
 	"net/http"
-
-	"github.com/cybergarage/go-graphite/net/graphite"
 )
 
 const (
@@ -29,12 +27,12 @@ type Client struct {
 
 // NewClient returns a new Client.
 func NewClient() *Client {
-	client := &Client{DefaultHost, graphite.CarbonDefaultPort, graphite.RenderDefaultPort}
+	client := &Client{DefaultHost, CarbonDefaultPort, RenderDefaultPort}
 	return client
 }
 
 // PostMetric posts the specified metric to Carbon.
-func (self *Client) PostMetric(m *graphite.Metric) error {
+func (self *Client) PostMetric(m *Metric) error {
 	addr := fmt.Sprintf("%s:%d", self.Host, self.CarbonPort)
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
@@ -58,9 +56,9 @@ func (self *Client) PostMetric(m *graphite.Metric) error {
 }
 
 // PostQuery queries with the specified parameters to Render.
-func (self *Client) PostQuery(query *graphite.Query) ([]*graphite.Metric, error) {
+func (self *Client) PostQuery(query *Query) ([]*Metric, error) {
 	// FIXME : Support other formats
-	query.Format = graphite.QueryFormatTypeCSV
+	query.Format = QueryFormatTypeCSV
 
 	url, err := query.URLString(self.Host, self.RenderPort)
 	if err != nil {
@@ -74,7 +72,7 @@ func (self *Client) PostQuery(query *graphite.Query) ([]*graphite.Metric, error)
 
 	defer resp.Body.Close()
 
-	var metrics []*graphite.Metric
+	var metrics []*Metric
 
 	reader := bufio.NewReader(resp.Body)
 	for {
@@ -85,7 +83,7 @@ func (self *Client) PostQuery(query *graphite.Query) ([]*graphite.Metric, error)
 			return metrics, err
 		}
 
-		metric := graphite.NewMetric()
+		metric := NewMetric()
 		err = metric.ParseRenderCSV(string(row))
 		if err != nil {
 			continue

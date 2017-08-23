@@ -2,16 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package server
+package graphite
 
 import (
 	"testing"
 
 	"fmt"
 	"time"
-
-	"github.com/cybergarage/go-graphite/net/graphite"
-	"github.com/cybergarage/go-graphite/net/graphite/client"
 )
 
 type TestServer struct {
@@ -25,7 +22,7 @@ func NewTestServer() *TestServer {
 	return server
 }
 
-func (self *TestServer) MetricRequestReceived(m *graphite.Metric, err error) {
+func (self *TestServer) MetricRequestReceived(m *Metric, err error) {
 	if err != nil {
 		return
 	}
@@ -45,16 +42,16 @@ func TestServerThread(t *testing.T) {
 		t.Error(err)
 	}
 
-	client := client.NewClient()
+	cli := NewClient()
 
 	loopCount := 0
 	for n := 0; n < 10; n++ {
-		m := graphite.NewMetric()
+		m := NewMetric()
 		m.Path = fmt.Sprintf("path%d", n)
 		m.Value = float64(n)
 		m.Timestamp = time.Now()
 
-		err = client.PostMetric(m)
+		err = cli.PostMetric(m)
 		if err != nil {
 			t.Error(err)
 		}
