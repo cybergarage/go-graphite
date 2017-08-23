@@ -13,11 +13,6 @@ import (
 	"github.com/cybergarage/go-graphite/net/graphite"
 )
 
-const (
-	// CarbonDefaultPort is the default port number for Carbon Server
-	CarbonDefaultPort int = 2003
-)
-
 // PlaintextRequestListener represents a listener for plain text protocol of Carbon.
 type PlaintextRequestListener interface {
 	MetricRequestReceived(*graphite.Metric, error)
@@ -30,28 +25,28 @@ type CarbonListener interface {
 
 // Carbon is an instance for Carbon protocols.
 type Carbon struct {
-	Port        int
-	Listener    CarbonListener
-	tcpListener net.Listener
+	Port           int
+	CarbonListener CarbonListener
+	tcpListener    net.Listener
 }
 
 // NewCarbon returns a new Carbon.
 func NewCarbon() *Carbon {
-	carbon := &Carbon{Port: CarbonDefaultPort}
+	carbon := &Carbon{Port: graphite.CarbonDefaultPort}
 	return carbon
 }
 
 // ParseRequestString returns a metrics of the specified context.
 func (self *Carbon) ParseRequestString(context string) (*graphite.Metric, error) {
 	m := graphite.NewMetric()
-	err := m.Parse(context)
+	err := m.ParsePlainText(context)
 
 	if err != nil {
 		m = nil
 	}
 
-	if self.Listener != nil {
-		self.Listener.MetricRequestReceived(m, err)
+	if self.CarbonListener != nil {
+		self.CarbonListener.MetricRequestReceived(m, err)
 	}
 
 	return m, err
