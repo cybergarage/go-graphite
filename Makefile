@@ -27,8 +27,10 @@ version: ${VERSION_GO}
 SETUP_CMD="./setup"
 
 setup:
-	@echo "export GOPATH=${GOPATH}" > ${SETUP_CMD}
-	@echo "go get -u ${PACKAGES}" >> ${SETUP_CMD}
+	@echo "#!/bin/bash" > ${SETUP_CMD}
+	@echo "export GOPATH=\`pwd\`" >> ${SETUP_CMD}
+	@echo "git pull" >> ${SETUP_CMD}
+	@echo "go get -u ${PACKAGE_ID}" >> ${SETUP_CMD}
 	@chmod a+x ${SETUP_CMD}
 	@./${SETUP_CMD}
 
