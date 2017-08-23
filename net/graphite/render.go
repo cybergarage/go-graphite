@@ -3,13 +3,18 @@
 // license that can be found in the LICENSE file.
 
 // Package server provides interfaces for Graphite protocols.
-package server
+package graphite
 
 import (
 	"fmt"
 	"net/http"
+)
 
-	"github.com/cybergarage/go-graphite/net/graphite"
+const (
+	// DefaultPort is the default port number for Render
+	RenderDefaultPort int = 8080
+	// DefaultPath is the default path for Render
+	RenderDefaultPath string = "/render"
 )
 
 const (
@@ -18,7 +23,7 @@ const (
 
 // RenderRequestListener represents a listener for Render protocol.
 type RenderRequestListener interface {
-	QueryRequestReceived(*graphite.Query, error) ([]*graphite.Metric, error)
+	QueryRequestReceived(*Query, error) ([]*Metric, error)
 }
 
 // RenderListener represents a listener for all requests of Render.
@@ -36,7 +41,7 @@ type Render struct {
 // NewRender returns a new Render.
 func NewRender() *Render {
 	server := &Render{
-		Port:   graphite.RenderDefaultPort,
+		Port:   RenderDefaultPort,
 		server: nil,
 	}
 	return server
@@ -86,7 +91,7 @@ func (self *Render) Stop() error {
 func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Request) {
 
 	switch httpReq.URL.Path {
-	case graphite.RenderDefaultPath:
+	case RenderDefaultPath:
 		self.handleRenderRequest(httpWriter, httpReq)
 		return
 	}
@@ -96,9 +101,9 @@ func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Requ
 
 // handleRenderRequest handles Render requests.
 // The Render URL API
-// http://graphite.readthedocs.io/en/latest/render_api.html
+// http://readthedocs.io/en/latest/render_api.html
 func (self *Render) handleRenderRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
-	query := graphite.NewQuery()
+	query := NewQuery()
 	err := query.Parse(httpReq.URL)
 	if err != nil {
 		self.responseBadRequest(httpWriter, httpReq)
@@ -127,12 +132,12 @@ func (self *Render) responseInternalServerError(httpWriter http.ResponseWriter, 
 	http.Error(httpWriter, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *graphite.Query, metrics []*graphite.Metric) {
+func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
 	switch query.Format {
-	case graphite.QueryFormatTypeCSV:
+	case QueryFormatTypeCSV:
 		self.responseQueryCSVMetrics(httpWriter, httpReq, query, metrics)
 		return
-	case graphite.QueryFormatTypeJSON:
+	case QueryFormatTypeJSON:
 		self.responseQueryJSONMetrics(httpWriter, httpReq, query, metrics)
 		return
 	}
@@ -140,8 +145,8 @@ func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq
 	self.responseBadRequest(httpWriter, httpReq)
 }
 
-func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *graphite.Query, metrics []*graphite.Metric) {
-	httpWriter.Header().Set(httpHeaderContentType, graphite.QueryContentTypeCSV)
+func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
+	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeCSV)
 	httpWriter.WriteHeader(http.StatusOK)
 	for _, m := range metrics {
 		mRow := fmt.Sprintf("%s,%s,%f\n", m.Path, m.Value)
@@ -149,8 +154,8 @@ func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, http
 	}
 }
 
-func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *graphite.Query, metrics []*graphite.Metric) {
-	httpWriter.Header().Set(httpHeaderContentType, graphite.QueryContentTypeJSON)
+func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
+	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
 	httpWriter.WriteHeader(http.StatusOK)
 	// FIXME : Not implemented yet
 }

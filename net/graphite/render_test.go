@@ -2,14 +2,11 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package server
+package graphite
 
 import (
 	"fmt"
 	"testing"
-
-	"github.com/cybergarage/go-graphite/net/graphite"
-	"github.com/cybergarage/go-graphite/net/graphite/client"
 )
 
 type TestRender struct {
@@ -23,7 +20,7 @@ func NewTestRender() *TestRender {
 	return render
 }
 
-func (self *TestRender) QueryRequestReceived(query *graphite.Query, err error) ([]*graphite.Metric, error) {
+func (self *TestRender) QueryRequestReceived(query *Query, err error) ([]*Metric, error) {
 	if err != nil {
 		return nil, nil
 	}
@@ -43,11 +40,11 @@ func TestRenderQuery(t *testing.T) {
 		t.Error(err)
 	}
 
-	cli := client.NewClient()
+	cli := NewClient()
 
 	loopCount := 0
 	for n := 0; n < 10; n++ {
-		q := graphite.NewQuery()
+		q := NewQuery()
 		q.Target = fmt.Sprintf("path%d", n)
 		_, err := cli.PostQuery(q)
 		if err != nil {

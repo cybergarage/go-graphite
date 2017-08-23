@@ -2,14 +2,12 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package server
+package graphite
 
 import (
 	"fmt"
 	"testing"
 	"time"
-
-	"github.com/cybergarage/go-graphite/net/graphite"
 )
 
 type TestCarbon struct {
@@ -23,7 +21,7 @@ func NewTestCarbon() *TestCarbon {
 	return carbon
 }
 
-func (self *TestCarbon) MetricRequestReceived(m *graphite.Metric, err error) {
+func (self *TestCarbon) MetricRequestReceived(m *Metric, err error) {
 	if err != nil {
 		return
 	}

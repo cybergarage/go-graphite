@@ -3,19 +3,22 @@
 // license that can be found in the LICENSE file.
 
 // Package server provides interfaces for Graphite protocols.
-package server
+package graphite
 
 import (
 	"fmt"
 	"io/ioutil"
 	"net"
+)
 
-	"github.com/cybergarage/go-graphite/net/graphite"
+const (
+	// CarbonDefaultPort is the default port number for Carbon Server
+	CarbonDefaultPort int = 2003
 )
 
 // PlaintextRequestListener represents a listener for plain text protocol of Carbon.
 type PlaintextRequestListener interface {
-	MetricRequestReceived(*graphite.Metric, error)
+	MetricRequestReceived(*Metric, error)
 }
 
 // CarbonListener represents a listener for all requests of Carbon.
@@ -32,13 +35,13 @@ type Carbon struct {
 
 // NewCarbon returns a new Carbon.
 func NewCarbon() *Carbon {
-	carbon := &Carbon{Port: graphite.CarbonDefaultPort}
+	carbon := &Carbon{Port: CarbonDefaultPort}
 	return carbon
 }
 
 // ParseRequestString returns a metrics of the specified context.
-func (self *Carbon) ParseRequestString(context string) (*graphite.Metric, error) {
-	m := graphite.NewMetric()
+func (self *Carbon) ParseRequestString(context string) (*Metric, error) {
+	m := NewMetric()
 	err := m.ParsePlainText(context)
 
 	if err != nil {
@@ -53,7 +56,7 @@ func (self *Carbon) ParseRequestString(context string) (*graphite.Metric, error)
 }
 
 // ParseRequestBytes returns a metrics of the specified bytes.
-func (self *Carbon) ParseRequestBytes(bytes []byte) (*graphite.Metric, error) {
+func (self *Carbon) ParseRequestBytes(bytes []byte) (*Metric, error) {
 	return self.ParseRequestString(string(bytes))
 }
 
