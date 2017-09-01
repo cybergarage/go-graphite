@@ -62,3 +62,34 @@ func TestRenderQuery(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestRenderHTTPListener(t *testing.T) {
+	render := NewTestRender()
+	render.RenderListener = render
+	err := render.Start()
+	if err != nil {
+		t.Error(err)
+	}
+
+	cli := NewClient()
+
+	loopCount := 0
+	for n := 0; n < 10; n++ {
+		q := NewQuery()
+		q.Target = fmt.Sprintf("path%d", n)
+		_, err := cli.PostQuery(q)
+		if err != nil {
+			t.Error(err)
+		}
+		loopCount++
+	}
+
+	if render.QueryCount != loopCount {
+		t.Error(fmt.Errorf("%d != %d", render.QueryCount, loopCount))
+	}
+
+	err = render.Stop()
+	if err != nil {
+		t.Error(err)
+	}
+}
