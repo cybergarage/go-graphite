@@ -26,6 +26,11 @@ type RenderRequestListener interface {
 	QueryRequestReceived(*Query, error) ([]*Metric, error)
 }
 
+// RenderHTTPRequestListener represents a listener for HTTP requets.
+type RenderHTTPRequestListener interface {
+	HTTPRequestReceived(r *http.Request, w http.ResponseWriter)
+}
+
 // RenderListener represents a listener for all requests of Render.
 type RenderListener interface {
 	RenderRequestListener
@@ -33,18 +38,33 @@ type RenderListener interface {
 
 // Render is an instance for Graphite render protocols.
 type Render struct {
-	Port           int
-	RenderListener RenderRequestListener
-	server         *http.Server
+	Port               int
+	RenderListener     RenderRequestListener
+	server             *http.Server
+	extraHTTPListeners map[string]RenderHTTPRequestListener
 }
 
 // NewRender returns a new Render.
 func NewRender() *Render {
 	server := &Render{
-		Port:   RenderDefaultPort,
-		server: nil,
+		Port:               RenderDefaultPort,
+		RenderListener:     nil,
+		server:             nil,
+		extraHTTPListeners: make(map[string]RenderHTTPRequestListener),
 	}
+
 	return server
+}
+
+// SetHTTPRequestListener sets a extra HTTP request listner.
+func (self *Render) SetHTTPRequestListener(path string, listener RenderHTTPRequestListener) error {
+	if len(path) <= 0 || listener == nil {
+		return fmt.Errorf(errorInvalidHTTPRequestListener, path, listener)
+	}
+
+	self.extraHTTPListeners[path] = listener
+
+	return nil
 }
 
 // Start starts the HTTP server.
@@ -89,10 +109,17 @@ func (self *Render) Stop() error {
 
 // ServeHTTP handles HTTP requests.
 func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Request) {
+	path := httpReq.URL.Path
 
-	switch httpReq.URL.Path {
+	switch path {
 	case RenderDefaultPath:
 		self.handleRenderRequest(httpWriter, httpReq)
+		return
+	}
+
+	httpListener, ok := self.extraHTTPListeners[path]
+	if ok {
+		httpListener.HTTPRequestReceived(httpReq, httpWriter)
 		return
 	}
 

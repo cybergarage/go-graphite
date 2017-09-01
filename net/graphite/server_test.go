@@ -5,20 +5,33 @@
 package graphite
 
 import (
+	"io/ioutil"
+	"net/http"
 	"testing"
 
 	"fmt"
 	"time"
 )
 
+const (
+	testServerHTTPRequestPath = "/hello"
+)
+
 type TestServer struct {
 	*Server
-	MetricsCount int
+	MetricsCount     int
+	HTTPRequestCount int
 }
 
 func NewTestServer() *TestServer {
-	server := &TestServer{NewServer(), 0}
+	server := &TestServer{
+		NewServer(),
+		0,
+		0,
+	}
+
 	server.CarbonListener = server
+
 	return server
 }
 
@@ -30,11 +43,16 @@ func (self *TestServer) MetricRequestReceived(m *Metric, err error) {
 	self.MetricsCount++
 }
 
+func (self *TestServer) HTTPRequestReceived(r *http.Request, w http.ResponseWriter) {
+	w.WriteHeader(http.StatusOK)
+	self.HTTPRequestCount++
+}
+
 func TestNewServer(t *testing.T) {
 	NewServer()
 }
 
-func TestServerThread(t *testing.T) {
+func TestServerQuery(t *testing.T) {
 	server := NewTestServer()
 
 	err := server.Start()
@@ -63,6 +81,41 @@ func TestServerThread(t *testing.T) {
 
 	if server.MetricsCount != loopCount {
 		t.Error(fmt.Errorf("%d != %d", server.MetricsCount, loopCount))
+	}
+
+	err = server.Stop()
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestServerHTTPRequest(t *testing.T) {
+	server := NewTestServer()
+	server.SetHTTPRequestListener(testServerHTTPRequestPath, server)
+
+	err := server.Start()
+	if err != nil {
+		t.Error(err)
+	}
+
+	loopCount := 0
+	for n := 0; n < 10; n++ {
+		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", server.Render.Port, testServerHTTPRequestPath))
+		if err != nil {
+			t.Error(err)
+		}
+		defer resp.Body.Close()
+
+		_, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			t.Error(err)
+		}
+
+		loopCount++
+	}
+
+	if server.HTTPRequestCount != loopCount {
+		t.Error(fmt.Errorf("%d != %d", server.HTTPRequestCount, loopCount))
 	}
 
 	err = server.Stop()
