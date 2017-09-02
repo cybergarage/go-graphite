@@ -19,7 +19,7 @@ const (
 
 // Metric is an instance for Metric of Carbon protocol.
 type Metric struct {
-	Path      string
+	Name      string
 	Value     float64
 	Timestamp time.Time
 }
@@ -41,7 +41,7 @@ func (self *Metric) ParsePlainText(line string) error {
 
 	var err error
 
-	self.Path = strs[0]
+	self.Name = strs[0]
 
 	self.Value, err = strconv.ParseFloat(strs[1], 64)
 	if err != nil {
@@ -69,7 +69,7 @@ func (self *Metric) ParseRenderCSV(line string) error {
 
 	var err error
 
-	self.Path = strs[0]
+	self.Name = strs[0]
 
 	self.Timestamp, err = time.Parse(metricsTimestampFormat, strs[1])
 	if err != nil {
@@ -86,7 +86,7 @@ func (self *Metric) ParseRenderCSV(line string) error {
 
 // GoString returns a string representation value.
 func (self *Metric) GoString() string {
-	return fmt.Sprintf("%s %f %d", self.Path, self.Value, self.Timestamp.Unix())
+	return fmt.Sprintf("%s %f %d", self.Name, self.Value, self.Timestamp.Unix())
 }
 
 // TimestampString returns a string for the Render API format.

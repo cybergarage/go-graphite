@@ -65,7 +65,7 @@ func TestServerQuery(t *testing.T) {
 	loopCount := 0
 	for n := 0; n < 10; n++ {
 		m := NewMetric()
-		m.Path = fmt.Sprintf("path%d", n)
+		m.Name = fmt.Sprintf("path%d", n)
 		m.Value = float64(n)
 		m.Timestamp = time.Now()
 

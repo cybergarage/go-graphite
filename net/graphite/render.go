@@ -176,7 +176,7 @@ func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, http
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeCSV)
 	httpWriter.WriteHeader(http.StatusOK)
 	for _, m := range metrics {
-		mRow := fmt.Sprintf("%s,%s,%f\n", m.Path, m.Value)
+		mRow := fmt.Sprintf("%s,%s,%f\n", m.Name, m.Value)
 		httpWriter.Write([]byte(mRow))
 	}
 }
