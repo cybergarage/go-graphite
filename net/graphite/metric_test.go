@@ -28,8 +28,8 @@ func TestMetricParsePlaintext(t *testing.T) {
 			t.Error(err)
 		}
 
-		if m.Path != path {
-			t.Error(fmt.Errorf("%s != %s", m.Path, path))
+		if m.Name != path {
+			t.Error(fmt.Errorf("%s != %s", m.Name, path))
 		}
 
 		if int64(m.Value) != int64(value) {
