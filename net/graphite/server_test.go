@@ -66,8 +66,11 @@ func TestServerQuery(t *testing.T) {
 	for n := 0; n < 10; n++ {
 		m := NewMetric()
 		m.Name = fmt.Sprintf("path%d", n)
-		m.Value = float64(n)
-		m.Timestamp = time.Now()
+
+		dp := NewDataPoint()
+		dp.Value = float64(n)
+		dp.Timestamp = time.Now()
+		m.AddDataPoint(dp)
 
 		err = cli.PostMetric(m)
 		if err != nil {

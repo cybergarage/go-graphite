@@ -52,12 +52,18 @@ func TestCarbonParseMetric(t *testing.T) {
 			t.Error(fmt.Errorf("%s != %s", m.Name, path))
 		}
 
-		if int64(m.Value) != int64(value) {
-			t.Error(fmt.Errorf("%f != %f", m.Value, value))
+		if len(m.DataPoints) != 1 {
+			t.Error(fmt.Errorf("%d", len(m.DataPoints)))
 		}
 
-		if m.Timestamp.Unix() != ts {
-			t.Error(fmt.Errorf("%d != %d", m.Timestamp.Unix(), ts))
+		dp := m.DataPoints[0]
+
+		if int64(dp.Value) != int64(value) {
+			t.Error(fmt.Errorf("%f != %f", dp.Value, value))
+		}
+
+		if dp.Timestamp.Unix() != ts {
+			t.Error(fmt.Errorf("%d != %d", dp.Timestamp.Unix(), ts))
 		}
 
 		loopCount++

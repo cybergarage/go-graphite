@@ -31,15 +31,31 @@ func NewClient() *Client {
 	return client
 }
 
-// PostMetric posts the specified metric to Carbon.
+// PostMetric posts all metric datapoints to Carbon.
 func (self *Client) PostMetric(m *Metric) error {
+	for n, _ := range m.DataPoints {
+		err := self.postMetricDataPoint(m, n)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// postMetricDataPoint posts a specified metric to Carbon.
+func (self *Client) postMetricDataPoint(m *Metric, n int) error {
+	dpData, err := m.DataPointPlainTextString(n)
+	if err != nil {
+		return err
+	}
+
 	addr := fmt.Sprintf("%s:%d", self.Host, self.CarbonPort)
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		return err
 	}
 
-	nWrote, err := fmt.Fprintf(conn, "%s", m.GoString())
+	nWrote, err := fmt.Fprintf(conn, "%s", dpData)
 	if err != nil {
 		return err
 	}
