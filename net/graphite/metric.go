@@ -13,21 +13,30 @@ import (
 )
 
 const (
-	metricParseError       = "Could not parse %s"
-	metricsTimestampFormat = "20060102 15:04:05"
+	metricParseError                = "Could not parse %s"
+	metricsRenderCSVTimestampFormat = "20060102 15:04:05"
 )
 
 // Metric is an instance for Metric of Carbon protocol.
 type Metric struct {
-	Name      string
-	Value     float64
-	Timestamp time.Time
+	Name       string
+	DataPoints []*DataPoint
+	//Value     float64
+	//Timestamp time.Time
 }
 
 // NewMetric returns a new Metric.
 func NewMetric() *Metric {
-	m := &Metric{}
+	m := &Metric{
+		DataPoints: make([]*DataPoint, 0),
+	}
 	return m
+}
+
+// AddDataPoint add a new datapoint
+func (self *Metric) AddDataPoint(dp *DataPoint) error {
+	self.DataPoints = append(self.DataPoints, dp)
+	return nil
 }
 
 // ParsePlainText parses the specified line string of the following plain text protocol.
@@ -43,7 +52,7 @@ func (self *Metric) ParsePlainText(line string) error {
 
 	self.Name = strs[0]
 
-	self.Value, err = strconv.ParseFloat(strs[1], 64)
+	value, err := strconv.ParseFloat(strs[1], 64)
 	if err != nil {
 		return err
 	}
@@ -53,7 +62,15 @@ func (self *Metric) ParsePlainText(line string) error {
 	if err != nil {
 		return err
 	}
-	self.Timestamp = time.Unix(unixTime, 0)
+
+	dp := NewDataPoint()
+	dp.Value = value
+	dp.Timestamp = time.Unix(unixTime, 0)
+
+	err = self.AddDataPoint(dp)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -71,12 +88,21 @@ func (self *Metric) ParseRenderCSV(line string) error {
 
 	self.Name = strs[0]
 
-	self.Timestamp, err = time.Parse(metricsTimestampFormat, strs[1])
+	ts, err := time.Parse(metricsRenderCSVTimestampFormat, strs[1])
 	if err != nil {
 		return err
 	}
 
-	self.Value, err = strconv.ParseFloat(strs[1], 64)
+	value, err := strconv.ParseFloat(strs[1], 64)
+	if err != nil {
+		return err
+	}
+
+	dp := NewDataPoint()
+	dp.Value = value
+	dp.Timestamp = ts
+
+	err = self.AddDataPoint(dp)
 	if err != nil {
 		return err
 	}
@@ -84,12 +110,11 @@ func (self *Metric) ParseRenderCSV(line string) error {
 	return nil
 }
 
-// GoString returns a string representation value.
-func (self *Metric) GoString() string {
-	return fmt.Sprintf("%s %f %d", self.Name, self.Value, self.Timestamp.Unix())
-}
-
-// TimestampString returns a string for the Render API format.
-func (self *Metric) TimestampString() string {
-	return self.Timestamp.Format(metricsTimestampFormat)
+// DataPointPlainTextString returns a string representation datapoint for the plaintext protocol.
+func (self *Metric) DataPointPlainTextString(n int) (string, error) {
+	if len(self.DataPoints) < n {
+		return "", fmt.Errorf(errorInvalidIndex, n, len(self.DataPoints))
+	}
+	dp := self.DataPoints[n]
+	return fmt.Sprintf("%s %s", self.Name, dp.PlainTextString()), nil
 }
