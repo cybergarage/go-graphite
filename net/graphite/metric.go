@@ -21,8 +21,6 @@ const (
 type Metric struct {
 	Name       string
 	DataPoints []*DataPoint
-	//Value     float64
-	//Timestamp time.Time
 }
 
 // NewMetric returns a new Metric.
