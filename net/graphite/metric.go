@@ -7,6 +7,7 @@ package graphite
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -26,7 +27,7 @@ type Metric struct {
 // NewMetric returns a new Metric.
 func NewMetric() *Metric {
 	m := &Metric{
-		DataPoints: make([]*DataPoint, 0),
+		DataPoints: NewDataPoints(0),
 	}
 	return m
 }
@@ -34,6 +35,12 @@ func NewMetric() *Metric {
 // AddDataPoint add a new datapoint
 func (self *Metric) AddDataPoint(dp *DataPoint) error {
 	self.DataPoints = append(self.DataPoints, dp)
+	return nil
+}
+
+// SortDataPoints sorts the current datapoints
+func (self *Metric) SortDataPoints() error {
+	sort.Sort(DataPoints(self.DataPoints))
 	return nil
 }
 
