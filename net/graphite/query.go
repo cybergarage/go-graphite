@@ -21,6 +21,8 @@ const (
 	QueryUntil string = "until"
 	// QueryFormat is 'format' parameter identifier for Render
 	QueryFormat string = "format"
+	// QueryFormatTypeRaw is a format type for Render
+	QueryFormatTypeRaw string = "raw"
 	// QueryFormatTypeCSV is a format type for Render
 	QueryFormatTypeCSV string = "csv"
 	// QueryFormatJSON is a format type for Render

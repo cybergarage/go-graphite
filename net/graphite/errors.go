@@ -6,6 +6,6 @@
 package graphite
 
 const (
-	errorInvalidIndex               = "Invalid Range Request : 0 <= %d < %d"
+	errorInvalidRangeIndex          = "Invalid Range Request : 0 <= %d < %d"
 	errorInvalidHTTPRequestListener = "Invalid HTTPRequestListener : %s %v"
 )
