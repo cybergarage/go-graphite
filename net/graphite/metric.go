@@ -32,10 +32,23 @@ func NewMetric() *Metric {
 	return m
 }
 
+// GetDataPointCount returns a count of the datapoints
+func (self *Metric) GetDataPointCount() int {
+	return len(self.DataPoints)
+}
+
 // AddDataPoint add a new datapoint
 func (self *Metric) AddDataPoint(dp *DataPoint) error {
 	self.DataPoints = append(self.DataPoints, dp)
 	return nil
+}
+
+// AddDataPoint add a new datapoint
+func (self *Metric) GetDataPoint(n int) (*DataPoint, error) {
+	if (n < 0) || (len(self.DataPoints) <= n) {
+		return nil, fmt.Errorf(errorInvalidRangeIndex, n, len(self.DataPoints))
+	}
+	return self.DataPoints[n], nil
 }
 
 // SortDataPoints sorts the current datapoints
@@ -118,7 +131,7 @@ func (self *Metric) ParseRenderCSV(line string) error {
 // DataPointPlainTextString returns a string representation datapoint for the plaintext protocol.
 func (self *Metric) DataPointPlainTextString(n int) (string, error) {
 	if len(self.DataPoints) < n {
-		return "", fmt.Errorf(errorInvalidIndex, n, len(self.DataPoints))
+		return "", fmt.Errorf(errorInvalidRangeIndex, n, len(self.DataPoints))
 	}
 	dp := self.DataPoints[n]
 	return fmt.Sprintf("%s %s", self.Name, dp.PlainTextString()), nil

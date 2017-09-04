@@ -8,6 +8,7 @@ package graphite
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
 const (
@@ -161,6 +162,9 @@ func (self *Render) responseInternalServerError(httpWriter http.ResponseWriter, 
 
 func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
 	switch query.Format {
+	case QueryFormatTypeRaw:
+		self.responseQueryRawMetrics(httpWriter, httpReq, query, metrics)
+		return
 	case QueryFormatTypeCSV:
 		self.responseQueryCSVMetrics(httpWriter, httpReq, query, metrics)
 		return
@@ -170,6 +174,73 @@ func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq
 	}
 
 	self.responseBadRequest(httpWriter, httpReq)
+}
+
+func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
+	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeCSV)
+	httpWriter.WriteHeader(http.StatusOK)
+
+	for _, m := range metrics {
+		err := m.SortDataPoints()
+		if err != nil {
+			continue
+		}
+		dpCount := m.GetDataPointCount()
+		if dpCount <= 0 {
+			continue
+		}
+
+		var from, until time.Time
+		var step int64
+
+		switch dpCount {
+		case 0:
+			continue
+		case 1:
+			firstDp, err := m.GetDataPoint(0)
+			if err != nil {
+				continue
+			}
+			from = firstDp.Timestamp
+			until = from
+			step = 0
+		default:
+			firstDp, err := m.GetDataPoint(0)
+			if err != nil {
+				continue
+			}
+			from = firstDp.Timestamp
+
+			lastDp, err := m.GetDataPoint((dpCount - 1))
+			if err != nil {
+				continue
+			}
+			until = lastDp.Timestamp
+
+			secondDp, err := m.GetDataPoint(1)
+			if err != nil {
+				continue
+			}
+			// FIXME : Step is calculated only using the first few data points.
+			step = secondDp.Timestamp.Unix() - firstDp.Timestamp.Unix()
+		}
+
+		msg := fmt.Sprintf("%s,%d,%d,%d|", m.Name, from.Unix(), until.Unix(), step)
+		httpWriter.Write([]byte(msg))
+
+		for n, dp := range m.DataPoints {
+			var value string
+			switch n {
+			case (dpCount - 1):
+				value = fmt.Sprintf("%f", dp.Value)
+			default:
+				value = fmt.Sprintf("%f,", dp.Value)
+			}
+			httpWriter.Write([]byte(value))
+		}
+
+		httpWriter.Write([]byte("\n"))
+	}
 }
 
 func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
