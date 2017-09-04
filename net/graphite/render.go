@@ -177,7 +177,7 @@ func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq
 }
 
 func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
-	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeCSV)
+	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeRaw)
 	httpWriter.WriteHeader(http.StatusOK)
 
 	for _, m := range metrics {
@@ -257,5 +257,35 @@ func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, http
 func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
 	httpWriter.WriteHeader(http.StatusOK)
-	// FIXME : Not implemented yet
+
+	httpWriter.Write([]byte("[\n"))
+
+	mCount := len(metrics)
+	for i, m := range metrics {
+		httpWriter.Write([]byte("{\n"))
+
+		// Output the target name
+		httpWriter.Write([]byte(fmt.Sprintf("\"target\": \"%s\",\n", m.Name)))
+
+		// Output the datapoint array
+		dpCount := m.GetDataPointCount()
+		httpWriter.Write([]byte("\"datapoints\": [\n"))
+		for j, dp := range m.DataPoints {
+			httpWriter.Write([]byte(fmt.Sprintf("%f,%d\n", dp.Value, dp.UnixTimestamp())))
+			if j < (dpCount - 1) {
+				httpWriter.Write([]byte("],\n"))
+			} else {
+				httpWriter.Write([]byte("]\n"))
+			}
+		}
+		httpWriter.Write([]byte("]\n"))
+
+		if i < (mCount - 1) {
+			httpWriter.Write([]byte("},\n"))
+		} else {
+			httpWriter.Write([]byte("}\n"))
+		}
+	}
+
+	httpWriter.Write([]byte("]\n"))
 }

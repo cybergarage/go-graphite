@@ -25,8 +25,10 @@ const (
 	QueryFormatTypeRaw string = "raw"
 	// QueryFormatTypeCSV is a format type for Render
 	QueryFormatTypeCSV string = "csv"
-	// QueryFormatJSON is a format type for Render
+	// QueryFormatTypeJSON is a format type for Render
 	QueryFormatTypeJSON string = "json"
+	// QueryContentTypeRaw is a content type for the CSV format
+	QueryContentTypeRaw string = "text/plain"
 	// QueryContentTypeCSV is a content type for the CSV format
 	QueryContentTypeCSV string = "text/csv"
 	// QueryContentTypeJSON is a content type for the JSON format
