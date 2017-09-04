@@ -35,10 +35,6 @@ const (
 	QueryContentTypeJSON string = "application/json"
 )
 
-const (
-	queryAbsoluteTimeFormat = "15:04_20060102"
-)
-
 // Query is an instance for Render query protocol.
 type Query struct {
 	Target string
