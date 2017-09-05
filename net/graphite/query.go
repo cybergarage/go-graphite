@@ -8,7 +8,6 @@ package graphite
 import (
 	"fmt"
 	"net/url"
-	"regexp"
 	"time"
 )
 
@@ -86,27 +85,15 @@ func (self *Query) Parse(u *url.URL) error {
 }
 
 func (self *Query) parseTimeString(timeStr string) (*time.Time, error) {
-	absRegex := regexp.MustCompile("abc")
-	if absRegex.MatchString(timeStr) {
-		return self.parseAbsoluteTimeString(timeStr)
+	if IsRelativeTimeString(timeStr) {
+		return RelativeTimeStringToTime(timeStr)
 	}
 
-	relRegex := regexp.MustCompile("abc")
-	if relRegex.MatchString(timeStr) {
-		return self.parseRelativeTimeString(timeStr)
+	if IsAbsoluteTimeString(timeStr) {
+		return AbsouleteTimeStringToTime(timeStr)
 	}
 
-	return nil, fmt.Errorf("Could not parse : %s", timeStr)
-}
-
-func (self *Query) parseAbsoluteTimeString(timeStr string) (*time.Time, error) {
-
-	return nil, nil
-}
-
-func (self *Query) parseRelativeTimeString(timeStr string) (*time.Time, error) {
-
-	return nil, nil
+	return nil, fmt.Errorf(errorQueryInvalidTimeFormat, timeStr)
 }
 
 // URLString returns a path for Render URL API
