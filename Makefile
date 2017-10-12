@@ -11,7 +11,7 @@
 PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
-GITHUB=git.corp.cybergarage.org/kvspj/go-graphite
+GITHUB=github.com/cybergarage/go-graphite
 PACKAGE_ID=${GITHUB}/net/graphite
 PACKAGES=${PACKAGE_ID}
 
