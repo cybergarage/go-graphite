@@ -39,7 +39,7 @@ setup:
 	@echo "export GOPATH=\`pwd\`" >> ${SETUP_CMD}
 	@echo "git pull" >> ${SETUP_CMD}
 	@echo "mkdir -p src" >> ${SETUP_CMD}
-	@echo "rm -rf ${GITHUB_ROOT}" >> ${SETUP_CMD}
+	@echo "rm -rf src/${GITHUB_ROOT}" >> ${SETUP_CMD}
 	@echo "pushd src && rm -rf ${GITHUB}.git ${GITHUB} && popd" >> ${SETUP_CMD}
 	@echo "go get -u ${GITHUB_ID}" >> ${SETUP_CMD}
 	@echo "pushd src && mv ${GITHUB}.git ${GITHUB} && popd" >> ${SETUP_CMD}
