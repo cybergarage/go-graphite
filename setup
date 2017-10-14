@@ -2,7 +2,7 @@
 export GOPATH=`pwd`
 git pull
 mkdir -p src
-rm -rf github.com/cybergarage
+rm -rf src/github.com/cybergarage
 pushd src && rm -rf github.com/cybergarage/go-graphite.git github.com/cybergarage/go-graphite && popd
 go get -u github.com/cybergarage/go-graphite.git/net/graphite
 pushd src && mv github.com/cybergarage/go-graphite.git github.com/cybergarage/go-graphite && popd
