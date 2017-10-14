@@ -11,11 +11,17 @@
 PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
-GITHUB=github.com/cybergarage/go-graphite
-PACKAGE_ID=${GITHUB}/net/graphite
+PACKAGE_NAME=net/graphite
+GITHUB=github.com/cybergarage/go-graphite
+
+GITHUB_ID=${GITHUB}.git/${PACKAGE_NAME}
+PACKAGE_ID=${GITHUB}/${PACKAGE_NAME}
+
 PACKAGES=${PACKAGE_ID}
 
 .PHONY: setup
+
+all: setup test
 
 VERSION_GO="./net/graphite/version.go"
 
@@ -30,26 +36,16 @@ setup:
 	@echo "#!/bin/bash" > ${SETUP_CMD}
 	@echo "export GOPATH=\`pwd\`" >> ${SETUP_CMD}
 	@echo "git pull" >> ${SETUP_CMD}
-	@echo "go get -u ${PACKAGE_ID}" >> ${SETUP_CMD}
+	@echo "pushd src && rm -rf ${GITHUB}.git ${GITHUB} && popd" >> ${SETUP_CMD}
+	@echo "go get -u ${GITHUB_ID}" >> ${SETUP_CMD}
+	@echo "pushd src && mv ${GITHUB}.git ${GITHUB} && popd" >> ${SETUP_CMD}
 	@chmod a+x ${SETUP_CMD}
 	@./${SETUP_CMD}
-
-commit:
-	pushd src/${GITHUB} && git commit -a && popd
-
-push:
-	pushd src/${GITHUB} && git push && popd
-
-pull:
-	pushd src/${GITHUB} && git pull && popd
-
-diff:
-	pushd src/${GITHUB} && git diff && popd
 
 format:
 	gofmt -w src/${GITHUB}
 
-package: format $(shell find src/${GITHUB}  -type f -name '*.go')
+package: format $(shell find src/${PACKAGE_ID}  -type f -name '*.go')
 	go build -v ${PACKAGES}
 
 test: package
