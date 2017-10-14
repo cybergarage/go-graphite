@@ -11,8 +11,10 @@
 PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
+GITHUB_ROOT=github.com/cybergarage
+
 PACKAGE_NAME=net/graphite
-GITHUB=github.com/cybergarage/go-graphite
+GITHUB=${GITHUB_ROOT}/go-graphite
 
 GITHUB_ID=${GITHUB}.git/${PACKAGE_NAME}
 PACKAGE_ID=${GITHUB}/${PACKAGE_NAME}
@@ -36,6 +38,8 @@ setup:
 	@echo "#!/bin/bash" > ${SETUP_CMD}
 	@echo "export GOPATH=\`pwd\`" >> ${SETUP_CMD}
 	@echo "git pull" >> ${SETUP_CMD}
+	@echo "mkdir -p src" >> ${SETUP_CMD}
+	@echo "rm -rf ${GITHUB_ROOT}" >> ${SETUP_CMD}
 	@echo "pushd src && rm -rf ${GITHUB}.git ${GITHUB} && popd" >> ${SETUP_CMD}
 	@echo "go get -u ${GITHUB_ID}" >> ${SETUP_CMD}
 	@echo "pushd src && mv ${GITHUB}.git ${GITHUB} && popd" >> ${SETUP_CMD}
