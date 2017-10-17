@@ -1,1 +1,1 @@
-# go-graphite-server
+# go-graphite
