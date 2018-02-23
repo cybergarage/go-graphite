@@ -43,10 +43,12 @@ func TestCarbonParseMetric(t *testing.T) {
 
 		line := fmt.Sprintf("%s %f %d", path, value, ts)
 
-		m, err := carbon.ParseRequestString(line)
+		ms, err := carbon.ParseRequestString(line)
 		if err != nil {
 			t.Error(err)
 		}
+
+		m := ms[0]
 
 		if m.Name != path {
 			t.Error(fmt.Errorf("%s != %s", m.Name, path))

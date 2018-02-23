@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	metricParseError                = "Could not parse %s"
+	metricParseError                = "Invalid request : %s"
 	metricsRenderCSVTimestampFormat = "20060102 15:04:05"
 )
 
