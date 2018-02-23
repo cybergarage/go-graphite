@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
+	"strings"
 )
 
 const (
@@ -39,10 +40,10 @@ func NewCarbon() *Carbon {
 	return carbon
 }
 
-// ParseRequestString returns a metrics of the specified context.
-func (self *Carbon) ParseRequestString(context string) (*Metric, error) {
+// parseRequestLine parses the specified metrics request.
+func (self *Carbon) parseRequestLine(lineString string) (*Metric, error) {
 	m := NewMetric()
-	err := m.ParsePlainText(context)
+	err := m.ParsePlainText(lineString)
 
 	if err != nil {
 		m = nil
@@ -55,8 +56,26 @@ func (self *Carbon) ParseRequestString(context string) (*Metric, error) {
 	return m, err
 }
 
+// ParseRequestString returns a metrics of the specified context.
+func (self *Carbon) ParseRequestString(context string) ([]*Metric, error) {
+	lines := strings.Split(context, "\n")
+	ms := make([]*Metric, len(lines))
+	for n, line := range lines {
+		if len(line) <= 0 {
+			continue
+		}
+		m, err := self.parseRequestLine(line)
+		if err != nil {
+			return ms, err
+		}
+		ms[n] = m
+	}
+
+	return ms, nil
+}
+
 // ParseRequestBytes returns a metrics of the specified bytes.
-func (self *Carbon) ParseRequestBytes(bytes []byte) (*Metric, error) {
+func (self *Carbon) ParseRequestBytes(bytes []byte) ([]*Metric, error) {
 	return self.ParseRequestString(string(bytes))
 }
 
