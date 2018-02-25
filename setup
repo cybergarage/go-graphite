@@ -1,24 +1,19 @@
 #!/bin/bash
-########################################
-# Set environment variables
-########################################
-
 export GOPATH=`pwd`
 
-########################################
-# Update local source codes
-########################################
 git pull
 
 if [ ! -d src ]; then
   mkdir -p src
+#else
+#  rm -rf src/github.com/cybergarage
 fi
 
 go_graphite_path="github.com/cybergarage/go-graphite"
-go_graphite_dir="src/${foreman_go_path}"
+go_graphite_dir="src/${go_graphite_path}"
 if [ -d ${go_graphite_dir} ]; then
   pushd ${go_graphite_dir} && git pull && popd
 else
   go get -u github.com/cybergarage/go-graphite.git/net/graphite
-  pushd src && mv github.com/cybergarage/go-graphite.git &{go_graphite_path} && popd
+  pushd src && mv github.com/cybergarage/go-graphite.git ${go_graphite_path} && popd
 fi
