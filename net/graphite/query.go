@@ -43,8 +43,16 @@ type Query struct {
 }
 
 // NewQuery returns a new Query.
+// The Render URL API
+// http://graphite.readthedocs.io/en/latest/render_api.html
 func NewQuery() *Query {
-	q := &Query{}
+	now := time.Now()
+	from := now.Add(-(time.Duration(24) * time.Hour))
+	q := &Query{
+		Target: "",
+		From:   &from, // it defaults to 24 hours ago.
+		Until:  &now,  // it defaults to the current time (now).
+	}
 	return q
 }
 
