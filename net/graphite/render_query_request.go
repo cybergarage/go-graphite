@@ -150,7 +150,7 @@ func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, htt
 		dpCount := m.GetDataPointCount()
 		httpWriter.Write([]byte("\"datapoints\": [\n"))
 		for j, dp := range m.DataPoints {
-			httpWriter.Write([]byte(fmt.Sprintf("%f,%d\n", dp.Value, dp.UnixTimestamp())))
+			httpWriter.Write([]byte(fmt.Sprintf("[%f,%d", dp.Value, dp.UnixTimestamp())))
 			if j < (dpCount - 1) {
 				httpWriter.Write([]byte("],\n"))
 			} else {
