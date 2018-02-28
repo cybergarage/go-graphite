@@ -20,6 +20,10 @@ func NewTestRender() *TestRender {
 	return render
 }
 
+func (self *TestRender) FindMetricsRequestReceived(query *Query, err error) ([]*Metrics, error) {
+	return nil, nil
+}
+
 func (self *TestRender) QueryMetricsRequestReceived(query *Query, err error) ([]*Metrics, error) {
 	if err != nil {
 		return nil, nil
