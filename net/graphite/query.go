@@ -6,6 +6,7 @@ package graphite
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 )
@@ -61,13 +62,25 @@ func NewQuery() *Query {
 	return q
 }
 
-// Parse parses the specified URL in a Render request.
+// ParseHTTPRequest parses the specified Render request.
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
-func (self *Query) Parse(u *url.URL) error {
+func (self *Query) ParseHTTPRequest(httpReq *http.Request) error {
+	err := httpReq.ParseForm()
+	if err != nil {
+		return err
+	}
+
+	return self.ParseURLValues(httpReq.Form)
+}
+
+// ParseURLValues parses the specified parameters in a Render request.
+// The Render URL API
+// http://graphite.readthedocs.io/en/latest/render_api.html
+func (self *Query) ParseURLValues(urlValues url.Values) error {
 	var err error
 
-	for key, values := range u.Query() {
+	for key, values := range urlValues {
 		switch key {
 		// For Metrics API
 		case QueryTargetRegexp:
