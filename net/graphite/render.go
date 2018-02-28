@@ -10,35 +10,9 @@ import (
 )
 
 const (
-	// RenderDefaultPort is the default port number for Render and Metrics APIs
+	// DefaultPort is the default port number for Render
 	RenderDefaultPort int = 8080
 )
-
-const (
-	httpHeaderContentType                 = "Content-Type"
-	renderDefaultFindRequestPath   string = "/metrics/find"
-	renderDefaultExpandRequestPath string = "/metrics/expand"
-	renderDefaultIndexRequestPath  string = "/metrics/index.json"
-	renderDefaultQueryRequestPath  string = "/render"
-	renderMetricsDelim             string = "."
-	renderMetricsAsterisk          string = "*"
-)
-
-// RenderRequestListener represents a listener for Render protocol.
-type RenderRequestListener interface {
-	FindMetricsRequestReceived(*Query, error) ([]*Metrics, error)
-	QueryMetricsRequestReceived(*Query, error) ([]*Metrics, error)
-}
-
-// RenderHTTPRequestListener represents a listener for HTTP requests.
-type RenderHTTPRequestListener interface {
-	HTTPRequestReceived(r *http.Request, w http.ResponseWriter)
-}
-
-// RenderListener represents a listener for all requests of Render.
-type RenderListener interface {
-	RenderRequestListener
-}
 
 // Render is an instance for Graphite render protocols.
 type Render struct {
@@ -109,39 +83,4 @@ func (self *Render) Stop() error {
 	}
 
 	return nil
-}
-
-// ServeHTTP handles HTTP requests.
-func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Request) {
-	path := httpReq.URL.Path
-
-	switch path {
-	case renderDefaultFindRequestPath:
-		self.handleFindRequest(httpWriter, httpReq)
-		return
-	case renderDefaultExpandRequestPath:
-		// TODO : Not implemented yet
-	case renderDefaultIndexRequestPath:
-		self.handleIndexRequest(httpWriter, httpReq)
-		return
-	case renderDefaultQueryRequestPath:
-		self.handleRenderRequest(httpWriter, httpReq)
-		return
-	}
-
-	httpListener, ok := self.extraHTTPListeners[path]
-	if ok {
-		httpListener.HTTPRequestReceived(httpReq, httpWriter)
-		return
-	}
-
-	http.NotFound(httpWriter, httpReq)
-}
-
-func (self *Render) responseBadRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
-	http.Error(httpWriter, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-}
-
-func (self *Render) responseInternalServerError(httpWriter http.ResponseWriter, httpReq *http.Request) {
-	http.Error(httpWriter, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
