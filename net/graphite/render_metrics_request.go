@@ -37,11 +37,14 @@ func (self *Render) handleFindRequest(httpWriter http.ResponseWriter, httpReq *h
 
 func (self *Render) responseFindMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	switch query.Format {
+	case QueryFormatTypeCompleter: // TODO : Not implemented yet
+		self.responseBadRequest(httpWriter, httpReq)
+		return
 	case QueryFormatTypeTreeJSON:
 		self.responseFindJSONMetrics(httpWriter, httpReq, query, metrics)
 		return
-	case QueryFormatTypeCompleter: // TODO : Not implemented yet
-		self.responseBadRequest(httpWriter, httpReq)
+	default:
+		self.responseFindJSONMetrics(httpWriter, httpReq, query, metrics)
 		return
 	}
 
