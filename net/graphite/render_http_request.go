@@ -10,6 +10,11 @@ import (
 
 const (
 	httpHeaderContentType                 = "Content-Type"
+	httpHeaderAccessControlAllowOrigin    = "Access-Control-Allow-Origin"
+	httpHeaderAccessControlAllowOriginAll = "*"
+)
+
+const (
 	renderDefaultFindRequestPath   string = "/metrics/find"
 	renderDefaultExpandRequestPath string = "/metrics/expand"
 	renderDefaultIndexRequestPath  string = "/metrics/index.json"
