@@ -75,7 +75,7 @@ func (self *Client) PostQuery(query *Query) ([]*Metrics, error) {
 	// FIXME : Support other formats
 	query.Format = QueryFormatTypeCSV
 
-	url, err := query.URLString(self.Host, self.RenderPort)
+	url, err := query.RenderURLString(self.Host, self.RenderPort)
 	if err != nil {
 		return nil, err
 	}

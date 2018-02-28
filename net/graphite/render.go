@@ -7,22 +7,26 @@ package graphite
 import (
 	"fmt"
 	"net/http"
-	"time"
 )
 
 const (
-	// RenderDefaultPort is the default port number for Render
+	// RenderDefaultPort is the default port number for Render and Metrics APIs
 	RenderDefaultPort int = 8080
-	// RenderDefaultPath is the default path for Render
-	RenderDefaultPath string = "/render"
 )
 
 const (
-	httpHeaderContentType = "Content-Type"
+	httpHeaderContentType                 = "Content-Type"
+	renderDefaultFindRequestPath   string = "/metrics/find"
+	renderDefaultExpandRequestPath string = "/metrics/expand"
+	renderDefaultIndexRequestPath  string = "/metrics/index.json"
+	renderDefaultQueryRequestPath  string = "/render"
+	renderMetricsDelim             string = "."
+	renderMetricsAsterisk          string = "*"
 )
 
 // RenderRequestListener represents a listener for Render protocol.
 type RenderRequestListener interface {
+	FindMetricsRequestReceived(*Query, error) ([]*Metrics, error)
 	QueryMetricsRequestReceived(*Query, error) ([]*Metrics, error)
 }
 
@@ -112,7 +116,15 @@ func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Requ
 	path := httpReq.URL.Path
 
 	switch path {
-	case RenderDefaultPath:
+	case renderDefaultFindRequestPath:
+		self.handleFindRequest(httpWriter, httpReq)
+		return
+	case renderDefaultExpandRequestPath:
+		// TODO : Not implemented yet
+	case renderDefaultIndexRequestPath:
+		self.handleIndexRequest(httpWriter, httpReq)
+		return
+	case renderDefaultQueryRequestPath:
 		self.handleRenderRequest(httpWriter, httpReq)
 		return
 	}
@@ -126,165 +138,10 @@ func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Requ
 	http.NotFound(httpWriter, httpReq)
 }
 
-// handleRenderRequest handles Render requests.
-// The Render URL API
-// http://readthedocs.io/en/latest/render_api.html
-func (self *Render) handleRenderRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
-	query := NewQuery()
-	err := query.Parse(httpReq.URL)
-	if err != nil {
-		self.responseBadRequest(httpWriter, httpReq)
-		return
-	}
-
-	if self.RenderListener == nil {
-		self.responseInternalServerError(httpWriter, httpReq)
-		return
-	}
-
-	metrics, err := self.RenderListener.QueryMetricsRequestReceived(query, nil)
-	if err != nil {
-		self.responseBadRequest(httpWriter, httpReq)
-		return
-	}
-
-	self.responseQueryMetrics(httpWriter, httpReq, query, metrics)
-}
-
 func (self *Render) responseBadRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
 	http.Error(httpWriter, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 }
 
 func (self *Render) responseInternalServerError(httpWriter http.ResponseWriter, httpReq *http.Request) {
 	http.Error(httpWriter, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-}
-
-func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
-	switch query.Format {
-	case QueryFormatTypeRaw:
-		self.responseQueryRawMetrics(httpWriter, httpReq, query, metrics)
-		return
-	case QueryFormatTypeCSV:
-		self.responseQueryCSVMetrics(httpWriter, httpReq, query, metrics)
-		return
-	case QueryFormatTypeJSON:
-		self.responseQueryJSONMetrics(httpWriter, httpReq, query, metrics)
-		return
-	}
-
-	self.responseBadRequest(httpWriter, httpReq)
-}
-
-func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
-	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeRaw)
-	httpWriter.WriteHeader(http.StatusOK)
-
-	for _, m := range metrics {
-		err := m.SortDataPoints()
-		if err != nil {
-			continue
-		}
-		dpCount := m.GetDataPointCount()
-		if dpCount <= 0 {
-			continue
-		}
-
-		var from, until time.Time
-		var step int64
-
-		switch dpCount {
-		case 0:
-			continue
-		case 1:
-			firstDp, err := m.GetDataPoint(0)
-			if err != nil {
-				continue
-			}
-			from = firstDp.Timestamp
-			until = from
-			step = 0
-		default:
-			firstDp, err := m.GetDataPoint(0)
-			if err != nil {
-				continue
-			}
-			from = firstDp.Timestamp
-
-			lastDp, err := m.GetDataPoint((dpCount - 1))
-			if err != nil {
-				continue
-			}
-			until = lastDp.Timestamp
-
-			secondDp, err := m.GetDataPoint(1)
-			if err != nil {
-				continue
-			}
-			// FIXME : Step is calculated only using the first few data points.
-			step = secondDp.Timestamp.Unix() - firstDp.Timestamp.Unix()
-		}
-
-		msg := fmt.Sprintf("%s,%d,%d,%d|", m.Name, from.Unix(), until.Unix(), step)
-		httpWriter.Write([]byte(msg))
-
-		for n, dp := range m.DataPoints {
-			var value string
-			switch n {
-			case (dpCount - 1):
-				value = fmt.Sprintf("%f", dp.Value)
-			default:
-				value = fmt.Sprintf("%f,", dp.Value)
-			}
-			httpWriter.Write([]byte(value))
-		}
-
-		httpWriter.Write([]byte("\n"))
-	}
-}
-
-func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
-	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeCSV)
-	httpWriter.WriteHeader(http.StatusOK)
-	for _, m := range metrics {
-		for _, dp := range m.DataPoints {
-			mRow := fmt.Sprintf("%s,%s\n", m.Name, dp.RenderCSVString())
-			httpWriter.Write([]byte(mRow))
-		}
-	}
-}
-
-func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
-	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
-	httpWriter.WriteHeader(http.StatusOK)
-
-	httpWriter.Write([]byte("[\n"))
-
-	mCount := len(metrics)
-	for i, m := range metrics {
-		httpWriter.Write([]byte("{\n"))
-
-		// Output the target name
-		httpWriter.Write([]byte(fmt.Sprintf("\"target\": \"%s\",\n", m.Name)))
-
-		// Output the datapoint array
-		dpCount := m.GetDataPointCount()
-		httpWriter.Write([]byte("\"datapoints\": [\n"))
-		for j, dp := range m.DataPoints {
-			httpWriter.Write([]byte(fmt.Sprintf("%f,%d\n", dp.Value, dp.UnixTimestamp())))
-			if j < (dpCount - 1) {
-				httpWriter.Write([]byte("],\n"))
-			} else {
-				httpWriter.Write([]byte("]\n"))
-			}
-		}
-		httpWriter.Write([]byte("]\n"))
-
-		if i < (mCount - 1) {
-			httpWriter.Write([]byte("},\n"))
-		} else {
-			httpWriter.Write([]byte("}\n"))
-		}
-	}
-
-	httpWriter.Write([]byte("]\n"))
 }

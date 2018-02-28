@@ -11,19 +11,25 @@ import (
 )
 
 const (
-	// QueryTarget is 'target' parameter identifier for Render
+	// QueryTargetRegexp is 'query' parameter identifier for Metrics API
+	QueryTargetRegexp string = "query"
+	// QueryTarget is 'target' parameter identifier for Render API
 	QueryTarget string = "target"
-	// QueryFrom is 'from' parameter identifier for Render
+	// QueryFrom is 'from' parameter identifier for Render API
 	QueryFrom string = "from"
-	// QueryUntil is 'until' parameter identifier for Render
+	// QueryUntil is 'until' parameter identifier for Render API
 	QueryUntil string = "until"
-	// QueryFormat is 'format' parameter identifier for Render
+	// QueryFormat is 'format' parameter identifier for Render API
 	QueryFormat string = "format"
-	// QueryFormatTypeRaw is a format type for Render
+	// QueryFormatTypeCompleter is a format type for Metrics API
+	QueryFormatTypeCompleter string = "completer"
+	// QueryFormatTypeTreeJSON is a format type for Metrics API
+	QueryFormatTypeTreeJSON string = "treejson"
+	// QueryFormatTypeRaw is a format type for Render API
 	QueryFormatTypeRaw string = "raw"
-	// QueryFormatTypeCSV is a format type for Render
+	// QueryFormatTypeCSV is a format type for Render API
 	QueryFormatTypeCSV string = "csv"
-	// QueryFormatTypeJSON is a format type for Render
+	// QueryFormatTypeJSON is a format type for Render API
 	QueryFormatTypeJSON string = "json"
 	// QueryContentTypeRaw is a content type for the CSV format
 	QueryContentTypeRaw string = "text/plain"
@@ -63,6 +69,12 @@ func (self *Query) Parse(u *url.URL) error {
 
 	for key, values := range u.Query() {
 		switch key {
+		// For Metrics API
+		case QueryTargetRegexp:
+			if 0 < len(values) {
+				self.Target = values[0]
+			}
+		// For Render API
 		case QueryTarget:
 			if 0 < len(values) {
 				self.Target = values[0]
@@ -103,10 +115,10 @@ func (self *Query) parseTimeString(timeStr string) (*time.Time, error) {
 	return nil, fmt.Errorf(errorQueryInvalidTimeFormat, timeStr)
 }
 
-// URLString returns a path for Render URL API
+// RenderURLString returns a path for Render URL API
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
-func (self *Query) URLString(host string, port int) (string, error) {
+func (self *Query) RenderURLString(host string, port int) (string, error) {
 	if len(self.Target) <= 0 {
 		return "", fmt.Errorf("%s is not specified", QueryTarget)
 	}
@@ -137,7 +149,7 @@ func (self *Query) URLString(host string, port int) (string, error) {
 		query += fmt.Sprintf("%s=%s", key, value)
 	}
 
-	url := fmt.Sprintf("http://%s:%d%s?%s", host, port, RenderDefaultPath, query)
+	url := fmt.Sprintf("http://%s:%d%s?%s", host, port, renderDefaultQueryRequestPath, query)
 
 	return url, nil
 }
