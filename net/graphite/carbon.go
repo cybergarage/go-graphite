@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package server provides interfaces for Graphite protocols.
 package graphite
 
 import (
@@ -19,7 +18,7 @@ const (
 
 // PlaintextRequestListener represents a listener for plain text protocol of Carbon.
 type PlaintextRequestListener interface {
-	MetricRequestReceived(*Metric, error)
+	MetricsRequestReceived(*Metrics, error)
 }
 
 // CarbonListener represents a listener for all requests of Carbon.
@@ -41,8 +40,8 @@ func NewCarbon() *Carbon {
 }
 
 // parseRequestLine parses the specified metrics request.
-func (self *Carbon) parseRequestLine(lineString string) (*Metric, error) {
-	m := NewMetric()
+func (self *Carbon) parseRequestLine(lineString string) (*Metrics, error) {
+	m := NewMetrics()
 	err := m.ParsePlainText(lineString)
 
 	if err != nil {
@@ -50,16 +49,16 @@ func (self *Carbon) parseRequestLine(lineString string) (*Metric, error) {
 	}
 
 	if self.CarbonListener != nil {
-		self.CarbonListener.MetricRequestReceived(m, err)
+		self.CarbonListener.MetricsRequestReceived(m, err)
 	}
 
 	return m, err
 }
 
 // ParseRequestString returns a metrics of the specified context.
-func (self *Carbon) ParseRequestString(context string) ([]*Metric, error) {
+func (self *Carbon) ParseRequestString(context string) ([]*Metrics, error) {
 	lines := strings.Split(context, "\n")
-	ms := make([]*Metric, len(lines))
+	ms := make([]*Metrics, len(lines))
 	for n, line := range lines {
 		if len(line) <= 0 {
 			continue
@@ -75,7 +74,7 @@ func (self *Carbon) ParseRequestString(context string) ([]*Metric, error) {
 }
 
 // ParseRequestBytes returns a metrics of the specified bytes.
-func (self *Carbon) ParseRequestBytes(bytes []byte) ([]*Metric, error) {
+func (self *Carbon) ParseRequestBytes(bytes []byte) ([]*Metrics, error) {
 	return self.ParseRequestString(string(bytes))
 }
 

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package graphite provides interfaces for Graphite protocols.
 package graphite
 
 import (
@@ -16,7 +15,7 @@ type DataPoint struct {
 	Timestamp time.Time
 }
 
-// NewDataPoint returns a new Metric.
+// NewDataPoint returns a new Metrics.
 func NewDataPoint() *DataPoint {
 	p := &DataPoint{}
 	return p

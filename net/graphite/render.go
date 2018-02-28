@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package server provides interfaces for Graphite protocols.
 package graphite
 
 import (
@@ -12,9 +11,9 @@ import (
 )
 
 const (
-	// DefaultPort is the default port number for Render
+	// RenderDefaultPort is the default port number for Render
 	RenderDefaultPort int = 8080
-	// DefaultPath is the default path for Render
+	// RenderDefaultPath is the default path for Render
 	RenderDefaultPath string = "/render"
 )
 
@@ -24,10 +23,10 @@ const (
 
 // RenderRequestListener represents a listener for Render protocol.
 type RenderRequestListener interface {
-	QueryRequestReceived(*Query, error) ([]*Metric, error)
+	QueryRequestReceived(*Query, error) ([]*Metrics, error)
 }
 
-// RenderHTTPRequestListener represents a listener for HTTP requets.
+// RenderHTTPRequestListener represents a listener for HTTP requests.
 type RenderHTTPRequestListener interface {
 	HTTPRequestReceived(r *http.Request, w http.ResponseWriter)
 }
@@ -160,7 +159,7 @@ func (self *Render) responseInternalServerError(httpWriter http.ResponseWriter, 
 	http.Error(httpWriter, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
+func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	switch query.Format {
 	case QueryFormatTypeRaw:
 		self.responseQueryRawMetrics(httpWriter, httpReq, query, metrics)
@@ -176,7 +175,7 @@ func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq
 	self.responseBadRequest(httpWriter, httpReq)
 }
 
-func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
+func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeRaw)
 	httpWriter.WriteHeader(http.StatusOK)
 
@@ -243,7 +242,7 @@ func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, http
 	}
 }
 
-func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
+func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeCSV)
 	httpWriter.WriteHeader(http.StatusOK)
 	for _, m := range metrics {
@@ -254,7 +253,7 @@ func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, http
 	}
 }
 
-func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metric) {
+func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
 	httpWriter.WriteHeader(http.StatusOK)
 

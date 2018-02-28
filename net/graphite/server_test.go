@@ -35,11 +35,11 @@ func NewTestServer() *TestServer {
 	return server
 }
 
-func (self *TestServer) MetricRequestReceived(m *Metric, err error) {
+func (self *TestServer) MetricsRequestReceived(m *Metrics, err error) {
 	if err != nil {
 		return
 	}
-	//fmt.Printf("MetricRequestReceived = %v\n", m)
+	//fmt.Printf("MetricsRequestReceived = %v\n", m)
 	self.MetricsCount++
 }
 
@@ -64,7 +64,7 @@ func TestServerQuery(t *testing.T) {
 
 	loopCount := 0
 	for n := 0; n < 10; n++ {
-		m := NewMetric()
+		m := NewMetrics()
 		m.Name = fmt.Sprintf("path%d", n)
 
 		dp := NewDataPoint()
@@ -72,7 +72,7 @@ func TestServerQuery(t *testing.T) {
 		dp.Timestamp = time.Now()
 		m.AddDataPoint(dp)
 
-		err = cli.PostMetric(m)
+		err = cli.PostMetrics(m)
 		if err != nil {
 			t.Error(err)
 		}

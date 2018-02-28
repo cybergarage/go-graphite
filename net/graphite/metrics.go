@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package graphite provides interfaces for Graphite protocols.
 package graphite
 
 import (
@@ -18,33 +17,33 @@ const (
 	metricsRenderCSVTimestampFormat = "20060102 15:04:05"
 )
 
-// Metric is an instance for Metric of Carbon protocol.
-type Metric struct {
+// Metrics is an instance for Metrics of Carbon protocol.
+type Metrics struct {
 	Name       string
 	DataPoints []*DataPoint
 }
 
-// NewMetric returns a new Metric.
-func NewMetric() *Metric {
-	m := &Metric{
+// NewMetrics returns a new Metrics.
+func NewMetrics() *Metrics {
+	m := &Metrics{
 		DataPoints: NewDataPoints(0),
 	}
 	return m
 }
 
 // GetDataPointCount returns a count of the datapoints
-func (self *Metric) GetDataPointCount() int {
+func (self *Metrics) GetDataPointCount() int {
 	return len(self.DataPoints)
 }
 
 // AddDataPoint add a new datapoint
-func (self *Metric) AddDataPoint(dp *DataPoint) error {
+func (self *Metrics) AddDataPoint(dp *DataPoint) error {
 	self.DataPoints = append(self.DataPoints, dp)
 	return nil
 }
 
 // AddDataPoint add a new datapoint
-func (self *Metric) GetDataPoint(n int) (*DataPoint, error) {
+func (self *Metrics) GetDataPoint(n int) (*DataPoint, error) {
 	if (n < 0) || (len(self.DataPoints) <= n) {
 		return nil, fmt.Errorf(errorInvalidRangeIndex, n, len(self.DataPoints))
 	}
@@ -52,7 +51,7 @@ func (self *Metric) GetDataPoint(n int) (*DataPoint, error) {
 }
 
 // SortDataPoints sorts the current datapoints
-func (self *Metric) SortDataPoints() error {
+func (self *Metrics) SortDataPoints() error {
 	sort.Sort(DataPoints(self.DataPoints))
 	return nil
 }
@@ -60,7 +59,7 @@ func (self *Metric) SortDataPoints() error {
 // ParsePlainText parses the specified line string of the following plain text protocol.
 // Feeding In Your Data — Graphite 0.10.0 documentation
 // http://graphite.readthedocs.io/en/latest/feeding-carbon.html
-func (self *Metric) ParsePlainText(line string) error {
+func (self *Metrics) ParsePlainText(line string) error {
 	strs := strings.Split(line, " ")
 	if len(strs) != 3 {
 		return fmt.Errorf(metricParseError, line)
@@ -96,7 +95,7 @@ func (self *Metric) ParsePlainText(line string) error {
 // ParseRenderCSV parses the specified line string of the following Render CSV protocol.
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
-func (self *Metric) ParseRenderCSV(line string) error {
+func (self *Metrics) ParseRenderCSV(line string) error {
 	strs := strings.Split(line, ", ")
 	if len(strs) != 3 {
 		return fmt.Errorf(metricParseError, line)
@@ -129,7 +128,7 @@ func (self *Metric) ParseRenderCSV(line string) error {
 }
 
 // DataPointPlainTextString returns a string representation datapoint for the plaintext protocol.
-func (self *Metric) DataPointPlainTextString(n int) (string, error) {
+func (self *Metrics) DataPointPlainTextString(n int) (string, error) {
 	if len(self.DataPoints) < n {
 		return "", fmt.Errorf(errorInvalidRangeIndex, n, len(self.DataPoints))
 	}
