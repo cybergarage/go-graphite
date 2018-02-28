@@ -51,9 +51,11 @@ func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Requ
 }
 
 func (self *Render) responseBadRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
+	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	http.Error(httpWriter, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 }
 
 func (self *Render) responseInternalServerError(httpWriter http.ResponseWriter, httpReq *http.Request) {
+	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	http.Error(httpWriter, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
