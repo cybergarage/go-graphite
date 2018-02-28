@@ -21,7 +21,7 @@ func NewTestCarbon() *TestCarbon {
 	return carbon
 }
 
-func (self *TestCarbon) MetricRequestReceived(m *Metric, err error) {
+func (self *TestCarbon) MetricsRequestReceived(m *Metrics, err error) {
 	if err != nil {
 		return
 	}
@@ -32,7 +32,7 @@ func TestNewCarbon(t *testing.T) {
 	NewCarbon()
 }
 
-func TestCarbonParseMetric(t *testing.T) {
+func TestCarbonParseMetrics(t *testing.T) {
 	carbon := NewTestCarbon()
 
 	loopCount := 0

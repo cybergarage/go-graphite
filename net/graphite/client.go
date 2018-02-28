@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package client provides interfaces for Graphite protocols.
 package graphite
 
 import (
@@ -31,10 +30,10 @@ func NewClient() *Client {
 	return client
 }
 
-// PostMetric posts all metric datapoints to Carbon.
-func (self *Client) PostMetric(m *Metric) error {
+// PostMetrics posts all metric datapoints to Carbon.
+func (self *Client) PostMetrics(m *Metrics) error {
 	for n, _ := range m.DataPoints {
-		err := self.postMetricDataPoint(m, n)
+		err := self.postMetricsDataPoint(m, n)
 		if err != nil {
 			return err
 		}
@@ -42,8 +41,8 @@ func (self *Client) PostMetric(m *Metric) error {
 	return nil
 }
 
-// postMetricDataPoint posts a specified metric to Carbon.
-func (self *Client) postMetricDataPoint(m *Metric, n int) error {
+// postMetricsDataPoint posts a specified metric to Carbon.
+func (self *Client) postMetricsDataPoint(m *Metrics, n int) error {
 	dpData, err := m.DataPointPlainTextString(n)
 	if err != nil {
 		return err
@@ -72,7 +71,7 @@ func (self *Client) postMetricDataPoint(m *Metric, n int) error {
 }
 
 // PostQuery queries with the specified parameters to Render.
-func (self *Client) PostQuery(query *Query) ([]*Metric, error) {
+func (self *Client) PostQuery(query *Query) ([]*Metrics, error) {
 	// FIXME : Support other formats
 	query.Format = QueryFormatTypeCSV
 
@@ -88,7 +87,7 @@ func (self *Client) PostQuery(query *Query) ([]*Metric, error) {
 
 	defer resp.Body.Close()
 
-	var metrics []*Metric
+	var metrics []*Metrics
 
 	reader := bufio.NewReader(resp.Body)
 	for {
@@ -99,7 +98,7 @@ func (self *Client) PostQuery(query *Query) ([]*Metric, error) {
 			return metrics, err
 		}
 
-		metric := NewMetric()
+		metric := NewMetrics()
 		err = metric.ParseRenderCSV(string(row))
 		if err != nil {
 			continue

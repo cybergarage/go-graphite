@@ -10,11 +10,11 @@ import (
 	"time"
 )
 
-func TestNewMetric(t *testing.T) {
-	NewMetric()
+func TestNewMetrics(t *testing.T) {
+	NewMetrics()
 }
 
-func TestMetricParsePlaintext(t *testing.T) {
+func TestMetricsParsePlaintext(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		path := fmt.Sprintf("path%d", i)
 		value := float64(i) * 100
@@ -22,7 +22,7 @@ func TestMetricParsePlaintext(t *testing.T) {
 
 		line := fmt.Sprintf("%s %f %d", path, value, ts)
 
-		m := NewMetric()
+		m := NewMetrics()
 		err := m.ParsePlainText(line)
 		if err != nil {
 			t.Error(err)
