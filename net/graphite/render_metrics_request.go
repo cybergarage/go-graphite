@@ -15,7 +15,7 @@ import (
 // http://readthedocs.io/en/latest/render_api.html
 func (self *Render) handleFindRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
 	query := NewQuery()
-	err := query.Parse(httpReq.URL)
+	err := query.ParseHTTPRequest(httpReq)
 	if err != nil {
 		self.responseBadRequest(httpWriter, httpReq)
 		return
