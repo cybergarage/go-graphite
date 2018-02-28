@@ -17,8 +17,9 @@ const (
 )
 
 // PlaintextRequestListener represents a listener for plain text protocol of Carbon.
+// See : Feeding In Your Data (http://graphite.readthedocs.io/en/latest/feeding-carbon.html)
 type PlaintextRequestListener interface {
-	MetricsRequestReceived(*Metrics, error)
+	InsertMetricsRequestReceived(*Metrics, error)
 }
 
 // CarbonListener represents a listener for all requests of Carbon.
@@ -49,7 +50,7 @@ func (self *Carbon) parseRequestLine(lineString string) (*Metrics, error) {
 	}
 
 	if self.CarbonListener != nil {
-		self.CarbonListener.MetricsRequestReceived(m, err)
+		self.CarbonListener.InsertMetricsRequestReceived(m, err)
 	}
 
 	return m, err

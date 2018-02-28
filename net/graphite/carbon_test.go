@@ -21,7 +21,7 @@ func NewTestCarbon() *TestCarbon {
 	return carbon
 }
 
-func (self *TestCarbon) MetricsRequestReceived(m *Metrics, err error) {
+func (self *TestCarbon) InsertMetricsRequestReceived(m *Metrics, err error) {
 	if err != nil {
 		return
 	}

@@ -35,11 +35,11 @@ func NewTestServer() *TestServer {
 	return server
 }
 
-func (self *TestServer) MetricsRequestReceived(m *Metrics, err error) {
+func (self *TestServer) InsertMetricsRequestReceived(m *Metrics, err error) {
 	if err != nil {
 		return
 	}
-	//fmt.Printf("MetricsRequestReceived = %v\n", m)
+	//fmt.Printf("InsertMetricsRequestReceived = %v\n", m)
 	self.MetricsCount++
 }
 
