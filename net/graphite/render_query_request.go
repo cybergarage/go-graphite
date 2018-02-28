@@ -6,6 +6,7 @@ package graphite
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"time"
 )
@@ -150,7 +151,12 @@ func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, htt
 		dpCount := m.GetDataPointCount()
 		httpWriter.Write([]byte("\"datapoints\": [\n"))
 		for j, dp := range m.DataPoints {
-			httpWriter.Write([]byte(fmt.Sprintf("[%f,%d", dp.Value, dp.UnixTimestamp())))
+			if !math.IsNaN(dp.Value) {
+				httpWriter.Write([]byte(fmt.Sprintf("[%f,", dp.Value)))
+			} else {
+				httpWriter.Write([]byte("[null,"))
+			}
+			httpWriter.Write([]byte(fmt.Sprintf("%d", dp.UnixTimestamp())))
 			if j < (dpCount - 1) {
 				httpWriter.Write([]byte("],\n"))
 			} else {
