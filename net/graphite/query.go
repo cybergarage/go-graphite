@@ -115,7 +115,7 @@ func (self *Query) parseTimeString(timeStr string) (*time.Time, error) {
 	return nil, fmt.Errorf(errorQueryInvalidTimeFormat, timeStr)
 }
 
-// RenderURLString returns a path for Render URL API
+// RenderURLString returns a path for Render API
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
 func (self *Query) RenderURLString(host string, port int) (string, error) {
