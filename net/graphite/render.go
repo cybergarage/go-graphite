@@ -23,7 +23,7 @@ const (
 
 // RenderRequestListener represents a listener for Render protocol.
 type RenderRequestListener interface {
-	QueryRequestReceived(*Query, error) ([]*Metrics, error)
+	QueryMetricsRequestReceived(*Query, error) ([]*Metrics, error)
 }
 
 // RenderHTTPRequestListener represents a listener for HTTP requests.
@@ -142,7 +142,7 @@ func (self *Render) handleRenderRequest(httpWriter http.ResponseWriter, httpReq 
 		return
 	}
 
-	metrics, err := self.RenderListener.QueryRequestReceived(query, nil)
+	metrics, err := self.RenderListener.QueryMetricsRequestReceived(query, nil)
 	if err != nil {
 		self.responseBadRequest(httpWriter, httpReq)
 		return
