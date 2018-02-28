@@ -53,6 +53,7 @@ func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq
 
 func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeRaw)
+	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	httpWriter.WriteHeader(http.StatusOK)
 
 	for _, m := range metrics {
@@ -120,6 +121,7 @@ func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, http
 
 func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeCSV)
+	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	httpWriter.WriteHeader(http.StatusOK)
 	for _, m := range metrics {
 		for _, dp := range m.DataPoints {
@@ -131,6 +133,7 @@ func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, http
 
 func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
+	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	httpWriter.WriteHeader(http.StatusOK)
 
 	httpWriter.Write([]byte("[\n"))

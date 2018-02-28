@@ -53,6 +53,7 @@ func (self *Render) responseFindMetrics(httpWriter http.ResponseWriter, httpReq 
 
 func (self *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
+	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	httpWriter.WriteHeader(http.StatusOK)
 
 	httpWriter.Write([]byte("{\"metrics\": [\n"))
@@ -116,6 +117,10 @@ func (self *Render) handleIndexRequest(httpWriter http.ResponseWriter, httpReq *
 	}
 
 	// Response by JSON array
+
+	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
+	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
+	httpWriter.WriteHeader(http.StatusOK)
 
 	httpWriter.Write([]byte("[\n"))
 
