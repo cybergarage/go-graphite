@@ -71,7 +71,7 @@ func (self *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, http
 		httpWriter.Write([]byte("{\n"))
 
 		// Leaf infomation (static)
-		httpWriter.Write([]byte("\"is_leaf\": 1,"))
+		httpWriter.Write([]byte("\"is_leaf\": 1,\n"))
 
 		// Name and path
 
@@ -82,8 +82,8 @@ func (self *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, http
 			prefix = strings.Join(prefixes, renderMetricsDelim)
 		}
 
-		httpWriter.Write([]byte(fmt.Sprintf("\"name\": %s,", name)))
-		httpWriter.Write([]byte(fmt.Sprintf("\"path\": %s", prefix)))
+		httpWriter.Write([]byte(fmt.Sprintf("\"name\": \"%s\",\n", name)))
+		httpWriter.Write([]byte(fmt.Sprintf("\"path\": \"%s\"\n", prefix)))
 
 		// End bracket
 		if i < (mCount - 1) {
@@ -122,9 +122,9 @@ func (self *Render) handleIndexRequest(httpWriter http.ResponseWriter, httpReq *
 	mCount := len(metrics)
 	for i, m := range metrics {
 		if i < (mCount - 1) {
-			httpWriter.Write([]byte(fmt.Sprintf("%s,", m.Name)))
+			httpWriter.Write([]byte(fmt.Sprintf("\"%s\",\n", m.Name)))
 		} else {
-			httpWriter.Write([]byte(fmt.Sprintf("%s", m.Name)))
+			httpWriter.Write([]byte(fmt.Sprintf("\"%s\"\n", m.Name)))
 		}
 	}
 
