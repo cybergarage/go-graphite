@@ -15,7 +15,20 @@ func NewServer() *Server {
 	server := &Server{}
 	server.Carbon = NewCarbon()
 	server.Render = NewRender()
+	server.SetAddress("")
 	return server
+}
+
+// SetAddress sets a bind address.
+func (self *Server) SetAddress(addr string) error {
+	self.Carbon.Addr = addr
+	self.Render.Addr = addr
+	return nil
+}
+
+// GetAddress returns the bind address.
+func (self *Server) GetAddress(addr string) string {
+	return self.Render.Addr
 }
 
 // Start starts the server.
