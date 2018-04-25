@@ -65,7 +65,7 @@ func AbsouleteTimeStringToTime(timeStr string) (*time.Time, error) {
 			now := time.Now()
 			return &now, nil
 		case 1: // queryAbsoluteTimeRegex
-			time, err := time.Parse(queryAbsoluteTimeFormat, timeStr)
+			time, err := time.ParseInLocation(queryAbsoluteTimeFormat, timeStr, time.Local)
 			if err != nil {
 				return nil, err
 			}
