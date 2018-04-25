@@ -29,6 +29,7 @@ type CarbonListener interface {
 
 // Carbon is an instance for Carbon protocols.
 type Carbon struct {
+	Addr           string
 	Port           int
 	CarbonListener CarbonListener
 	tcpListener    net.Listener
@@ -109,7 +110,7 @@ func (self *Carbon) Stop() error {
 // open opens a socket for the Carbon server.
 func (self *Carbon) open() error {
 	var err error
-	addr := fmt.Sprintf(":%d", self.Port)
+	addr := fmt.Sprintf("%s:%d", self.Addr, self.Port)
 	self.tcpListener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return err

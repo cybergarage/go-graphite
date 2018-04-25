@@ -16,6 +16,7 @@ const (
 
 // Render is an instance for Graphite render protocols.
 type Render struct {
+	Addr               string
 	Port               int
 	RenderListener     RenderRequestListener
 	server             *http.Server
@@ -52,7 +53,7 @@ func (self *Render) Start() error {
 		return err
 	}
 
-	addr := fmt.Sprintf(":%d", self.Port)
+	addr := fmt.Sprintf("%s:%d", self.Addr, self.Port)
 
 	self.server = &http.Server{
 		Addr:    addr,
