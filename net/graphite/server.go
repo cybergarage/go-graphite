@@ -27,7 +27,7 @@ func (self *Server) SetAddress(addr string) error {
 }
 
 // GetAddress returns the bind address.
-func (self *Server) GetAddress(addr string) string {
+func (self *Server) GetAddress() string {
 	return self.Render.Addr
 }
 
