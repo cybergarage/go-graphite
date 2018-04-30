@@ -41,6 +41,12 @@ func NewCarbon() *Carbon {
 	return carbon
 }
 
+// SetCarbonListener sets a default listener.
+func (self *Carbon) SetCarbonListener(listener CarbonListener) error {
+	self.CarbonListener = listener
+	return nil
+}
+
 // parseRequestLine parses the specified metrics request.
 func (self *Carbon) parseRequestLine(lineString string) (*Metrics, error) {
 	m := NewMetrics()
