@@ -115,7 +115,6 @@ func (self *Carbon) open() error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -139,6 +138,9 @@ func (self *Carbon) serve() error {
 
 	l := self.tcpListener
 	for {
+		if l == nil {
+			break
+		}
 		conn, err := l.Accept()
 		if err != nil {
 			return err
