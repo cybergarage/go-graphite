@@ -31,6 +31,17 @@ func (self *Server) GetAddress() string {
 	return self.Render.Addr
 }
 
+// SetCarbonPort sets a bind port for Carbon.
+func (self *Server) SetCarbonPort(port int) error {
+	self.Carbon.Port = port
+	return nil
+}
+
+// GetCarbonPort returns a bind port for Carbon.
+func (self *Server) GetCarbonPort() int {
+	return self.Carbon.Port
+}
+
 // Start starts the server.
 func (self *Server) Start() error {
 	err := self.Carbon.Start()
