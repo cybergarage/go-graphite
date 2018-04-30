@@ -35,6 +35,12 @@ func NewRender() *Render {
 	return server
 }
 
+// SetRenderListener sets a default listener.
+func (self *Render) SetRenderListener(listener RenderRequestListener) error {
+	self.RenderListener = listener
+	return nil
+}
+
 // SetHTTPRequestListener sets a extra HTTP request listner.
 func (self *Render) SetHTTPRequestListener(path string, listener RenderHTTPRequestListener) error {
 	if len(path) <= 0 || listener == nil {
