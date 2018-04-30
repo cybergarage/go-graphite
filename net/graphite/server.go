@@ -42,6 +42,17 @@ func (self *Server) GetCarbonPort() int {
 	return self.Carbon.Port
 }
 
+// SetRenderPort sets a bind port for Render.
+func (self *Server) SetRenderPort(port int) error {
+	self.Render.Port = port
+	return nil
+}
+
+// GetRenderPort returns a bind port for Render.
+func (self *Server) GetRenderPort() int {
+	return self.Render.Port
+}
+
 // Start starts the server.
 func (self *Server) Start() error {
 	err := self.Carbon.Start()
