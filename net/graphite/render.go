@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	// DefaultPort is the default port number for Render
-	RenderDefaultPort int = 8080
+	// DefaultRenderPort is the default port number for Render
+	DefaultRenderPort int = 8080
 )
 
 // Render is an instance for Graphite render protocols.
@@ -26,7 +26,7 @@ type Render struct {
 // NewRender returns a new Render.
 func NewRender() *Render {
 	server := &Render{
-		Port:               RenderDefaultPort,
+		Port:               DefaultRenderPort,
 		RenderListener:     nil,
 		server:             nil,
 		extraHTTPListeners: make(map[string]RenderHTTPRequestListener),
