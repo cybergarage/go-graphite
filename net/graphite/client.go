@@ -26,7 +26,7 @@ type Client struct {
 
 // NewClient returns a new Client.
 func NewClient() *Client {
-	client := &Client{DefaultHost, CarbonDefaultPort, RenderDefaultPort}
+	client := &Client{DefaultHost, DefaultCarbonPort, DefaultRenderPort}
 	return client
 }
 

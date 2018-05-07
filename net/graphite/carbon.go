@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	// CarbonDefaultPort is the default port number for Carbon Server
-	CarbonDefaultPort int = 2003
+	// DefaultCarbonPort is the default port number for Carbon Server
+	DefaultCarbonPort int = 2003
 )
 
 // PlaintextRequestListener represents a listener for plain text protocol of Carbon.
@@ -37,7 +37,7 @@ type Carbon struct {
 
 // NewCarbon returns a new Carbon.
 func NewCarbon() *Carbon {
-	carbon := &Carbon{Port: CarbonDefaultPort}
+	carbon := &Carbon{Port: DefaultCarbonPort}
 	return carbon
 }
 
