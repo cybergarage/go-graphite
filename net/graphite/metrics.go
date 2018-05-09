@@ -96,21 +96,21 @@ func (self *Metrics) ParsePlainText(line string) error {
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
 func (self *Metrics) ParseRenderCSV(line string) error {
-	strs := strings.Split(line, ", ")
+	strs := strings.Split(line, ",")
 	if len(strs) != 3 {
 		return fmt.Errorf(metricParseError, line)
 	}
 
 	var err error
 
-	self.Name = strs[0]
+	self.Name = strings.TrimSpace(strs[0])
 
-	ts, err := time.Parse(metricsRenderCSVTimestampFormat, strs[1])
+	ts, err := time.Parse(metricsRenderCSVTimestampFormat, strings.TrimSpace(strs[1]))
 	if err != nil {
 		return err
 	}
 
-	value, err := strconv.ParseFloat(strs[1], 64)
+	value, err := strconv.ParseFloat(strings.TrimSpace(strs[2]), 64)
 	if err != nil {
 		return err
 	}
