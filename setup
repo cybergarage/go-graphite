@@ -1,14 +1,9 @@
 #!/bin/bash
 export GOPATH=`pwd`
-
 git pull
-
 if [ ! -d src ]; then
   mkdir -p src
-#else
-#  rm -rf src/github.com/cybergarage
 fi
-
 go_graphite_path="github.com/cybergarage/go-graphite"
 go_graphite_dir="src/${go_graphite_path}"
 if [ -d ${go_graphite_dir} ]; then
