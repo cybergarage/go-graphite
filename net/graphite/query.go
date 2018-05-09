@@ -48,7 +48,7 @@ type Query struct {
 	Format string
 }
 
-// NewQuery returns a new Query.
+// NewQuery returns a new query.
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
 func NewQuery() *Query {
@@ -58,6 +58,18 @@ func NewQuery() *Query {
 		Target: "",
 		From:   &from, // it defaults to 24 hours ago.
 		Until:  &now,  // it defaults to the current time (now).
+		Format: QueryContentTypeCSV,
+	}
+	return q
+}
+
+// NewQueryWithQuery copies a query.
+func NewQueryWithQuery(oq *Query) *Query {
+	q := &Query{
+		Target: oq.Target,
+		From:   oq.From,  // FIXME : Shallow copy
+		Until:  oq.Until, // FIXME : Shallow copy
+		Format: oq.Format,
 	}
 	return q
 }
