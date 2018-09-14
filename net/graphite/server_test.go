@@ -49,7 +49,7 @@ func (self *TestServer) HTTPRequestReceived(r *http.Request, w http.ResponseWrit
 }
 
 func TestNewServer(t *testing.T) {
-	NewServer()
+	NewTestServer()
 }
 
 func TestServerQuery(t *testing.T) {
