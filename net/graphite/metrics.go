@@ -60,7 +60,7 @@ func (self *Metrics) SortDataPoints() error {
 // Feeding In Your Data — Graphite 0.10.0 documentation
 // http://graphite.readthedocs.io/en/latest/feeding-carbon.html
 func (self *Metrics) ParsePlainText(line string) error {
-	strs := strings.Split(line, " ")
+	strs := strings.Split(strings.Trim(line, "\n\r"), " ")
 	if len(strs) != 3 {
 		return fmt.Errorf(metricParseError, line)
 	}
