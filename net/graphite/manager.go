@@ -116,7 +116,12 @@ func (mgr *Manager) Start() error {
 		return err
 	}
 
-	if mgr.IsEachInterfaceBindingEnabled() {
+	shouldBindEachInterfaces := mgr.IsEachInterfaceBindingEnabled()
+	if mgr.IsAutoInterfaceBindingEnabled() {
+		shouldBindEachInterfaces = len(ifis) <= 1
+	}
+
+	if shouldBindEachInterfaces {
 		for _, ifi := range ifis {
 			_, err = mgr.StartWithInterface(ifi)
 			if err != nil {

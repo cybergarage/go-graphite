@@ -25,7 +25,20 @@ func testManagerBinding(t *testing.T, conf *Config) {
 }
 
 func TestManagerWithDefaultConfig(t *testing.T) {
-	//log.SetStdoutDebugEnbled(true)
 	conf := NewDefaultConfig()
+	testManagerBinding(t, conf)
+}
+
+func TestManagerWithBindEachInterfaces(t *testing.T) {
+	conf := NewDefaultConfig()
+	conf.SetAutoInterfaceBindingEnabled(false)
+	conf.SetEachInterfaceBindingEnabled(true)
+	testManagerBinding(t, conf)
+}
+
+func TestManagerWithNoBindInterfaces(t *testing.T) {
+	conf := NewDefaultConfig()
+	conf.SetAutoInterfaceBindingEnabled(false)
+	conf.SetEachInterfaceBindingEnabled(false)
 	testManagerBinding(t, conf)
 }
