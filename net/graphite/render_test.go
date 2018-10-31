@@ -16,7 +16,7 @@ type TestRender struct {
 
 func NewTestRender() *TestRender {
 	render := &TestRender{NewRender(), 0}
-	render.RenderListener = render
+	render.SetRenderListener(render)
 	return render
 }
 
@@ -38,7 +38,7 @@ func TestNewRender(t *testing.T) {
 
 func TestRenderQuery(t *testing.T) {
 	render := NewTestRender()
-	render.RenderListener = render
+	render.SetRenderListener(render)
 	err := render.Start()
 	if err != nil {
 		t.Error(err)
@@ -69,7 +69,7 @@ func TestRenderQuery(t *testing.T) {
 
 func TestRenderHTTPListener(t *testing.T) {
 	render := NewTestRender()
-	render.RenderListener = render
+	render.SetRenderListener(render)
 	err := render.Start()
 	if err != nil {
 		t.Error(err)

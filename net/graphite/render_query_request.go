@@ -14,45 +14,45 @@ import (
 // handleRenderRequest handles requests for Render API.
 // The Render URL API
 // http://readthedocs.io/en/latest/render_api.html
-func (self *Render) handleRenderRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
+func (render *Render) handleRenderRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
 	query := NewQuery()
 	err := query.ParseHTTPRequest(httpReq)
 	if err != nil {
-		self.responseBadRequest(httpWriter, httpReq)
+		render.responseBadRequest(httpWriter, httpReq)
 		return
 	}
 
-	if self.RenderListener == nil {
-		self.responseInternalServerError(httpWriter, httpReq)
+	if render.renderListener == nil {
+		render.responseInternalServerError(httpWriter, httpReq)
 		return
 	}
 
-	metrics, err := self.RenderListener.QueryMetricsRequestReceived(query, nil)
+	metrics, err := render.renderListener.QueryMetricsRequestReceived(query, nil)
 	if err != nil {
-		self.responseBadRequest(httpWriter, httpReq)
+		render.responseBadRequest(httpWriter, httpReq)
 		return
 	}
 
-	self.responseQueryMetrics(httpWriter, httpReq, query, metrics)
+	render.responseQueryMetrics(httpWriter, httpReq, query, metrics)
 }
 
-func (self *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
+func (render *Render) responseQueryMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	switch query.Format {
 	case QueryFormatTypeRaw:
-		self.responseQueryRawMetrics(httpWriter, httpReq, query, metrics)
+		render.responseQueryRawMetrics(httpWriter, httpReq, query, metrics)
 		return
 	case QueryFormatTypeCSV:
-		self.responseQueryCSVMetrics(httpWriter, httpReq, query, metrics)
+		render.responseQueryCSVMetrics(httpWriter, httpReq, query, metrics)
 		return
 	case QueryFormatTypeJSON:
-		self.responseQueryJSONMetrics(httpWriter, httpReq, query, metrics)
+		render.responseQueryJSONMetrics(httpWriter, httpReq, query, metrics)
 		return
 	}
 
-	self.responseBadRequest(httpWriter, httpReq)
+	render.responseBadRequest(httpWriter, httpReq)
 }
 
-func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
+func (render *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeRaw)
 	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	httpWriter.WriteHeader(http.StatusOK)
@@ -120,7 +120,7 @@ func (self *Render) responseQueryRawMetrics(httpWriter http.ResponseWriter, http
 	}
 }
 
-func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
+func (render *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeCSV)
 	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	httpWriter.WriteHeader(http.StatusOK)
@@ -133,7 +133,7 @@ func (self *Render) responseQueryCSVMetrics(httpWriter http.ResponseWriter, http
 	}
 }
 
-func (self *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
+func (render *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
 	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	httpWriter.WriteHeader(http.StatusOK)
