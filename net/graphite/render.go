@@ -75,6 +75,18 @@ func (render *Render) SetHTTPRequestListener(path string, listener RenderHTTPReq
 	return nil
 }
 
+// SetHTTPRequestListeners sets a extra HTTP request listners.
+func (render *Render) SetHTTPRequestListeners(listeners map[string]RenderHTTPRequestListener) error {
+	var lastError error
+	for path, listener := range listeners {
+		err := render.SetHTTPRequestListener(path, listener)
+		if err != nil {
+			lastError = err
+		}
+	}
+	return lastError
+}
+
 // Start starts the HTTP server.
 func (render *Render) Start() error {
 	err := render.Stop()
