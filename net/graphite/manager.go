@@ -18,6 +18,7 @@ const (
 type Manager struct {
 	*Config
 
+	httpListeners  map[string]RenderHTTPRequestListener
 	CarbonListener CarbonListener
 	RenderListener RenderRequestListener
 
@@ -27,28 +28,50 @@ type Manager struct {
 // NewManager returns a new Manager.
 func NewManager() *Manager {
 	mgr := &Manager{
-		Config:         NewDefaultConfig(),
-		Servers:        make([]*Server, 0),
+		Config: NewDefaultConfig(),
+
+		httpListeners:  map[string]RenderHTTPRequestListener{},
+		CarbonListener: nil,
 		RenderListener: nil,
+
+		Servers: make([]*Server, 0),
 	}
 	return mgr
+}
+
+// SetHTTPRequestListener sets a extra HTTP request listner.
+func (mgr *Manager) SetHTTPRequestListener(path string, listener RenderHTTPRequestListener) error {
+	if len(path) <= 0 || listener == nil {
+		return fmt.Errorf(errorInvalidHTTPRequestListener, path, listener)
+	}
+	mgr.httpListeners[path] = listener
+
+	for _, server := range mgr.Servers {
+		server.SetHTTPRequestListeners(mgr.httpListeners)
+	}
+
+	return nil
 }
 
 // SetCarbonListener sets a default listener.
 func (mgr *Manager) SetCarbonListener(l CarbonListener) error {
 	mgr.CarbonListener = l
+
 	for _, server := range mgr.Servers {
 		server.SetCarbonListener(l)
 	}
+
 	return nil
 }
 
 // SetRenderListener sets a default listener.
 func (mgr *Manager) SetRenderListener(l RenderRequestListener) error {
 	mgr.RenderListener = l
+
 	for _, server := range mgr.Servers {
 		server.SetRenderListener(l)
 	}
+
 	return nil
 }
 
@@ -93,6 +116,7 @@ func (mgr *Manager) StartWithInterface(ifi *net.Interface) (*Server, error) {
 	server := NewServer()
 	server.SetConfig(mgr.Config)
 	server.SetInterface(ifi)
+	server.SetHTTPRequestListeners(mgr.httpListeners)
 
 	err := server.Start()
 	if err != nil {
