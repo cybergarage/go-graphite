@@ -7,6 +7,7 @@ package graphite
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
 const (
@@ -86,8 +87,16 @@ func (render *Render) Start() error {
 		Handler: render,
 	}
 
-	// FIXE : Handle error
-	go render.server.ListenAndServe()
+	c := make(chan error)
+	go func() {
+		c <- render.server.ListenAndServe()
+	}()
+
+	select {
+	case err = <-c:
+	case <-time.After(time.Millisecond * 500):
+		err = nil
+	}
 
 	return err
 }
