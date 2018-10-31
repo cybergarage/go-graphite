@@ -38,11 +38,6 @@ func (conf *Config) SetAddress(addr string) {
 	conf.Addr = addr
 }
 
-// GetAddress returns the bind address.
-func (conf *Config) GetAddress() string {
-	return conf.Addr
-}
-
 // SetEachInterfaceBindingEnabled sets a flag for binding functions.
 func (conf *Config) SetEachInterfaceBindingEnabled(flag bool) {
 	conf.EachInterfaceBindingEnabled = flag
