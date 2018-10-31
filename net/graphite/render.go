@@ -6,7 +6,9 @@ package graphite
 
 import (
 	"fmt"
+	"net"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -80,7 +82,7 @@ func (render *Render) Start() error {
 		return err
 	}
 
-	addr := fmt.Sprintf("%s:%d", render.addr, render.port)
+	addr := net.JoinHostPort(render.addr, strconv.Itoa(render.port))
 
 	render.server = &http.Server{
 		Addr:    addr,

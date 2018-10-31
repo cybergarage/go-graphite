@@ -5,9 +5,9 @@
 package graphite
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net"
+	"strconv"
 	"strings"
 )
 
@@ -140,7 +140,7 @@ func (carbon *Carbon) Stop() error {
 // open opens a socket for the Carbon server.
 func (carbon *Carbon) open() error {
 	var err error
-	addr := fmt.Sprintf("%s:%d", carbon.addr, carbon.port)
+	addr := net.JoinHostPort(carbon.addr, strconv.Itoa(carbon.port))
 	carbon.tcpListener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return err

@@ -10,6 +10,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"strconv"
 )
 
 const (
@@ -48,7 +49,7 @@ func (self *Client) postMetricsDataPoint(m *Metrics, n int) error {
 		return err
 	}
 
-	addr := fmt.Sprintf("%s:%d", self.Host, self.CarbonPort)
+	addr := net.JoinHostPort(self.Host, strconv.Itoa(self.CarbonPort))
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		return err
