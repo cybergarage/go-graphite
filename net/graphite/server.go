@@ -4,66 +4,91 @@
 
 package graphite
 
+import "net"
+
 // Server is an instance for Graphite protocols.
 type Server struct {
+	*net.Interface
 	*Carbon
 	*Render
 }
 
 // NewServer returns a new Server.
 func NewServer() *Server {
-	server := &Server{}
-	server.Carbon = NewCarbon()
-	server.Render = NewRender()
-	server.SetAddress("")
+	server := &Server{
+		Interface: nil,
+		Carbon:    NewCarbon(),
+		Render:    NewRender(),
+	}
 	return server
 }
 
-// SetAddress sets a bind address.
-func (self *Server) SetAddress(addr string) error {
-	self.Carbon.Addr = addr
-	self.Render.Addr = addr
-	return nil
+// SetConfig sets a configuration to the server.
+func (server *Server) SetConfig(conf *Config) {
+	server.SetCarbonPort(conf.GetCarbonPort())
+	server.SetRenderPort(conf.GetRenderPort())
 }
 
-// GetAddress returns the bind address.
-func (self *Server) GetAddress() string {
-	return self.Render.Addr
-}
-
-// SetCarbonPort sets a bind port for Carbon.
-func (self *Server) SetCarbonPort(port int) error {
-	self.Carbon.Port = port
-	return nil
-}
-
-// GetCarbonPort returns a bind port for Carbon.
-func (self *Server) GetCarbonPort() int {
-	return self.Carbon.Port
-}
-
-// SetRenderPort sets a bind port for Render.
-func (self *Server) SetRenderPort(port int) error {
-	self.Render.Port = port
-	return nil
-}
-
-// GetRenderPort returns a bind port for Render.
-func (self *Server) GetRenderPort() int {
-	return self.Render.Port
-}
-
-// Start starts the server.
-func (self *Server) Start() error {
-	err := self.Carbon.Start()
+// SetInterface sets a bound interface to the server.
+func (server *Server) SetInterface(ifi *net.Interface) error {
+	ifaddr, err := GetInterfaceAddress(ifi)
 	if err != nil {
-		self.Stop()
 		return err
 	}
 
-	err = self.Render.Start()
+	server.Interface = ifi
+	server.SetAddress(ifaddr)
+
+	return nil
+}
+
+// GetInterface returns the bound interface.
+func (server *Server) GetInterface() *net.Interface {
+	return server.Interface
+}
+
+// SetAddress sets a bind address.
+func (server *Server) SetAddress(addr string) {
+	server.Carbon.SetAddress(addr)
+	server.Render.SetAddress(addr)
+}
+
+// GetAddress returns the bound address.
+func (server *Server) GetAddress() string {
+	return server.Render.GetAddress()
+}
+
+// SetCarbonPort sets a bind port for Carbon.
+func (server *Server) SetCarbonPort(port int) {
+	server.Carbon.SetPort(port)
+}
+
+// GetCarbonPort returns a bind port for Carbon.
+func (server *Server) GetCarbonPort() int {
+	return server.Carbon.GetPort()
+}
+
+// SetRenderPort sets a bind port for Render.
+func (server *Server) SetRenderPort(port int) {
+	server.Render.SetPort(port)
+}
+
+// GetRenderPort returns a bind port for Render.
+func (server *Server) GetRenderPort() int {
+	return server.Render.GetPort()
+}
+
+// Start starts the server.
+func (server *Server) Start() error {
+	err := server.Carbon.Start()
 	if err != nil {
-		self.Stop()
+		server.Stop()
+		return err
+	}
+
+	err = server.Render.Start()
+	if err != nil {
+		server.Stop()
 		return err
 	}
 
@@ -71,13 +96,13 @@ func (self *Server) Start() error {
 }
 
 // Stop stops the server.
-func (self *Server) Stop() error {
-	err := self.Carbon.Stop()
+func (server *Server) Stop() error {
+	err := server.Carbon.Stop()
 	if err != nil {
 		return err
 	}
 
-	err = self.Render.Stop()
+	err = server.Render.Stop()
 	if err != nil {
 		return err
 	}

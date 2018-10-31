@@ -16,9 +16,9 @@ const (
 
 // Render is an instance for Graphite render protocols.
 type Render struct {
-	Addr               string
-	Port               int
-	RenderListener     RenderRequestListener
+	addr               string
+	port               int
+	renderListener     RenderRequestListener
 	server             *http.Server
 	extraHTTPListeners map[string]RenderHTTPRequestListener
 }
@@ -26,8 +26,9 @@ type Render struct {
 // NewRender returns a new Render.
 func NewRender() *Render {
 	server := &Render{
-		Port:               DefaultRenderPort,
-		RenderListener:     nil,
+		addr:               "",
+		port:               DefaultRenderPort,
+		renderListener:     nil,
 		server:             nil,
 		extraHTTPListeners: make(map[string]RenderHTTPRequestListener),
 	}
@@ -35,56 +36,69 @@ func NewRender() *Render {
 	return server
 }
 
+// SetAddress sets a bind address to the server.
+func (render *Render) SetAddress(addr string) {
+	render.addr = addr
+}
+
+// GetAddress returns a bound address.
+func (render *Render) GetAddress() string {
+	return render.addr
+}
+
+// SetPort sets a bind porto the server.
+func (render *Render) SetPort(port int) {
+	render.port = port
+}
+
+// GetPort returns a bound port.
+func (render *Render) GetPort() int {
+	return render.port
+}
+
 // SetRenderListener sets a default listener.
-func (self *Render) SetRenderListener(listener RenderRequestListener) error {
-	self.RenderListener = listener
-	return nil
+func (render *Render) SetRenderListener(listener RenderRequestListener) {
+	render.renderListener = listener
 }
 
 // SetHTTPRequestListener sets a extra HTTP request listner.
-func (self *Render) SetHTTPRequestListener(path string, listener RenderHTTPRequestListener) error {
+func (render *Render) SetHTTPRequestListener(path string, listener RenderHTTPRequestListener) error {
 	if len(path) <= 0 || listener == nil {
 		return fmt.Errorf(errorInvalidHTTPRequestListener, path, listener)
 	}
 
-	self.extraHTTPListeners[path] = listener
+	render.extraHTTPListeners[path] = listener
 
 	return nil
 }
 
 // Start starts the HTTP server.
-func (self *Render) Start() error {
-	err := self.Stop()
+func (render *Render) Start() error {
+	err := render.Stop()
 	if err != nil {
 		return err
 	}
 
-	addr := fmt.Sprintf("%s:%d", self.Addr, self.Port)
+	addr := fmt.Sprintf("%s:%d", render.addr, render.port)
 
-	self.server = &http.Server{
+	render.server = &http.Server{
 		Addr:    addr,
-		Handler: self,
+		Handler: render,
 	}
 
 	// FIXE : Handle error
-	go self.server.ListenAndServe()
-	/*
-		err = go self.server.ListenAndServe()
-		if err != nil {
-			return err
-		}
-	*/
+	go render.server.ListenAndServe()
 
-	return nil
+	return err
 }
 
 // Stop stops the HTTP server.
-func (self *Render) Stop() error {
-	if self.server == nil {
+func (render *Render) Stop() error {
+	if render.server == nil {
 		return nil
 	}
 
-	err := self.server.Close()
+	err := render.server.Close()
 	if err != nil {
 		return err
 	}

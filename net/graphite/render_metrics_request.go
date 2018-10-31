@@ -13,45 +13,45 @@ import (
 // handleFindRequest handles requests for Metrics API.
 // The Render URL API
 // http://readthedocs.io/en/latest/render_api.html
-func (self *Render) handleFindRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
+func (render *Render) handleFindRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
 	query := NewQuery()
 	err := query.ParseHTTPRequest(httpReq)
 	if err != nil {
-		self.responseBadRequest(httpWriter, httpReq)
+		render.responseBadRequest(httpWriter, httpReq)
 		return
 	}
 
-	if self.RenderListener == nil {
-		self.responseInternalServerError(httpWriter, httpReq)
+	if render.renderListener == nil {
+		render.responseInternalServerError(httpWriter, httpReq)
 		return
 	}
 
-	metrics, err := self.RenderListener.FindMetricsRequestReceived(query, nil)
+	metrics, err := render.renderListener.FindMetricsRequestReceived(query, nil)
 	if err != nil {
-		self.responseBadRequest(httpWriter, httpReq)
+		render.responseBadRequest(httpWriter, httpReq)
 		return
 	}
 
-	self.responseFindMetrics(httpWriter, httpReq, query, metrics)
+	render.responseFindMetrics(httpWriter, httpReq, query, metrics)
 }
 
-func (self *Render) responseFindMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
+func (render *Render) responseFindMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	switch query.Format {
 	case QueryFormatTypeCompleter: // TODO : Not implemented yet
-		self.responseBadRequest(httpWriter, httpReq)
+		render.responseBadRequest(httpWriter, httpReq)
 		return
 	case QueryFormatTypeTreeJSON:
-		self.responseFindJSONMetrics(httpWriter, httpReq, query, metrics)
+		render.responseFindJSONMetrics(httpWriter, httpReq, query, metrics)
 		return
 	default:
-		self.responseFindJSONMetrics(httpWriter, httpReq, query, metrics)
+		render.responseFindJSONMetrics(httpWriter, httpReq, query, metrics)
 		return
 	}
 
-	self.responseBadRequest(httpWriter, httpReq)
+	render.responseBadRequest(httpWriter, httpReq)
 }
 
-func (self *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
+func (render *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
 	httpWriter.Header().Set(httpHeaderContentType, QueryContentTypeJSON)
 	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	httpWriter.WriteHeader(http.StatusOK)
@@ -100,9 +100,9 @@ func (self *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, http
 // handleIndexRequest handles requests for Metrics API.
 // The Render URL API
 // http://readthedocs.io/en/latest/render_api.html
-func (self *Render) handleIndexRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
-	if self.RenderListener == nil {
-		self.responseInternalServerError(httpWriter, httpReq)
+func (render *Render) handleIndexRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
+	if render.renderListener == nil {
+		render.responseInternalServerError(httpWriter, httpReq)
 		return
 	}
 
@@ -110,9 +110,9 @@ func (self *Render) handleIndexRequest(httpWriter http.ResponseWriter, httpReq *
 
 	query := NewQuery()
 	query.Target = renderMetricsAsterisk
-	metrics, err := self.RenderListener.FindMetricsRequestReceived(query, nil)
+	metrics, err := render.renderListener.FindMetricsRequestReceived(query, nil)
 	if err != nil {
-		self.responseBadRequest(httpWriter, httpReq)
+		render.responseBadRequest(httpWriter, httpReq)
 		return
 	}
 

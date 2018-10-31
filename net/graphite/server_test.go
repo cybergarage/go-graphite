@@ -30,7 +30,7 @@ func NewTestServer() *TestServer {
 		0,
 	}
 
-	server.CarbonListener = server
+	server.SetCarbonListener(server)
 
 	return server
 }
@@ -103,7 +103,7 @@ func TestServerHTTPRequest(t *testing.T) {
 
 	loopCount := 0
 	for n := 0; n < 10; n++ {
-		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", server.Render.Port, testServerHTTPRequestPath))
+		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", server.Render.GetPort(), testServerHTTPRequestPath))
 		if err != nil {
 			t.Error(err)
 		}
