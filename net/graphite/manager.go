@@ -117,6 +117,8 @@ func (mgr *Manager) StartWithInterface(ifi *net.Interface) (*Server, error) {
 	server.SetConfig(mgr.Config)
 	server.SetInterface(ifi)
 	server.SetHTTPRequestListeners(mgr.httpListeners)
+	server.SetCarbonListener(mgr.CarbonListener)
+	server.SetRenderListener(mgr.RenderListener)
 
 	err := server.Start()
 	if err != nil {

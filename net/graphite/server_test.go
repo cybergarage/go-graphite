@@ -23,7 +23,7 @@ type TestServer struct {
 	HTTPRequestCount int
 }
 
-func NewTestServer() *TestServer {
+func newTestServer() *TestServer {
 	server := &TestServer{
 		NewServer(),
 		0,
@@ -49,11 +49,11 @@ func (self *TestServer) HTTPRequestReceived(r *http.Request, w http.ResponseWrit
 }
 
 func TestNewServer(t *testing.T) {
-	NewTestServer()
+	newTestServer()
 }
 
 func TestServerQuery(t *testing.T) {
-	server := NewTestServer()
+	server := newTestServer()
 
 	err := server.Start()
 	if err != nil {
@@ -93,7 +93,7 @@ func TestServerQuery(t *testing.T) {
 }
 
 func TestServerHTTPRequest(t *testing.T) {
-	server := NewTestServer()
+	server := newTestServer()
 	server.SetHTTPRequestListener(testServerHTTPRequestPath, server)
 
 	err := server.Start()
