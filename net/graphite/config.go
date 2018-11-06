@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	DefaultStartupRetryCount = 5
+	DefaultStartupRetryCount = 0
 )
 
 // Config represents a cofiguration for extended specifications.
