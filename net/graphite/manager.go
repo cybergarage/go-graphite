@@ -90,9 +90,13 @@ func (mgr *Manager) GetAddress() string {
 func (mgr *Manager) GetBoundAddresses() []string {
 	boundAddrs := make([]string, 0)
 
+	if !mgr.IsRunning() {
+		return boundAddrs
+	}
+
 	if mgr.IsEachInterfaceBindingEnabled() {
 		for _, server := range mgr.Servers {
-			boundAddrs = append(boundAddrs, server.GetAddress())
+			boundAddrs = append(boundAddrs, server.GetBoundAddress())
 		}
 	} else {
 		addrs, err := GetAvailableAddresses()
@@ -108,9 +112,13 @@ func (mgr *Manager) GetBoundAddresses() []string {
 func (mgr *Manager) GetBoundInterfaces() []*net.Interface {
 	boundIfs := make([]*net.Interface, 0)
 
+	if !mgr.IsRunning() {
+		return boundIfs
+	}
+
 	if mgr.IsEachInterfaceBindingEnabled() {
 		for _, server := range mgr.Servers {
-			boundIfs = append(boundIfs, server.GetInterface())
+			boundIfs = append(boundIfs, server.GetBoundInterface())
 		}
 	} else {
 		ifis, err := GetAvailableInterfaces()
@@ -126,7 +134,6 @@ func (mgr *Manager) GetBoundInterfaces() []*net.Interface {
 func (mgr *Manager) StartWithInterface(ifi *net.Interface) (*Server, error) {
 	server := NewServer()
 	server.SetConfig(mgr.Config)
-	server.SetInterface(ifi)
 	server.SetHTTPRequestListeners(mgr.httpListeners)
 	server.SetCarbonListener(mgr.CarbonListener)
 	server.SetRenderListener(mgr.RenderListener)
@@ -134,6 +141,26 @@ func (mgr *Manager) StartWithInterface(ifi *net.Interface) (*Server, error) {
 	err := server.Start()
 	if err != nil {
 		return nil, err
+	}
+
+	server.SetBoundInterface(ifi)
+
+	// Set bound interface addrss
+	if ifi != nil {
+		addrs, err := GetInterfaceAddress(ifi)
+		if err != nil {
+			return nil, err
+		}
+		server.SetBoundAddress(addrs)
+	} else {
+		addrs, err := GetAvailableAddresses()
+		if err != nil {
+			return nil, err
+		}
+		// FIXME : Set more appropriate addrss instead of addrs[0]
+		if 0 < len(addrs) {
+			server.SetBoundAddress(addrs[0])
+		}
 	}
 
 	mgr.Servers = append(mgr.Servers, server)
@@ -199,7 +226,7 @@ func (mgr *Manager) getAppropriateServerForInterface(ifi *net.Interface) (*Serve
 		if server == nil {
 			continue
 		}
-		if server.Interface == ifi {
+		if server.GetBoundInterface() == ifi {
 			return server, nil
 		}
 	}

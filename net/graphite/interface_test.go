@@ -27,3 +27,53 @@ func TestGetAvailableAddresses(t *testing.T) {
 		t.Errorf("available address is not found")
 	}
 }
+
+func TestIPv6Addresses(t *testing.T) {
+	goodAddrs := []string{
+		"::1",
+		"fe80::1875:6549:801:d487",
+	}
+
+	for n, addr := range goodAddrs {
+		if !IsIPv6Address(addr) {
+			t.Errorf("[%d] %s", n, addr)
+		}
+	}
+
+	badAddrs := []string{
+		"",
+		"127.0.0.1",
+		"192.168.0.1",
+	}
+
+	for n, addr := range badAddrs {
+		if IsIPv6Address(addr) {
+			t.Errorf("[%d] %s", n, addr)
+		}
+	}
+}
+
+func TestIPv4Addresses(t *testing.T) {
+	goodAddrs := []string{
+		"127.0.0.1",
+		"192.168.0.1",
+	}
+
+	for n, addr := range goodAddrs {
+		if !IsIPv4Address(addr) {
+			t.Errorf("[%d] %s", n, addr)
+		}
+	}
+
+	barAddrs := []string{
+		"",
+		"::1",
+		"fe80::1875:6549:801:d487",
+	}
+
+	for n, addr := range barAddrs {
+		if IsIPv4Address(addr) {
+			t.Errorf("[%d] %s", n, addr)
+		}
+	}
+}
