@@ -103,6 +103,20 @@ func GetAvailableInterfaces() ([]*net.Interface, error) {
 	return useIfs, err
 }
 
+// HasMultipleAvailableInterfaces retuns true when the system has multiple interfaces, otherwise false.
+func HasMultipleAvailableInterfaces() bool {
+	ifes, err := GetAvailableInterfaces()
+	if err != nil {
+		return false
+	}
+
+	if len(ifes) <= 1 {
+		return false
+	}
+
+	return true
+}
+
 // GetAvailableAddresses retuns all available IPv4 addresses in the node
 func GetAvailableAddresses() ([]string, error) {
 	addrs := make([]string, 0)
