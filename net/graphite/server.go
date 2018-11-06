@@ -8,7 +8,7 @@ import "net"
 
 // Server is an instance for Graphite protocols.
 type Server struct {
-	*net.Interface
+	boundInterface *net.Interface
 	*Carbon
 	*Render
 }
@@ -16,9 +16,9 @@ type Server struct {
 // NewServer returns a new Server.
 func NewServer() *Server {
 	server := &Server{
-		Interface: nil,
-		Carbon:    NewCarbon(),
-		Render:    NewRender(),
+		boundInterface: nil,
+		Carbon:         NewCarbon(),
+		Render:         NewRender(),
 	}
 	return server
 }
@@ -29,32 +29,24 @@ func (server *Server) SetConfig(conf *Config) {
 	server.SetRenderPort(conf.GetRenderPort())
 }
 
-// SetInterface sets a bound interface to the server.
-func (server *Server) SetInterface(ifi *net.Interface) error {
-	ifaddr, err := GetInterfaceAddress(ifi)
-	if err != nil {
-		return err
-	}
-
-	server.Interface = ifi
-	server.SetAddress(ifaddr)
-
-	return nil
+// SetBoundInterface sets a bound interface to the server.
+func (server *Server) SetBoundInterface(ifi *net.Interface) {
+	server.boundInterface = ifi
 }
 
-// GetInterface returns the bound interface.
-func (server *Server) GetInterface() *net.Interface {
-	return server.Interface
+// GetBoundInterface returns the bound interface.
+func (server *Server) GetBoundInterface() *net.Interface {
+	return server.boundInterface
 }
 
-// SetAddress sets a bind address.
-func (server *Server) SetAddress(addr string) {
+// SetBoundAddress sets a bound address.
+func (server *Server) SetBoundAddress(addr string) {
 	server.Carbon.SetAddress(addr)
 	server.Render.SetAddress(addr)
 }
 
-// GetAddress returns the bound address.
-func (server *Server) GetAddress() string {
+// GetBoundAddress returns the bound address.
+func (server *Server) GetBoundAddress() string {
 	return server.Render.GetAddress()
 }
 

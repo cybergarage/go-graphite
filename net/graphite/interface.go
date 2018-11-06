@@ -6,11 +6,13 @@ package graphite
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"strings"
 )
 
 const (
+	errorNullInterface            = "Null interface"
 	errorAvailableAddressNotFound = "Available address not found"
 	errorAvailableInterfaceFound  = "Available interface not found"
 )
@@ -21,10 +23,9 @@ func IsIPv6Address(addr string) bool {
 		return false
 	}
 
-	if 0 < strings.Index(addr, ":") {
+	if 0 <= strings.Index(addr, ":") {
 		return true
 	}
-
 	return false
 }
 
@@ -40,7 +41,7 @@ func IsIPv4Address(addr string) bool {
 // GetInterfaceAddress retuns a IPv4 address of the specivied interface.
 func GetInterfaceAddress(ifi *net.Interface) (string, error) {
 	if ifi == nil {
-		return "", nil
+		return "", fmt.Errorf(errorNullInterface)
 	}
 
 	addrs, err := ifi.Addrs()
