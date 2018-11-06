@@ -40,6 +40,10 @@ func TestManagerWithDefaultConfig(t *testing.T) {
 }
 
 func TestManagerWithBindEachInterfaces(t *testing.T) {
+	if HasMultipleAvailableInterfaces() {
+		return
+	}
+
 	conf := NewDefaultConfig()
 	conf.SetAutoInterfaceBindingEnabled(false)
 	conf.SetEachInterfaceBindingEnabled(true)
