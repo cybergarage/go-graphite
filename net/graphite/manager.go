@@ -7,6 +7,7 @@ package graphite
 import (
 	"fmt"
 	"net"
+	"time"
 )
 
 const (
@@ -138,9 +139,17 @@ func (mgr *Manager) StartWithInterface(ifi *net.Interface) (*Server, error) {
 	server.SetCarbonListener(mgr.CarbonListener)
 	server.SetRenderListener(mgr.RenderListener)
 
-	err := server.Start()
-	if err != nil {
-		return nil, err
+	var startupError error
+	for n := 0; n < mgr.GetStartupRetryCount(); n++ {
+		startupError = server.Start()
+		if startupError == nil {
+			break
+		}
+		time.Sleep(time.Second * 1)
+	}
+
+	if startupError != nil {
+		return nil, startupError
 	}
 
 	server.SetBoundInterface(ifi)

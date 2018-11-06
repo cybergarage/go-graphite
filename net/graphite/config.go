@@ -4,7 +4,13 @@
 
 package graphite
 
-import "reflect"
+import (
+	"reflect"
+)
+
+const (
+	DefaultStartupRetryCount = 5
+)
 
 // Config represents a cofiguration for extended specifications.
 type Config struct {
@@ -13,6 +19,7 @@ type Config struct {
 	Addr                        string
 	CarbonPort                  int
 	RenderPort                  int
+	StartupRetryCount           int
 }
 
 // NewDefaultConfig returns a default configuration.
@@ -31,6 +38,9 @@ func NewDefaultConfig() *Config {
 func (conf *Config) SetConfig(newConfig *Config) {
 	conf.EachInterfaceBindingEnabled = newConfig.EachInterfaceBindingEnabled
 	conf.AutoInterfaceBindingEnabled = newConfig.AutoInterfaceBindingEnabled
+	conf.CarbonPort = newConfig.CarbonPort
+	conf.RenderPort = newConfig.RenderPort
+	conf.StartupRetryCount = newConfig.StartupRetryCount
 }
 
 // SetAddress sets a bind address.
@@ -59,9 +69,8 @@ func (conf *Config) IsAutoInterfaceBindingEnabled() bool {
 }
 
 // SetCarbonPort sets a bind port for Carbon.
-func (conf *Config) SetCarbonPort(port int) error {
+func (conf *Config) SetCarbonPort(port int) {
 	conf.CarbonPort = port
-	return nil
 }
 
 // GetCarbonPort returns a bind port for Carbon.
@@ -70,14 +79,23 @@ func (conf *Config) GetCarbonPort() int {
 }
 
 // SetRenderPort sets a bind port for Render.
-func (conf *Config) SetRenderPort(port int) error {
+func (conf *Config) SetRenderPort(port int) {
 	conf.RenderPort = port
-	return nil
 }
 
 // GetRenderPort returns a bind port for Render.
 func (conf *Config) GetRenderPort() int {
 	return conf.RenderPort
+}
+
+// SetStartupRetryCount sets a bind retry count.
+func (conf *Config) SetStartupRetryCount(n int) {
+	conf.StartupRetryCount = n
+}
+
+// GetStartupRetryCount returns a bind retry count.
+func (conf *Config) GetStartupRetryCount() int {
+	return conf.StartupRetryCount
 }
 
 // Equals returns true whether the specified other class is same, otherwise false.
