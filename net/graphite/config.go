@@ -30,6 +30,7 @@ func NewDefaultConfig() *Config {
 		Addr:                        "",
 		CarbonPort:                  DefaultCarbonPort,
 		RenderPort:                  DefaultRenderPort,
+		StartupRetryCount:           DefaultStartupRetryCount,
 	}
 	return conf
 }

@@ -139,7 +139,7 @@ func (mgr *Manager) StartWithInterface(ifi *net.Interface) (*Server, error) {
 	server.SetCarbonListener(mgr.CarbonListener)
 	server.SetRenderListener(mgr.RenderListener)
 
-	var startupError error
+	startupError := fmt.Errorf(errorServerNotRunning)
 	for n := 0; n < mgr.GetStartupRetryCount(); n++ {
 		startupError = server.Start()
 		if startupError == nil {
