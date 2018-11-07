@@ -54,6 +54,19 @@ func IsLoopbackAddress(addr string) bool {
 	return false
 }
 
+// IsCommunicableAddress returns true whether the address is a effective address to commnicate with other nodes, othwise false.
+func IsCommunicableAddress(addr string) bool {
+	if len(addr) <= 0 {
+		return false
+	}
+
+	if IsLoopbackAddress(addr) {
+		return false
+	}
+
+	return true
+}
+
 // GetInterfaceAddress retuns a IPv4 address of the specivied interface.
 func GetInterfaceAddress(ifi *net.Interface) (string, error) {
 	if ifi == nil {
