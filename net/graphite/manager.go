@@ -76,8 +76,8 @@ func (mgr *Manager) SetRenderListener(l RenderRequestListener) error {
 	return nil
 }
 
-// GetAddress returns the bind address.
-func (mgr *Manager) GetAddress() string {
+// GetBoundAddress returns a listen address.
+func (mgr *Manager) GetBoundAddress() string {
 	// FIXME : Return an appropriate address instead of addrs[0]
 	addrs := mgr.GetBoundAddresses()
 	if 0 < len(addrs) {

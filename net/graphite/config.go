@@ -44,9 +44,14 @@ func (conf *Config) SetConfig(newConfig *Config) {
 	conf.StartupRetryCount = newConfig.StartupRetryCount
 }
 
-// SetAddress sets a bind address.
+// SetAddress sets a configuration address.
 func (conf *Config) SetAddress(addr string) {
 	conf.Addr = addr
+}
+
+// GetAddress returns a configuration address.
+func (conf *Config) GetAddress() string {
+	return conf.Addr
 }
 
 // SetEachInterfaceBindingEnabled sets a flag for binding functions.
