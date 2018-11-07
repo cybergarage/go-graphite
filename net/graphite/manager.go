@@ -77,23 +77,27 @@ func (mgr *Manager) SetRenderListener(l RenderRequestListener) error {
 }
 
 // GetBoundAddress returns a listen address.
-func (mgr *Manager) GetBoundAddress() string {
+func (mgr *Manager) GetBoundAddress() (string, error) {
 	// FIXME : Return an appropriate address instead of addrs[0]
-	addrs := mgr.GetBoundAddresses()
-	if 0 < len(addrs) {
-		return addrs[0]
+	addrs, err := mgr.GetBoundAddresses()
+	if err != nil {
+		return "", err
 	}
 
-	return mgr.Config.Addr
+	if 0 < len(addrs) {
+		return addrs[0], nil
+	}
+
+	return "", fmt.Errorf(errorServerNotRunning)
 }
 
 // GetBoundAddresses returns the listen addresses.
-func (mgr *Manager) GetBoundAddresses() []string {
-	boundAddrs := make([]string, 0)
-
+func (mgr *Manager) GetBoundAddresses() ([]string, error) {
 	if !mgr.IsRunning() {
-		return boundAddrs
+		return nil, fmt.Errorf(errorServerNotRunning)
 	}
+
+	boundAddrs := make([]string, 0)
 
 	if mgr.IsEachInterfaceBindingEnabled() {
 		for _, server := range mgr.Servers {
@@ -106,16 +110,17 @@ func (mgr *Manager) GetBoundAddresses() []string {
 		}
 	}
 
-	return boundAddrs
+	return boundAddrs, nil
 }
 
 // GetBoundInterfaces returns the listen interfaces.
-func (mgr *Manager) GetBoundInterfaces() []*net.Interface {
-	boundIfs := make([]*net.Interface, 0)
+func (mgr *Manager) GetBoundInterfaces() ([]*net.Interface, error) {
 
 	if !mgr.IsRunning() {
-		return boundIfs
+		return nil, fmt.Errorf(errorServerNotRunning)
 	}
+
+	boundIfs := make([]*net.Interface, 0)
 
 	if mgr.IsEachInterfaceBindingEnabled() {
 		for _, server := range mgr.Servers {
@@ -128,7 +133,7 @@ func (mgr *Manager) GetBoundInterfaces() []*net.Interface {
 		}
 	}
 
-	return boundIfs
+	return boundIfs, nil
 }
 
 // StartWithInterface starts this server on the specified interface.
