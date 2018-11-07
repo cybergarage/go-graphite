@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	errorServerNotRunning           = "Unicast server is not running"
-	errorServerNoAvailableInterface = "No available interface"
+	errorManagerNotRunning = "Manager is not running"
 )
 
 // A Manager represents a multicast server manager.
@@ -88,13 +87,13 @@ func (mgr *Manager) GetBoundAddress() (string, error) {
 		return addrs[0], nil
 	}
 
-	return "", fmt.Errorf(errorServerNotRunning)
+	return "", fmt.Errorf(errorManagerNotRunning)
 }
 
 // GetBoundAddresses returns the listen addresses.
 func (mgr *Manager) GetBoundAddresses() ([]string, error) {
 	if !mgr.IsRunning() {
-		return nil, fmt.Errorf(errorServerNotRunning)
+		return nil, fmt.Errorf(errorManagerNotRunning)
 	}
 
 	boundAddrs := make([]string, 0)
@@ -117,7 +116,7 @@ func (mgr *Manager) GetBoundAddresses() ([]string, error) {
 func (mgr *Manager) GetBoundInterfaces() ([]*net.Interface, error) {
 
 	if !mgr.IsRunning() {
-		return nil, fmt.Errorf(errorServerNotRunning)
+		return nil, fmt.Errorf(errorManagerNotRunning)
 	}
 
 	boundIfs := make([]*net.Interface, 0)
@@ -144,7 +143,7 @@ func (mgr *Manager) StartWithInterface(ifi *net.Interface) (*Server, error) {
 	server.SetCarbonListener(mgr.CarbonListener)
 	server.SetRenderListener(mgr.RenderListener)
 
-	startupError := fmt.Errorf(errorServerNotRunning)
+	startupError := fmt.Errorf(errorManagerNotRunning)
 	for n := 0; n <= mgr.GetStartupRetryCount(); n++ {
 		startupError = server.Start()
 		if startupError == nil {
@@ -233,7 +232,7 @@ func (mgr *Manager) Stop() error {
 // Stop stops this server.
 func (mgr *Manager) getAppropriateServerForInterface(ifi *net.Interface) (*Server, error) {
 	if len(mgr.Servers) <= 0 {
-		return nil, fmt.Errorf(errorServerNotRunning)
+		return nil, fmt.Errorf(errorManagerNotRunning)
 	}
 
 	for _, server := range mgr.Servers {
