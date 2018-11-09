@@ -5,11 +5,12 @@
 package graphite
 
 import (
-	"io/ioutil"
-	"net/http"
-	"testing"
-
 	"fmt"
+	"io/ioutil"
+	"net"
+	"net/http"
+	"strconv"
+	"testing"
 	"time"
 )
 
@@ -103,7 +104,10 @@ func TestServerHTTPRequest(t *testing.T) {
 
 	loopCount := 0
 	for n := 0; n < 10; n++ {
-		resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", server.Render.GetPort(), testServerHTTPRequestPath))
+		url := fmt.Sprintf("http://%s%s",
+			net.JoinHostPort(server.GetAddress(), strconv.Itoa(server.Render.GetPort())),
+			testServerHTTPRequestPath)
+		resp, err := http.Get(url)
 		if err != nil {
 			t.Error(err)
 		}
