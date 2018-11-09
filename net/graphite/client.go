@@ -11,11 +11,14 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 const (
 	// DefaultHost is the default host for Carbon and Render servers
 	DefaultHost string = "localhost"
+	// DefaultHost is the default host for Carbon and Render servers
+	DefaultTimeoutSecond = 10
 )
 
 // Client is an instance for Graphite protocols.
@@ -23,11 +26,18 @@ type Client struct {
 	Host       string
 	CarbonPort int
 	RenderPort int
+	Timeout    time.Duration
 }
 
 // NewClient returns a new Client.
 func NewClient() *Client {
-	client := &Client{DefaultHost, DefaultCarbonPort, DefaultRenderPort}
+	client := &Client{
+		Host:       DefaultHost,
+		CarbonPort: DefaultCarbonPort,
+		RenderPort: DefaultRenderPort,
+		Timeout:    (time.Second * DefaultTimeoutSecond),
+	}
+
 	return client
 }
 
@@ -61,6 +71,16 @@ func (self *Client) GetRenderPort() int {
 	return self.RenderPort
 }
 
+// SetTimeout sets a timeout for the request.
+func (self *Client) SetTimeout(d time.Duration) {
+	self.Timeout = d
+}
+
+// GetTimeout return  the timeout for the request.
+func (self *Client) GetTimeout() time.Duration {
+	return self.Timeout
+}
+
 // PostMetrics posts all metric datapoints to Carbon.
 func (self *Client) PostMetrics(m *Metrics) error {
 	for n, _ := range m.DataPoints {
@@ -80,7 +100,8 @@ func (self *Client) postMetricsDataPoint(m *Metrics, n int) error {
 	}
 
 	addr := net.JoinHostPort(self.Host, strconv.Itoa(self.CarbonPort))
-	conn, err := net.Dial("tcp", addr)
+	dialer := net.Dialer{Timeout: self.Timeout}
+	conn, err := dialer.Dial("tcp", addr)
 	if err != nil {
 		return err
 	}
@@ -111,7 +132,10 @@ func (self *Client) PostQuery(query *Query) ([]*Metrics, error) {
 		return nil, err
 	}
 
-	resp, err := http.Get(url)
+	client := http.Client{
+		Timeout: self.Timeout,
+	}
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}
