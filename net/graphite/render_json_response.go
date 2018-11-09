@@ -4,12 +4,16 @@
 
 package graphite
 
-type findMetricResponseMetrics struct {
+type renderFindMetricJSONResponseMetrics struct {
 	IsLeaf int    `json:"is_leaf"`
 	Name   string `json:"name"`
 	Path   string `json:"path"`
 }
 
-type findMetricResponse struct {
-	Metrics []findMetricResponseMetrics `json:"metrics"`
+type renderFindMetricJSONResponse struct {
+	Metrics []renderFindMetricJSONResponseMetrics `json:"metrics"`
+}
+
+type renderMetricIndexJSONResponse struct {
+	Metrics []string
 }

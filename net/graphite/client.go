@@ -19,13 +19,14 @@ import (
 const (
 	// DefaultHost is the default host for Carbon and Render servers
 	DefaultHost string = "localhost"
-	// DefaultHost is the default host for Carbon and Render servers
+	// DefaultTimeoutSecond is the default request timeout for Carbon and Render servers
 	DefaultTimeoutSecond = 10
 )
 
 const (
-	errorPostMetric            = "Couldn't write metric [%d] : %v"
-	errorFindMetricsStatusCode = "Invalid find metrics query (%d) : %s"
+	errorPostMetric              = "Couldn't write metric [%d] : %v"
+	errorFindMetricsStatusCode   = "Bad status code (%d) : %s"
+	errorGetAllMetricsStatusCode = "Bad status code (%d)"
 )
 
 // Client is an instance for Graphite protocols.
@@ -130,6 +131,8 @@ func (self *Client) postMetricsDataPoint(m *Metrics, n int) error {
 }
 
 // FindMetrics searches the specified metrics.
+// Graphite - The Metrics API
+// https://graphite-api.readthedocs.io/en/latest/api.html#the-metrics-api
 func (self *Client) FindMetrics(q *Query) ([]*Metrics, error) {
 	url, err := q.FindMetricsURL(self.Host, self.RenderPort)
 	if err != nil {
@@ -155,7 +158,7 @@ func (self *Client) FindMetrics(q *Query) ([]*Metrics, error) {
 		return nil, err
 	}
 
-	var jsonMetrics findMetricResponse
+	var jsonMetrics renderFindMetricJSONResponse
 	err = json.Unmarshal(jsonBytes, &jsonMetrics)
 	if err != nil {
 		return nil, err
@@ -171,7 +174,53 @@ func (self *Client) FindMetrics(q *Query) ([]*Metrics, error) {
 	return ms, nil
 }
 
+// GetAllMetrics returns all metrics.
+// Graphite - The Metrics API
+// https://graphite-api.readthedocs.io/en/latest/api.html#the-metrics-api
+func (self *Client) GetAllMetrics() ([]*Metrics, error) {
+	url := fmt.Sprintf("http://%s:%d%s",
+		self.Host,
+		self.RenderPort,
+		renderDefaultIndexRequestPath)
+
+	client := http.Client{
+		Timeout: self.Timeout,
+	}
+	resp, err := client.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(errorGetAllMetricsStatusCode, resp.StatusCode)
+	}
+
+	jsonBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var jsonMetrics renderMetricIndexJSONResponse
+	err = json.Unmarshal(jsonBytes, &jsonMetrics)
+	if err != nil {
+		return nil, err
+	}
+
+	ms := make([]*Metrics, 0)
+	for _, jsonMetric := range jsonMetrics.Metrics {
+		m := NewMetrics()
+		m.SetName(jsonMetric)
+		ms = append(ms, m)
+	}
+
+	return ms, nil
+}
+
 // QueryRender queries with the specified parameters to Render.
+// Graphite - The Render API
+// https://graphite-api.readthedocs.io/en/latest/api.html#the-render-api-render
 func (self *Client) QueryRender(q *Query) ([]*Metrics, error) {
 	// FIXME : Support other formats
 	q.Format = QueryFormatTypeCSV
