@@ -31,6 +31,36 @@ func NewClient() *Client {
 	return client
 }
 
+// SetHost sets a target host.
+func (self *Client) SetHost(host string) {
+	self.Host = host
+}
+
+// GetHost returns a target host.
+func (self *Client) GetHost() string {
+	return self.Host
+}
+
+// SetCarbonPort sets a target Carbon port.
+func (self *Client) SetCarbonPort(port int) {
+	self.CarbonPort = port
+}
+
+// GetCarbonPort returns a target Carbon port.
+func (self *Client) GetCarbonPort() int {
+	return self.CarbonPort
+}
+
+// SetRenderPort sets a target Carbon port.
+func (self *Client) SetRenderPort(port int) {
+	self.RenderPort = port
+}
+
+// GetRenderPort returns a target Carbon port.
+func (self *Client) GetRenderPort() int {
+	return self.RenderPort
+}
+
 // PostMetrics posts all metric datapoints to Carbon.
 func (self *Client) PostMetrics(m *Metrics) error {
 	for n, _ := range m.DataPoints {
