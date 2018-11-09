@@ -31,18 +31,28 @@ func NewMetrics() *Metrics {
 	return m
 }
 
+// SetName sets a name to the metrics.
+func (self *Metrics) SetName(name string) {
+	self.Name = name
+}
+
+// GetName returns the metrics name.
+func (self *Metrics) GetName() string {
+	return self.Name
+}
+
 // GetDataPointCount returns a count of the datapoints
 func (self *Metrics) GetDataPointCount() int {
 	return len(self.DataPoints)
 }
 
-// AddDataPoint add a new datapoint
+// AddDataPoint add a new datapoint to the metrics
 func (self *Metrics) AddDataPoint(dp *DataPoint) error {
 	self.DataPoints = append(self.DataPoints, dp)
 	return nil
 }
 
-// AddDataPoint add a new datapoint
+// GetDataPoint retur a datapoint of the specified index.
 func (self *Metrics) GetDataPoint(n int) (*DataPoint, error) {
 	if (n < 0) || (len(self.DataPoints) <= n) {
 		return nil, fmt.Errorf(errorInvalidRangeIndex, n, len(self.DataPoints))
