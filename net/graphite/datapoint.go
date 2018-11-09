@@ -31,6 +31,16 @@ func (self *DataPoint) GetValue() float64 {
 	return self.Value
 }
 
+// SetTimestamp sets a timestamp to the datapoint.
+func (self *DataPoint) SetTimestamp(value time.Time) {
+	self.Timestamp = value
+}
+
+// GetTimestamp returns the timestamp of the datapoint.
+func (self *DataPoint) GetTimestamp() time.Time {
+	return self.Timestamp
+}
+
 // PlainTextString returns a string representation datapoint for the plaintext protocol.
 func (self *DataPoint) PlainTextString() string {
 	return fmt.Sprintf("%f %d", self.Value, self.UnixTimestamp())
