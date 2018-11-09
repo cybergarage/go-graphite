@@ -209,9 +209,9 @@ func (self *Client) GetAllMetrics() ([]*Metrics, error) {
 	}
 
 	ms := make([]*Metrics, 0)
-	for _, jsonMetric := range jsonMetrics.Metrics {
+	for _, name := range jsonMetrics {
 		m := NewMetrics()
-		m.SetName(jsonMetric)
+		m.SetName(name)
 		ms = append(ms, m)
 	}
 
