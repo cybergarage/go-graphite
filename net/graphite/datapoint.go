@@ -21,6 +21,16 @@ func NewDataPoint() *DataPoint {
 	return p
 }
 
+// SetValue sets a value to the datapoint.
+func (self *DataPoint) SetValue(value float64) {
+	self.Value = value
+}
+
+// GetValue returns the value of the datapoint.
+func (self *DataPoint) GetValue() float64 {
+	return self.Value
+}
+
 // PlainTextString returns a string representation datapoint for the plaintext protocol.
 func (self *DataPoint) PlainTextString() string {
 	return fmt.Sprintf("%f %d", self.Value, self.UnixTimestamp())
