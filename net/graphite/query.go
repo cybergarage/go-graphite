@@ -140,6 +140,24 @@ func (self *Query) parseTimeString(timeStr string) (*time.Time, error) {
 	return nil, fmt.Errorf(errorQueryInvalidTimeFormat, timeStr)
 }
 
+// FindMetricsURL returns a path for Metrics API
+// The Metrics API
+// https://graphite-api.readthedocs.io/en/latest/api.html
+func (self *Query) FindMetricsURL(host string, port int) (string, error) {
+	if len(self.Target) <= 0 {
+		return "", fmt.Errorf("%s is not specified", QueryTarget)
+	}
+
+	url := fmt.Sprintf("http://%s:%d%s?%s=%s",
+		host,
+		port,
+		renderDefaultFindRequestPath,
+		QueryTargetRegexp,
+		self.Target)
+
+	return url, nil
+}
+
 // RenderURLString returns a path for Render API
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html

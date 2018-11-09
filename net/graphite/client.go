@@ -122,6 +122,13 @@ func (self *Client) postMetricsDataPoint(m *Metrics, n int) error {
 	return nil
 }
 
+// FindMetrics searches the specified metrics.
+func (self *Client) FindMetrics(query *Query) ([]*Metrics, error) {
+	// FIXME : Support other formats
+	query.Format = QueryFormatTypeCSV
+	return nil, nil
+}
+
 // QueryRender queries with the specified parameters to Render.
 func (self *Client) QueryRender(query *Query) ([]*Metrics, error) {
 	// FIXME : Support other formats
