@@ -105,8 +105,7 @@ func TestServerHTTPRequest(t *testing.T) {
 	loopCount := 0
 	for n := 0; n < 10; n++ {
 		url := fmt.Sprintf("http://%s%s",
-			net.JoinHostPort(server.GetAddress(), strconv.Itoa(server.Render.GetPort())),
-			testServerHTTPRequestPath)
+			net.JoinHostPort(server.GetBoundAddress(), strconv.Itoa(server.Render.GetPort())), testServerHTTPRequestPath)
 		resp, err := http.Get(url)
 		if err != nil {
 			t.Error(err)
