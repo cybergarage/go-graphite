@@ -50,7 +50,7 @@ func TestRenderQuery(t *testing.T) {
 	for n := 0; n < 10; n++ {
 		q := NewQuery()
 		q.Target = fmt.Sprintf("path%d", n)
-		_, err := cli.PostQuery(q)
+		_, err := cli.QueryRender(q)
 		if err != nil {
 			t.Error(err)
 		}
@@ -81,7 +81,7 @@ func TestRenderHTTPListener(t *testing.T) {
 	for n := 0; n < 10; n++ {
 		q := NewQuery()
 		q.Target = fmt.Sprintf("path%d", n)
-		_, err := cli.PostQuery(q)
+		_, err := cli.QueryRender(q)
 		if err != nil {
 			t.Error(err)
 		}
