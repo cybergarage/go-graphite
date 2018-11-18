@@ -114,10 +114,10 @@ func (self *Client) FeedString(m string) error {
 	return nil
 }
 
-// PostMetrics posts all metric datapoints to Carbon.
-func (self *Client) PostMetrics(m *Metrics) error {
+// FeedMetrics posts all metric datapoints to Carbon.
+func (self *Client) FeedMetrics(m *Metrics) error {
 	for n, _ := range m.DataPoints {
-		err := self.postMetricsDataPoint(m, n)
+		err := self.feedMetricsDataPoint(m, n)
 		if err != nil {
 			return err
 		}
@@ -125,8 +125,8 @@ func (self *Client) PostMetrics(m *Metrics) error {
 	return nil
 }
 
-// postMetricsDataPoint posts a specified metric to Carbon.
-func (self *Client) postMetricsDataPoint(m *Metrics, n int) error {
+// feedMetricsDataPoint posts a specified metric to Carbon.
+func (self *Client) feedMetricsDataPoint(m *Metrics, n int) error {
 	dpData, err := m.DataPointPlainTextString(n)
 	if err != nil {
 		return err
