@@ -89,6 +89,31 @@ func (self *Client) GetTimeout() time.Duration {
 	return self.Timeout
 }
 
+// FeedString posts a specified string to Carbon.
+func (self *Client) FeedString(m string) error {
+	addr := net.JoinHostPort(self.Host, strconv.Itoa(self.CarbonPort))
+	dialer := net.Dialer{Timeout: self.Timeout}
+	conn, err := dialer.Dial("tcp", addr)
+	if err != nil {
+		return err
+	}
+
+	nWrote, err := fmt.Fprintf(conn, "%s", m)
+	if err != nil {
+		return err
+	}
+	if nWrote <= 0 {
+		return fmt.Errorf(errorPostMetric, nWrote, m)
+	}
+
+	err = conn.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // PostMetrics posts all metric datapoints to Carbon.
 func (self *Client) PostMetrics(m *Metrics) error {
 	for n, _ := range m.DataPoints {
@@ -107,27 +132,7 @@ func (self *Client) postMetricsDataPoint(m *Metrics, n int) error {
 		return err
 	}
 
-	addr := net.JoinHostPort(self.Host, strconv.Itoa(self.CarbonPort))
-	dialer := net.Dialer{Timeout: self.Timeout}
-	conn, err := dialer.Dial("tcp", addr)
-	if err != nil {
-		return err
-	}
-
-	nWrote, err := fmt.Fprintf(conn, "%s", dpData)
-	if err != nil {
-		return err
-	}
-	if nWrote <= 0 {
-		return fmt.Errorf(errorPostMetric, nWrote, m)
-	}
-
-	err = conn.Close()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return self.FeedString(dpData)
 }
 
 // FindMetrics searches the specified metrics.

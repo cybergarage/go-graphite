@@ -5,7 +5,6 @@
 package graphite
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net"
 	"strconv"
@@ -74,13 +73,10 @@ func (carbon *Carbon) SetCarbonListener(listener CarbonListener) {
 
 // parseRequestLine parses the specified metrics request.
 func (carbon *Carbon) parseRequestLine(lineString string) (*Metrics, error) {
-	fmt.Printf("%s\n", lineString)
-
 	m := NewMetrics()
 	err := m.ParsePlainText(lineString)
 
 	if err != nil {
-		fmt.Printf("%s\n", err.Error())
 		m = nil
 	}
 

@@ -6,8 +6,13 @@ package graphite
 
 import (
 	"fmt"
+	"io/ioutil"
 	"testing"
 	"time"
+)
+
+const (
+	carbonTestFeedDataFilename = "carbon_feed_test.dat"
 )
 
 type TestCarbon struct {
@@ -73,5 +78,32 @@ func TestCarbonParseMetrics(t *testing.T) {
 
 	if carbon.MetricsCount != loopCount {
 		t.Error(fmt.Errorf("%d != %d", carbon.MetricsCount, loopCount))
+	}
+}
+
+func TestCarbonFeed(t *testing.T) {
+	feedBytes, err := ioutil.ReadFile(carbonTestFeedDataFilename)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	server := newTestServer()
+
+	err = server.Start()
+	if err != nil {
+		t.Error(err)
+	}
+
+	cli := NewClient()
+
+	err = cli.FeedString(string(feedBytes))
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = server.Stop()
+	if err != nil {
+		t.Error(err)
 	}
 }
