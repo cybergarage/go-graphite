@@ -73,7 +73,7 @@ func TestServerQuery(t *testing.T) {
 		dp.Timestamp = time.Now()
 		m.AddDataPoint(dp)
 
-		err = cli.PostMetrics(m)
+		err = cli.FeedMetrics(m)
 		if err != nil {
 			t.Error(err)
 		}
