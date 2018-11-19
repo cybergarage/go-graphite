@@ -21,15 +21,15 @@ const (
 	carbonPlainTextLineFieldSep = " "
 )
 
-// PlaintextRequestListener represents a listener for plain text protocol of Carbon.
+// PlainTextRequestListener represents a listener for plain text protocol of Carbon.
 // See : Feeding In Your Data (http://graphite.readthedocs.io/en/latest/feeding-carbon.html)
-type PlaintextRequestListener interface {
+type PlainTextRequestListener interface {
 	InsertMetricsRequestReceived(*Metrics, error)
 }
 
 // CarbonListener represents a listener for all requests of Carbon.
 type CarbonListener interface {
-	PlaintextRequestListener
+	PlainTextRequestListener
 }
 
 // Carbon is an instance for Carbon protocols.
