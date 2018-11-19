@@ -48,7 +48,7 @@ func TestCarbonParseMetrics(t *testing.T) {
 
 		line := fmt.Sprintf("%s %f %d", path, value, ts)
 
-		ms, err := carbon.ParseRequestString(line)
+		ms, err := carbon.FeedPlainTextString(line)
 		if err != nil {
 			t.Error(err)
 		}

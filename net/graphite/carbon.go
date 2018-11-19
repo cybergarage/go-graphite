@@ -76,8 +76,8 @@ func (carbon *Carbon) SetCarbonListener(listener CarbonListener) {
 	carbon.carbonListener = listener
 }
 
-// ParseRequestString returns a metrics of the specified text.
-func (carbon *Carbon) ParseRequestString(text string) ([]*Metrics, error) {
+// FeedPlainTextString returns a metrics of the specified text.
+func (carbon *Carbon) FeedPlainTextString(text string) ([]*Metrics, error) {
 	ms, err := NewMetricsWithPlainText(text)
 
 	if carbon.carbonListener != nil {
@@ -91,7 +91,7 @@ func (carbon *Carbon) ParseRequestString(text string) ([]*Metrics, error) {
 
 // ParseRequestBytes returns a metrics of the specified bytes.
 func (carbon *Carbon) ParseRequestBytes(bytes []byte) ([]*Metrics, error) {
-	return carbon.ParseRequestString(string(bytes))
+	return carbon.FeedPlainTextString(string(bytes))
 }
 
 // Start starts the Carbon server.
