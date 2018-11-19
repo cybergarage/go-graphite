@@ -8,12 +8,17 @@ import (
 	"io/ioutil"
 	"net"
 	"strconv"
-	"strings"
 )
 
 const (
 	// DefaultCarbonPort is the default port number for Carbon Server
 	DefaultCarbonPort int = 2003
+)
+
+const (
+	carbonPlainTextLineSep      = "\n"
+	carbonPlainTextLineTrim     = "\n\r"
+	carbonPlainTextLineFieldSep = " "
 )
 
 // PlaintextRequestListener represents a listener for plain text protocol of Carbon.
@@ -71,38 +76,17 @@ func (carbon *Carbon) SetCarbonListener(listener CarbonListener) {
 	carbon.carbonListener = listener
 }
 
-// parseRequestLine parses the specified metrics request.
-func (carbon *Carbon) parseRequestLine(lineString string) (*Metrics, error) {
-	m := NewMetrics()
-	err := m.ParsePlainText(lineString)
-
-	if err != nil {
-		m = nil
-	}
+// ParseRequestString returns a metrics of the specified text.
+func (carbon *Carbon) ParseRequestString(text string) ([]*Metrics, error) {
+	ms, err := NewMetricsWithPlainText(text)
 
 	if carbon.carbonListener != nil {
-		carbon.carbonListener.InsertMetricsRequestReceived(m, err)
+		for _, m := range ms {
+			carbon.carbonListener.InsertMetricsRequestReceived(m, err)
+		}
 	}
 
-	return m, err
-}
-
-// ParseRequestString returns a metrics of the specified context.
-func (carbon *Carbon) ParseRequestString(context string) ([]*Metrics, error) {
-	lines := strings.Split(context, "\n")
-	ms := make([]*Metrics, len(lines))
-	for n, line := range lines {
-		if len(line) <= 0 {
-			continue
-		}
-		m, err := carbon.parseRequestLine(line)
-		if err != nil {
-			return ms, err
-		}
-		ms[n] = m
-	}
-
-	return ms, nil
+	return ms, err
 }
 
 // ParseRequestBytes returns a metrics of the specified bytes.

@@ -6,6 +6,8 @@ package graphite
 
 import (
 	"fmt"
+	"io/ioutil"
+	"strings"
 	"testing"
 	"time"
 )
@@ -14,7 +16,7 @@ func TestNewMetrics(t *testing.T) {
 	NewMetrics()
 }
 
-func TestMetricsParsePlaintext(t *testing.T) {
+func TestMetricsParsePlainLine(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		path := fmt.Sprintf("path%d", i)
 		value := float64(i) * 100
@@ -23,7 +25,7 @@ func TestMetricsParsePlaintext(t *testing.T) {
 		line := fmt.Sprintf("%s %f %d", path, value, ts)
 
 		m := NewMetrics()
-		err := m.ParsePlainText(line)
+		err := m.ParsePlainLine(line)
 		if err != nil {
 			t.Error(err)
 		}
@@ -45,5 +47,27 @@ func TestMetricsParsePlaintext(t *testing.T) {
 		if dp.Timestamp.Unix() != ts {
 			t.Error(fmt.Errorf("%d != %d", dp.Timestamp.Unix(), ts))
 		}
+	}
+}
+
+func TestMetricsParsePlainText(t *testing.T) {
+	feedBytes, err := ioutil.ReadFile(carbonTestFeedDataFilename)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	feedString := strings.Trim(string(feedBytes), carbonPlainTextLineTrim)
+
+	ms, err := NewMetricsWithPlainText(feedString)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	feedLines := strings.Split(feedString, carbonPlainTextLineSep)
+
+	if len(ms) != len(feedLines) {
+		t.Errorf("%d != %d", len(ms), len(feedLines))
 	}
 }
