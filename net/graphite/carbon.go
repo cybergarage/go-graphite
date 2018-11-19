@@ -89,8 +89,8 @@ func (carbon *Carbon) FeedPlainTextString(text string) ([]*Metrics, error) {
 	return ms, err
 }
 
-// ParseRequestBytes returns a metrics of the specified bytes.
-func (carbon *Carbon) ParseRequestBytes(bytes []byte) ([]*Metrics, error) {
+// FeedPlainTextBytes returns a metrics of the specified bytes.
+func (carbon *Carbon) FeedPlainTextBytes(bytes []byte) ([]*Metrics, error) {
 	return carbon.FeedPlainTextString(string(bytes))
 }
 
@@ -165,7 +165,7 @@ func (carbon *Carbon) serve() error {
 			return err
 		}
 
-		carbon.ParseRequestBytes(reqBytes)
+		carbon.FeedPlainTextBytes(reqBytes)
 	}
 
 	return nil
