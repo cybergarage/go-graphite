@@ -144,7 +144,7 @@ func (mgr *Manager) StartWithInterface(ifi *net.Interface) (*Server, error) {
 	server.SetRenderListener(mgr.RenderListener)
 
 	startupError := fmt.Errorf(errorManagerNotRunning)
-	for n := 0; n <= mgr.GetStartupRetryCount(); n++ {
+	for n := 0; n <= mgr.GetBindingRetryCount(); n++ {
 		startupError = server.Start()
 		if startupError == nil {
 			break

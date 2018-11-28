@@ -9,17 +9,17 @@ import (
 )
 
 const (
-	DefaultStartupRetryCount = 0
+	DefaultBindingRetryCount = 0
 )
 
 // Config represents a cofiguration for extended specifications.
 type Config struct {
 	EachInterfaceBindingEnabled bool
 	AutoInterfaceBindingEnabled bool
+	BindingRetryCount           int
 	Addr                        string
 	CarbonPort                  int
 	RenderPort                  int
-	StartupRetryCount           int
 }
 
 // NewDefaultConfig returns a default configuration.
@@ -30,7 +30,7 @@ func NewDefaultConfig() *Config {
 		Addr:                        "",
 		CarbonPort:                  DefaultCarbonPort,
 		RenderPort:                  DefaultRenderPort,
-		StartupRetryCount:           DefaultStartupRetryCount,
+		BindingRetryCount:           DefaultBindingRetryCount,
 	}
 	return conf
 }
@@ -41,7 +41,7 @@ func (conf *Config) SetConfig(newConfig *Config) {
 	conf.AutoInterfaceBindingEnabled = newConfig.AutoInterfaceBindingEnabled
 	conf.CarbonPort = newConfig.CarbonPort
 	conf.RenderPort = newConfig.RenderPort
-	conf.StartupRetryCount = newConfig.StartupRetryCount
+	conf.BindingRetryCount = newConfig.BindingRetryCount
 }
 
 // SetAddress sets a configuration address.
@@ -94,14 +94,14 @@ func (conf *Config) GetRenderPort() int {
 	return conf.RenderPort
 }
 
-// SetStartupRetryCount sets a bind retry count.
-func (conf *Config) SetStartupRetryCount(n int) {
-	conf.StartupRetryCount = n
+// SetBindingRetryCount sets a bind retry count.
+func (conf *Config) SetBindingRetryCount(n int) {
+	conf.BindingRetryCount = n
 }
 
-// GetStartupRetryCount returns a bind retry count.
-func (conf *Config) GetStartupRetryCount() int {
-	return conf.StartupRetryCount
+// GetBindingRetryCount returns a bind retry count.
+func (conf *Config) GetBindingRetryCount() int {
+	return conf.BindingRetryCount
 }
 
 // Equals returns true whether the specified other class is same, otherwise false.
