@@ -12,6 +12,10 @@ import (
 )
 
 const (
+	libvirtInterfaceName = "virbr0"
+)
+
+const (
 	errorNullInterface            = "Null interface"
 	errorAvailableAddressNotFound = "Available address not found"
 	errorAvailableInterfaceFound  = "Available interface not found"
@@ -67,6 +71,17 @@ func IsCommunicableAddress(addr string) bool {
 	return true
 }
 
+// IsBridgeInterface retuns true when the specified interface is a bridge interface, otherwise false.
+func IsBridgeInterface(ifi *net.Interface) bool {
+	ifname := ifi.Name
+
+	if ifname == libvirtInterfaceName {
+		return true
+	}
+
+	return false
+}
+
 // GetInterfaceAddress retuns a IPv4 address of the specivied interface.
 func GetInterfaceAddress(ifi *net.Interface) (string, error) {
 	if ifi == nil {
@@ -113,6 +128,9 @@ func GetAvailableInterfaces() ([]*net.Interface, error) {
 			continue
 		}
 		if (localIf.Flags & net.FlagMulticast) == 0 {
+			continue
+		}
+		if IsBridgeInterface(&localIf) {
 			continue
 		}
 
