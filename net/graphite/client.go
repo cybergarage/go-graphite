@@ -20,7 +20,7 @@ const (
 	// DefaultHost is the default host for Carbon and Render servers
 	DefaultHost string = "localhost"
 	// DefaultTimeoutSecond is the default request timeout for Carbon and Render servers
-	DefaultTimeoutSecond = 10
+	DefaultTimeoutSecond = 60
 )
 
 const (
