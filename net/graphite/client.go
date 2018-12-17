@@ -245,6 +245,7 @@ func (self *Client) QueryRender(q *Query) ([]*Metrics, error) {
 
 	defer resp.Body.Close()
 
+	var lastErr error
 	ms := make([]*Metrics, 0)
 
 	reader := bufio.NewReader(resp.Body)
@@ -253,16 +254,18 @@ func (self *Client) QueryRender(q *Query) ([]*Metrics, error) {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return ms, err
+			lastErr = err
+			break
 		}
 
 		m := NewMetrics()
 		err = m.ParseRenderCSV(string(row))
 		if err != nil {
+			lastErr = err
 			continue
 		}
 		ms = append(ms, m)
 	}
 
-	return ms, nil
+	return ms, lastErr
 }
