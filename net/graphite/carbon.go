@@ -5,7 +5,8 @@
 package graphite
 
 import (
-	"io/ioutil"
+	"bufio"
+	"io"
 	"net"
 	"strconv"
 )
@@ -160,13 +161,25 @@ func (carbon *Carbon) serve() error {
 			return err
 		}
 
-		reqBytes, err := ioutil.ReadAll(conn)
-		if err != nil {
-			return err
-		}
-
-		carbon.FeedPlainTextBytes(reqBytes)
+		go carbon.receive(conn)
 	}
 
+	return nil
+}
+
+func (carbon *Carbon) receive(conn net.Conn) error {
+	defer conn.Close()
+
+	reader := bufio.NewReader(conn)
+	for {
+		line, _, err := reader.ReadLine()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return err
+		}
+		carbon.FeedPlainTextBytes(line)
+	}
 	return nil
 }
