@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func TestReletiveTimes(t *testing.T) {
+func TestRelativeTimes(t *testing.T) {
 	relTimeStrings := []string{
 		"-30s",
 		"-30min",
@@ -81,7 +81,7 @@ func TestAbsoluteTimes(t *testing.T) {
 		}
 
 		absTimeSeconds[0] = time.Now().Unix()
-		absTime, err := AbsouleteTimeStringToTime(timeStr)
+		absTime, err := AbsoluteTimeStringToTime(timeStr)
 		if err != nil {
 			t.Error(err)
 			continue
