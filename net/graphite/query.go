@@ -134,7 +134,7 @@ func (self *Query) parseTimeString(timeStr string) (*time.Time, error) {
 	}
 
 	if IsAbsoluteTimeString(timeStr) {
-		return AbsouleteTimeStringToTime(timeStr)
+		return AbsoluteTimeStringToTime(timeStr)
 	}
 
 	return nil, fmt.Errorf(errorQueryInvalidTimeFormat, timeStr)
