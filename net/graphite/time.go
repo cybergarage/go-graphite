@@ -28,34 +28,35 @@ const (
 	queryAbsoluteTimeFormat    = "15:04_20060102"
 )
 
+var graphiteQueryAbsoluteTimeRegexes []*regexp.Regexp
+
+// getAbsoluteTimeRegexes returns a Regexp slice of the absolute time formats.
+func getAbsoluteTimeRegexes() []*regexp.Regexp {
+	if graphiteQueryAbsoluteTimeRegexes == nil {
+		graphiteQueryAbsoluteTimeRegexes = []*regexp.Regexp{
+			regexp.MustCompile(queryAbsoluteTimeNowRegex),
+			regexp.MustCompile(queryAbsoluteTimeRegex),
+			regexp.MustCompile(queryAbsoluteTimeUnixRegex),
+		}
+	}
+	return graphiteQueryAbsoluteTimeRegexes
+}
+
 // IsAbsoluteTimeString returns the specified string whether it is based on the absolute time formats.
 func IsAbsoluteTimeString(timeStr string) bool {
-	queryAbsTimeRegexs := []string{
-		queryAbsoluteTimeNowRegex,
-		queryAbsoluteTimeRegex,
-		queryAbsoluteTimeUnixRegex,
-	}
-
-	for _, regex := range queryAbsTimeRegexs {
-		matched, _ := regexp.MatchString(regex, timeStr)
+	for _, regex := range getAbsoluteTimeRegexes() {
+		matched := regex.MatchString(timeStr)
 		if matched {
 			return true
 		}
 	}
-
 	return false
 }
 
 // AbsoluteTimeStringToTime returns a time based on the specified relative time string.
 func AbsoluteTimeStringToTime(timeStr string) (*time.Time, error) {
-	queryRelativeTimeRegexs := []string{
-		queryAbsoluteTimeNowRegex,
-		queryAbsoluteTimeRegex,
-		queryAbsoluteTimeUnixRegex,
-	}
-
-	for n, regex := range queryRelativeTimeRegexs {
-		matched, _ := regexp.MatchString(regex, timeStr)
+	for n, regex := range getAbsoluteTimeRegexes() {
+		matched := regex.MatchString(timeStr)
 		if !matched {
 			continue
 		}
@@ -85,20 +86,28 @@ func AbsoluteTimeStringToTime(timeStr string) (*time.Time, error) {
 	return nil, fmt.Errorf(errorQueryInvalidTimeFormat, timeStr)
 }
 
+var graphiteQueryRelativeTimeRegexes []*regexp.Regexp
+
+// getRelativeTimeRegexes returns a Regexp slice of the relative time formats.
+func getRelativeTimeRegexes() []*regexp.Regexp {
+	if graphiteQueryRelativeTimeRegexes == nil {
+		graphiteQueryRelativeTimeRegexes = []*regexp.Regexp{
+			regexp.MustCompile(queryRelativeTimeSecondsRegex),
+			regexp.MustCompile(queryRelativeTimeMinutesRegex),
+			regexp.MustCompile(queryRelativeTimeHoursRegex),
+			regexp.MustCompile(queryRelativeTimeDaysRegex),
+			regexp.MustCompile(queryRelativeTimeWeeksRegex),
+			regexp.MustCompile(queryRelativeTimeMonthsRegex),
+			regexp.MustCompile(queryRelativeTimeYearsRegex),
+		}
+	}
+	return graphiteQueryRelativeTimeRegexes
+}
+
 // IsRelativeTimeString returns the specified string whether it is based on the releative time formats.
 func IsRelativeTimeString(timeStr string) bool {
-	queryRelativeTimeRegexs := []string{
-		queryRelativeTimeSecondsRegex,
-		queryRelativeTimeMinutesRegex,
-		queryRelativeTimeHoursRegex,
-		queryRelativeTimeDaysRegex,
-		queryRelativeTimeWeeksRegex,
-		queryRelativeTimeMonthsRegex,
-		queryRelativeTimeYearsRegex,
-	}
-
-	for _, regex := range queryRelativeTimeRegexs {
-		matched, _ := regexp.MatchString(regex, timeStr)
+	for _, regex := range getRelativeTimeRegexes() {
+		matched := regex.MatchString(timeStr)
 		if matched {
 			return true
 		}
@@ -109,20 +118,10 @@ func IsRelativeTimeString(timeStr string) bool {
 
 // RelativeTimeStringToTime returns a time based on the specified relative time string.
 func RelativeTimeStringToTime(timeStr string) (*time.Time, error) {
-	queryRelativeTimeRegexs := []string{
-		queryRelativeTimeSecondsRegex,
-		queryRelativeTimeMinutesRegex,
-		queryRelativeTimeHoursRegex,
-		queryRelativeTimeDaysRegex,
-		queryRelativeTimeWeeksRegex,
-		queryRelativeTimeMonthsRegex,
-		queryRelativeTimeYearsRegex,
-	}
-
 	now := time.Now()
 
-	for n, regex := range queryRelativeTimeRegexs {
-		matched, _ := regexp.MatchString(regex, timeStr)
+	for n, regex := range getRelativeTimeRegexes() {
+		matched := regex.MatchString(timeStr)
 		if !matched {
 			continue
 		}
