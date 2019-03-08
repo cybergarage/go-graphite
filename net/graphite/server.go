@@ -4,7 +4,10 @@
 
 package graphite
 
-import "net"
+import (
+	"net"
+	"time"
+)
 
 // Server is an instance for Graphite protocols.
 type Server struct {
@@ -27,6 +30,7 @@ func NewServer() *Server {
 func (server *Server) SetConfig(conf *Config) {
 	server.SetCarbonPort(conf.GetCarbonPort())
 	server.SetRenderPort(conf.GetRenderPort())
+	server.SetConnectionTimeout(conf.GetConnectionTimeout())
 }
 
 // SetBoundInterface sets a bound interface to the server.
@@ -68,6 +72,17 @@ func (server *Server) SetRenderPort(port int) {
 // GetRenderPort returns a bind port for Render.
 func (server *Server) GetRenderPort() int {
 	return server.Render.GetPort()
+}
+
+// SetConnectionTimeout sets the connection timeout.
+func (server *Server) SetConnectionTimeout(d time.Duration) {
+	server.Carbon.SetConnectionTimeout(d)
+	server.Render.SetConnectionTimeout(d)
+}
+
+// GetConnectionTimeout return the connection timeout.
+func (server *Server) GetConnectionTimeout() time.Duration {
+	return server.Render.GetConnectionTimeout()
 }
 
 // Start starts the server.

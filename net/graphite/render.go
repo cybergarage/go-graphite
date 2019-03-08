@@ -15,12 +15,15 @@ import (
 const (
 	// DefaultRenderPort is the default port number for Render
 	DefaultRenderPort int = 8080
+	// DefaultRenderConnectionTimeout is a default timeout for Render.
+	DefaultRenderConnectionTimeout time.Duration = DefaultConnectionTimeout
 )
 
 // Render is an instance for Graphite render protocols.
 type Render struct {
 	addr               string
 	port               int
+	connectionTimeout  time.Duration
 	renderListener     RenderRequestListener
 	server             *http.Server
 	extraHTTPListeners map[string]RenderHTTPRequestListener
@@ -31,6 +34,7 @@ func NewRender() *Render {
 	server := &Render{
 		addr:               "",
 		port:               DefaultRenderPort,
+		connectionTimeout:  DefaultRenderConnectionTimeout,
 		renderListener:     nil,
 		server:             nil,
 		extraHTTPListeners: make(map[string]RenderHTTPRequestListener),
@@ -57,6 +61,16 @@ func (render *Render) SetPort(port int) {
 // GetPort returns a bound port.
 func (render *Render) GetPort() int {
 	return render.port
+}
+
+// SetConnectionTimeout sets the connection timeout.
+func (render *Render) SetConnectionTimeout(d time.Duration) {
+	render.connectionTimeout = d
+}
+
+// GetConnectionTimeout return the connection timeout.
+func (render *Render) GetConnectionTimeout() time.Duration {
+	return render.connectionTimeout
 }
 
 // SetRenderListener sets a default listener.
@@ -97,8 +111,9 @@ func (render *Render) Start() error {
 	addr := net.JoinHostPort(render.addr, strconv.Itoa(render.port))
 
 	render.server = &http.Server{
-		Addr:    addr,
-		Handler: render,
+		Addr:        addr,
+		ReadTimeout: render.connectionTimeout,
+		Handler:     render,
 	}
 
 	c := make(chan error)
