@@ -6,10 +6,14 @@ package graphite
 
 import (
 	"reflect"
+	"time"
 )
 
 const (
+	// DefaultBindingRetryCount is a default retry count when the server can't bind the specified port.
 	DefaultBindingRetryCount = 0
+	// DefaultConnectionTimeout is a default timeout for Render and Carbon server.
+	DefaultConnectionTimeout = time.Second * 60
 )
 
 // Config represents a cofiguration for extended specifications.
@@ -20,6 +24,7 @@ type Config struct {
 	Addr                        string
 	CarbonPort                  int
 	RenderPort                  int
+	ConnectionTimeout           time.Duration
 }
 
 // NewDefaultConfig returns a default configuration.
@@ -31,6 +36,7 @@ func NewDefaultConfig() *Config {
 		CarbonPort:                  DefaultCarbonPort,
 		RenderPort:                  DefaultRenderPort,
 		BindingRetryCount:           DefaultBindingRetryCount,
+		ConnectionTimeout:           DefaultConnectionTimeout,
 	}
 	return conf
 }
@@ -102,6 +108,16 @@ func (conf *Config) SetBindingRetryCount(n int) {
 // GetBindingRetryCount returns a bind retry count.
 func (conf *Config) GetBindingRetryCount() int {
 	return conf.BindingRetryCount
+}
+
+// SetConnectionTimeout sets the connection timeout for the carbon and the render server.
+func (conf *Config) SetConnectionTimeout(d time.Duration) {
+	conf.ConnectionTimeout = d
+}
+
+// GetConnectionTimeout return the connection timeout of he carbon and the render server.
+func (conf *Config) GetConnectionTimeout() time.Duration {
+	return conf.ConnectionTimeout
 }
 
 // Equals returns true whether the specified other class is same, otherwise false.

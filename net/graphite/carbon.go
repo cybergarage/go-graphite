@@ -9,11 +9,14 @@ import (
 	"io"
 	"net"
 	"strconv"
+	"time"
 )
 
 const (
-	// DefaultCarbonPort is the default port number for Carbon Server
+	// DefaultCarbonPort is the default port number for Carbon.
 	DefaultCarbonPort int = 2003
+	// DefaultCarbonConnectionTimeout is a default timeout for Carbon.
+	DefaultCarbonConnectionTimeout time.Duration = DefaultConnectionTimeout
 )
 
 const (
@@ -35,19 +38,21 @@ type CarbonListener interface {
 
 // Carbon is an instance for Carbon protocols.
 type Carbon struct {
-	addr           string
-	port           int
-	carbonListener CarbonListener
-	tcpListener    net.Listener
+	addr              string
+	port              int
+	connectionTimeout time.Duration
+	carbonListener    CarbonListener
+	tcpListener       net.Listener
 }
 
 // NewCarbon returns a new Carbon.
 func NewCarbon() *Carbon {
 	carbon := &Carbon{
-		addr:           "",
-		port:           DefaultCarbonPort,
-		carbonListener: nil,
-		tcpListener:    nil,
+		addr:              "",
+		port:              DefaultCarbonPort,
+		connectionTimeout: DefaultCarbonConnectionTimeout,
+		carbonListener:    nil,
+		tcpListener:       nil,
 	}
 	return carbon
 }
@@ -70,6 +75,16 @@ func (carbon *Carbon) SetPort(port int) {
 // GetPort returns a bound port.
 func (carbon *Carbon) GetPort() int {
 	return carbon.port
+}
+
+// SetConnectionTimeout sets the connection timeout.
+func (carbon *Carbon) SetConnectionTimeout(d time.Duration) {
+	carbon.connectionTimeout = d
+}
+
+// GetConnectionTimeout return the connection timeout.
+func (carbon *Carbon) GetConnectionTimeout() time.Duration {
+	return carbon.connectionTimeout
 }
 
 // SetCarbonListener sets a default listener.
@@ -169,6 +184,7 @@ func (carbon *Carbon) serve() error {
 
 func (carbon *Carbon) receive(conn net.Conn) error {
 	defer conn.Close()
+	conn.SetReadDeadline(time.Now().Add(carbon.connectionTimeout))
 
 	reader := bufio.NewReader(conn)
 	for {
