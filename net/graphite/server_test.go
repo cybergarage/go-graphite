@@ -36,12 +36,15 @@ func newTestServer() *TestServer {
 	return server
 }
 
-func (self *TestServer) InsertMetricsRequestReceived(m *Metrics, err error) {
+func (self *TestServer) InsertMetricsRequestReceived(ms []*Metrics, err error) {
 	if err != nil {
 		return
 	}
-	//fmt.Printf("InsertMetricsRequestReceived = %v\n", m)
-	self.MetricsCount++
+
+	for _, _ = range ms {
+		//fmt.Printf("InsertMetricsRequestReceived = %v\n", m)
+		self.MetricsCount++
+	}
 }
 
 func (self *TestServer) HTTPRequestReceived(r *http.Request, w http.ResponseWriter) {
