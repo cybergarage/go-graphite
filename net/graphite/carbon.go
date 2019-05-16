@@ -6,7 +6,7 @@ package graphite
 
 import (
 	"bufio"
-	"io"
+	"io/ioutil"
 	"net"
 	"strconv"
 	"time"
@@ -93,8 +93,8 @@ func (carbon *Carbon) SetCarbonListener(listener CarbonListener) {
 }
 
 // FeedPlainTextString returns a metrics of the specified text.
-func (carbon *Carbon) FeedPlainTextString(text string) ([]*Metrics, error) {
-	ms, err := NewMetricsWithPlainText(text)
+func (carbon *Carbon) FeedPlainTextString(reqString string) ([]*Metrics, error) {
+	ms, err := NewMetricsWithPlainText(reqString)
 
 	if carbon.carbonListener != nil {
 		carbon.carbonListener.InsertMetricsRequestReceived(ms, err)
@@ -104,8 +104,8 @@ func (carbon *Carbon) FeedPlainTextString(text string) ([]*Metrics, error) {
 }
 
 // FeedPlainTextBytes returns a metrics of the specified bytes.
-func (carbon *Carbon) FeedPlainTextBytes(bytes []byte) ([]*Metrics, error) {
-	return carbon.FeedPlainTextString(string(bytes))
+func (carbon *Carbon) FeedPlainTextBytes(reqBytes []byte) ([]*Metrics, error) {
+	return carbon.FeedPlainTextString(string(reqBytes))
 }
 
 // Start starts the Carbon server.
@@ -185,15 +185,12 @@ func (carbon *Carbon) receive(conn net.Conn) error {
 	conn.SetReadDeadline(time.Now().Add(carbon.connectionTimeout))
 
 	reader := bufio.NewReader(conn)
-	for {
-		line, _, err := reader.ReadLine()
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return err
-		}
-		carbon.FeedPlainTextBytes(line)
+	reqBytes, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return err
 	}
+
+	carbon.FeedPlainTextBytes(reqBytes)
+
 	return nil
 }
