@@ -113,15 +113,14 @@ func (self *Metrics) ParsePlainLine(line string) error {
 		return err
 	}
 
-	var unixTime int64
-	unixTime, err = strconv.ParseInt(strs[2], 10, 64)
+	ts, err := TimeStringToTime(strs[2])
 	if err != nil {
 		return err
 	}
 
 	dp := NewDataPoint()
 	dp.Value = value
-	dp.Timestamp = time.Unix(unixTime, 0)
+	dp.Timestamp = *ts
 
 	err = self.AddDataPoint(dp)
 	if err != nil {
