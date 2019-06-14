@@ -182,9 +182,7 @@ func (carbon *Carbon) serve() error {
 
 func (carbon *Carbon) receive(conn net.Conn) error {
 	defer conn.Close()
-	if 0 < carbon.connectionTimeout {
-		conn.SetReadDeadline(time.Now().Add(carbon.connectionTimeout))
-	}
+	conn.SetReadDeadline(time.Now().Add(carbon.connectionTimeout))
 
 	reader := bufio.NewReader(conn)
 	reqBytes, err := ioutil.ReadAll(reader)
