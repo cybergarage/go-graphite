@@ -16,7 +16,7 @@ const (
 	// DefaultCarbonPort is the default port number for Carbon.
 	DefaultCarbonPort int = 2003
 	// DefaultCarbonConnectionTimeout is a default timeout for Carbon.
-	DefaultCarbonConnectionTimeout time.Duration = DefaultConnectionTimeout
+	DefaultCarbonConnectionTimeout time.Duration = 0
 )
 
 const (
@@ -182,7 +182,9 @@ func (carbon *Carbon) serve() error {
 
 func (carbon *Carbon) receive(conn net.Conn) error {
 	defer conn.Close()
-	conn.SetReadDeadline(time.Now().Add(carbon.connectionTimeout))
+	if 0 < carbon.connectionTimeout {
+		conn.SetReadDeadline(time.Now().Add(carbon.connectionTimeout))
+	}
 
 	reader := bufio.NewReader(conn)
 	reqBytes, err := ioutil.ReadAll(reader)
