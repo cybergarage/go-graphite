@@ -76,9 +76,7 @@ func (server *Server) GetRenderPort() int {
 
 // SetConnectionTimeout sets the connection timeout.
 func (server *Server) SetConnectionTimeout(d time.Duration) {
-	// NOTE : Disable to set the timeout to Carbon because collectd uses a connected connection repeatedly
-	//server.Carbon.SetConnectionTimeout(d)
-
+	server.Carbon.SetConnectionTimeout(d)
 	server.Render.SetConnectionTimeout(d)
 }
 
