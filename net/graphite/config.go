@@ -15,7 +15,7 @@ const (
 	// DefaultConnectionTimeout is a default timeout for Render and Carbon server.
 	DefaultConnectionTimeout = time.Second * 60
 	// DefaultConnectionWaitTimeout is a default wait timeout for Render and Carbon server.
-	DefaultConnectionWaitTimeout = time.Second * 1
+	DefaultConnectionWaitTimeout = time.Second * 10
 )
 
 // Config represents a cofiguration for extended specifications.
