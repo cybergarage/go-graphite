@@ -1,3 +1,3 @@
-module go-graphite
+module github.com/cybergarage/go-graphite
 
 go 1.12
