@@ -6,7 +6,8 @@ package graphite
 
 import (
 	"bufio"
-	"io/ioutil"
+	"fmt"
+	"io"
 	"net"
 	"strconv"
 	"time"
@@ -15,8 +16,8 @@ import (
 const (
 	// DefaultCarbonPort is the default port number for Carbon.
 	DefaultCarbonPort int = 2003
-	// DefaultCarbonConnectionTimeout is a default timeout for Carbon.
-	DefaultCarbonConnectionTimeout time.Duration = 0
+	// DefaultCarbonConnectionWaitTimeout is a default timeout for Carbon.
+	DefaultCarbonConnectionWaitTimeout time.Duration = DefaultConnectionWaitTimeout
 )
 
 const (
@@ -38,21 +39,21 @@ type CarbonListener interface {
 
 // Carbon is an instance for Carbon protocols.
 type Carbon struct {
-	addr              string
-	port              int
-	connectionTimeout time.Duration
-	carbonListener    CarbonListener
-	tcpListener       net.Listener
+	addr                  string
+	port                  int
+	connectionWaitTimeout time.Duration
+	carbonListener        CarbonListener
+	tcpListener           net.Listener
 }
 
 // NewCarbon returns a new Carbon.
 func NewCarbon() *Carbon {
 	carbon := &Carbon{
-		addr:              "",
-		port:              DefaultCarbonPort,
-		connectionTimeout: DefaultCarbonConnectionTimeout,
-		carbonListener:    nil,
-		tcpListener:       nil,
+		addr:                  "",
+		port:                  DefaultCarbonPort,
+		connectionWaitTimeout: DefaultCarbonConnectionWaitTimeout,
+		carbonListener:        nil,
+		tcpListener:           nil,
 	}
 	return carbon
 }
@@ -77,14 +78,14 @@ func (carbon *Carbon) GetPort() int {
 	return carbon.port
 }
 
-// SetConnectionTimeout sets the connection timeout.
-func (carbon *Carbon) SetConnectionTimeout(d time.Duration) {
-	carbon.connectionTimeout = d
+// SetConnectionWaitTimeout sets the connection wait timeout.
+func (carbon *Carbon) SetConnectionWaitTimeout(d time.Duration) {
+	carbon.connectionWaitTimeout = d
 }
 
-// GetConnectionTimeout return the connection timeout.
-func (carbon *Carbon) GetConnectionTimeout() time.Duration {
-	return carbon.connectionTimeout
+// GetConnectionWaitTimeout return the connection wait timeout.
+func (carbon *Carbon) GetConnectionWaitTimeout() time.Duration {
+	return carbon.connectionWaitTimeout
 }
 
 // SetCarbonListener sets a default listener.
@@ -182,15 +183,30 @@ func (carbon *Carbon) serve() error {
 
 func (carbon *Carbon) receive(conn net.Conn) error {
 	defer conn.Close()
-	conn.SetReadDeadline(time.Now().Add(carbon.connectionTimeout))
 
-	reader := bufio.NewReader(conn)
-	reqBytes, err := ioutil.ReadAll(reader)
-	if err != nil {
-		return err
+	var readLines string
+	for {
+		conn.SetReadDeadline(time.Now().Add(time.Second))
+		reader := bufio.NewReader(conn)
+		line, _, err := reader.ReadLine()
+		if err == nil {
+			readLines += string(line)
+			readLines += "\n"
+		} else {
+			if 0 < len(readLines) {
+				fmt.Printf("%s", string(readLines))
+				carbon.FeedPlainTextBytes([]byte(readLines))
+				readLines = ""
+			}
+			if err == io.EOF {
+				break
+			}
+			netErr, ok := err.(net.Error)
+			if ok && netErr.Timeout() {
+				continue
+			}
+			return err
+		}
 	}
-
-	carbon.FeedPlainTextBytes(reqBytes)
-
 	return nil
 }
