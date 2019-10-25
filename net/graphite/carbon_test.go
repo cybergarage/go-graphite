@@ -109,3 +109,33 @@ func TestCarbonFeed(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestCarbonMultipleFeed(t *testing.T) {
+	feedBytes, err := ioutil.ReadFile(carbonTestFeedDataFilename)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	server := newTestServer()
+
+	err = server.Start()
+	if err != nil {
+		t.Error(err)
+	}
+
+	cli := NewClient()
+
+	for n := 0; n < 10; n++ {
+		err = cli.FeedString(string(feedBytes))
+		if err != nil {
+			t.Error(err)
+		}
+		time.Sleep(time.Microsecond * 500)
+	}
+
+	err = server.Stop()
+	if err != nil {
+		t.Error(err)
+	}
+}
