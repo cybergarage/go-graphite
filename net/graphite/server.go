@@ -74,10 +74,14 @@ func (server *Server) GetRenderPort() int {
 	return server.Render.GetPort()
 }
 
-// SetConnectionTimeout sets the connection timeout.
+// SetConnectionTimeout sets the connection timeout for Render .
 func (server *Server) SetConnectionTimeout(d time.Duration) {
-	server.Carbon.SetConnectionTimeout(d)
 	server.Render.SetConnectionTimeout(d)
+}
+
+// SetConnectionWaitTimeout sets the connection wait timeout for Carbon .
+func (server *Server) SetConnectionWaitTimeout(d time.Duration) {
+	server.Carbon.SetConnectionWaitTimeout(d)
 }
 
 // GetConnectionTimeout return the connection timeout.
