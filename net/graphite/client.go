@@ -107,10 +107,9 @@ func (self *Client) FeedString(m string) error {
 	if err != nil {
 		return err
 	}
+	defer conn.Close()
 
 	err = self.FeedStringWithConnection(conn, m)
-
-	err = conn.Close()
 	if err != nil {
 		return err
 	}
