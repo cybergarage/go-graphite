@@ -34,7 +34,7 @@ version: ${VERSION_GO}
 format:
 	gofmt -w ${PACKAGE_NAME}
 
-package: format $(shell find src/${PACKAGE_ID}  -type f -name '*.go')
+package: format $(shell find ${PACKAGE_NAME}  -type f -name '*.go')
 	go build -v ${PACKAGES}
 
 test: package
