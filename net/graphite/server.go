@@ -31,6 +31,7 @@ func (server *Server) SetConfig(conf *Config) {
 	server.SetCarbonPort(conf.GetCarbonPort())
 	server.SetRenderPort(conf.GetRenderPort())
 	server.SetConnectionTimeout(conf.GetConnectionTimeout())
+	server.SetConnectionWaitTimeout(conf.GetConnectionWaitTimeout())
 }
 
 // SetBoundInterface sets a bound interface to the server.
