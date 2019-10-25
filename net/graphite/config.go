@@ -27,6 +27,7 @@ type Config struct {
 	CarbonPort                  int
 	RenderPort                  int
 	ConnectionTimeout           time.Duration
+	ConnectionWaitTimeout       time.Duration
 }
 
 // NewDefaultConfig returns a default configuration.
@@ -39,6 +40,7 @@ func NewDefaultConfig() *Config {
 		RenderPort:                  DefaultRenderPort,
 		BindingRetryCount:           DefaultBindingRetryCount,
 		ConnectionTimeout:           DefaultConnectionTimeout,
+		ConnectionWaitTimeout:       DefaultConnectionWaitTimeout,
 	}
 	return conf
 }
@@ -120,6 +122,16 @@ func (conf *Config) SetConnectionTimeout(d time.Duration) {
 // GetConnectionTimeout return the connection timeout of he carbon and the render server.
 func (conf *Config) GetConnectionTimeout() time.Duration {
 	return conf.ConnectionTimeout
+}
+
+// SetConnectionWaitTimeout sets the connection timeout for the carbon and the render server.
+func (conf *Config) SetConnectionWaitTimeout(d time.Duration) {
+	conf.ConnectionWaitTimeout = d
+}
+
+// GetConnectionWaitTimeout return the connection timeout of he carbon and the render server.
+func (conf *Config) GetConnectionWaitTimeout() time.Duration {
+	return conf.ConnectionWaitTimeout
 }
 
 // Equals returns true whether the specified other class is same, otherwise false.
