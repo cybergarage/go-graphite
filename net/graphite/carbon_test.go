@@ -95,6 +95,7 @@ func TestCarbonFeed(t *testing.T) {
 	err = server.Start()
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	cli := NewClient()
@@ -122,6 +123,7 @@ func TestCarbonMultipleFeed(t *testing.T) {
 	err = server.Start()
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	cli := NewClient()
@@ -131,7 +133,53 @@ func TestCarbonMultipleFeed(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		time.Sleep(time.Microsecond * 500)
+		time.Sleep(time.Millisecond * 100)
+	}
+
+	err = server.Stop()
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCarbonMultipleFeedWithKeepConnection(t *testing.T) {
+	feedBytes, err := ioutil.ReadFile(carbonTestFeedDataFilename)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	serverWaitTimeout := time.Millisecond * 500
+
+	server := newTestServer()
+	server.SetConnectionWaitTimeout(serverWaitTimeout)
+
+	err = server.Start()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	cli := NewClient()
+
+	conn, err := cli.Open()
+	if err != nil {
+		t.Error(err)
+		server.Stop()
+		return
+	}
+
+	for n := 0; n < 10; n++ {
+		err = cli.FeedStringWithConnection(conn, string(feedBytes))
+		if err != nil {
+			t.Error(err)
+		}
+		time.Sleep(serverWaitTimeout * 2)
+	}
+
+	err = conn.Close()
+	if err != nil {
+		t.Error(err)
 	}
 
 	err = server.Stop()

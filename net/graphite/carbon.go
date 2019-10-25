@@ -6,7 +6,6 @@ package graphite
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"net"
 	"strconv"
@@ -186,7 +185,7 @@ func (carbon *Carbon) receive(conn net.Conn) error {
 
 	var readLines string
 	for {
-		conn.SetReadDeadline(time.Now().Add(time.Second))
+		conn.SetReadDeadline(time.Now().Add(carbon.connectionWaitTimeout))
 		reader := bufio.NewReader(conn)
 		line, _, err := reader.ReadLine()
 		if err == nil {
@@ -194,7 +193,6 @@ func (carbon *Carbon) receive(conn net.Conn) error {
 			readLines += "\n"
 		} else {
 			if 0 < len(readLines) {
-				fmt.Printf("%s", string(readLines))
 				carbon.FeedPlainTextBytes([]byte(readLines))
 				readLines = ""
 			}
