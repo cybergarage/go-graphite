@@ -35,6 +35,7 @@ type Client struct {
 	CarbonPort int
 	RenderPort int
 	Timeout    time.Duration
+	conn       net.Conn
 }
 
 // NewClient returns a new Client.
@@ -89,11 +90,20 @@ func (self *Client) GetTimeout() time.Duration {
 	return self.Timeout
 }
 
-// FeedString posts a specified string to Carbon.
-func (self *Client) FeedString(m string) error {
+// Open connects to the specified host.
+func (self *Client) Open() (net.Conn, error) {
 	addr := net.JoinHostPort(self.Host, strconv.Itoa(self.CarbonPort))
 	dialer := net.Dialer{Timeout: self.Timeout}
 	conn, err := dialer.Dial("tcp", addr)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
+
+// FeedString posts a specified string to Carbon.
+func (self *Client) FeedString(m string) error {
+	conn, err := self.Open()
 	if err != nil {
 		return err
 	}
