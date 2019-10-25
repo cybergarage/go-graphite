@@ -11,19 +11,18 @@
 PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
-GITHUB_ROOT=github.com/cybergarage
+MODULE_NAME_ROOT=github.com/cybergarage
 
 PACKAGE_NAME=net/graphite
-GITHUB=${GITHUB_ROOT}/go-graphite
+MODULE_NAME=go-graphite
 
-GITHUB_ID=${GITHUB}.git/${PACKAGE_NAME}
-PACKAGE_ID=${GITHUB}/${PACKAGE_NAME}
+PACKAGE_ID=${MODULE_NAME}/${PACKAGE_NAME}
 
 PACKAGES=${PACKAGE_ID}
 
-.PHONY: setup
+.PHONY:
 
-all: setup test
+all: test
 
 VERSION_GO="./net/graphite/version.go"
 
@@ -32,28 +31,8 @@ ${VERSION_GO}: ./net/graphite/version.gen
 
 version: ${VERSION_GO}
 
-SETUP_CMD="./setup"
-
-setup:
-	@echo "#!/bin/bash" > ${SETUP_CMD}
-	@echo "export GOPATH=\`pwd\`" >> ${SETUP_CMD}
-	@echo "git pull" >> ${SETUP_CMD}
-	@echo "if [ ! -d src ]; then" >> ${SETUP_CMD}
-	@echo "  mkdir -p src" >> ${SETUP_CMD}
-	@echo "fi" >> ${SETUP_CMD}
-	@echo "go_graphite_path=\"${GITHUB}\"" >> ${SETUP_CMD}
-	@echo "go_graphite_dir=\"src/\$${go_graphite_path}\"" >> ${SETUP_CMD}
-	@echo "if [ -d \$${go_graphite_dir} ]; then" >> ${SETUP_CMD}
-	@echo "  pushd \$${go_graphite_dir} && git pull && popd" >> ${SETUP_CMD}
-	@echo "else" >> ${SETUP_CMD}
-	@echo "  go get -u ${GITHUB_ID}" >> ${SETUP_CMD}
-	@echo "  pushd src && mv ${GITHUB}.git \$${go_graphite_path} && popd" >> ${SETUP_CMD}
-	@echo "fi" >> ${SETUP_CMD}
-	@chmod a+x ${SETUP_CMD}
-	@./${SETUP_CMD}
-
 format:
-	gofmt -w src/${GITHUB}
+	gofmt -w ${PACKAGE_NAME}
 
 package: format $(shell find src/${PACKAGE_ID}  -type f -name '*.go')
 	go build -v ${PACKAGES}
