@@ -14,7 +14,7 @@ GOPATH=$(shell pwd)
 MODULE_NAME_ROOT=github.com/cybergarage
 
 PACKAGE_NAME=net/graphite
-MODULE_NAME=go-graphite
+MODULE_NAME=github.com/cybergarage/go-graphite
 
 PACKAGE_ID=${MODULE_NAME}/${PACKAGE_NAME}
 
