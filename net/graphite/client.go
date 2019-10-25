@@ -108,17 +108,24 @@ func (self *Client) FeedString(m string) error {
 		return err
 	}
 
+	err = self.FeedStringWithConnection(conn, m)
+
+	err = conn.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// FeedStringWithConnection posts a specified string to the specified connection.
+func (self *Client) FeedStringWithConnection(conn net.Conn, m string) error {
 	nWrote, err := fmt.Fprintf(conn, "%s", m)
 	if err != nil {
 		return err
 	}
 	if nWrote <= 0 {
 		return fmt.Errorf(errorPostMetric, nWrote, m)
-	}
-
-	err = conn.Close()
-	if err != nil {
-		return err
 	}
 
 	return nil
