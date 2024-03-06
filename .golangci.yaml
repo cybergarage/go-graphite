@@ -9,9 +9,12 @@ issues:
       linters:
         - goconst
         - gosec
+        - exhaustruct
 linters:
   enable-all: true
   disable:
+    - dupword
+    - gocyclo
     - deadcode
     - paralleltest
     - testpackage
@@ -53,6 +56,10 @@ linters:
     - golint
     - musttag
     - unconvert
+    - perfsprint
+    - gochecknoinits
+    - containedctx
+    - asasalint
 linters-settings:
   staticcheck:
     checks: ["all", "-SA5008", "-SA1008"]
