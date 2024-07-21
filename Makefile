@@ -11,16 +11,18 @@
 PREFIX?=$(shell pwd)
 GOPATH=$(shell pwd)
 
-MODULE_NAME_ROOT=github.com/cybergarage
+MODULE_ROOT=github.com/cybergarage/go-graphite
 
-PACKAGE_NAME=net/graphite
-MODULE_NAME=github.com/cybergarage/go-graphite
+PKG_NAME=net/graphite
+PKG_COVER=${PKG_NAME}-cover
+PKG_ID=${MODULE_ROOT}/${PKG_NAME}
+PKG_SRC_DIR=${PKG_NAME}
+PKG_SRCS=\
+        ${PKG_SRC_DIR}
+PKGS=\
+        ${PKG_ID}
 
-PACKAGE_ID=${MODULE_NAME}/${PACKAGE_NAME}
-
-PACKAGES=${PACKAGE_ID}
-
-.PHONY:
+.PHONY: format vet lint cover clean
 
 all: test
 
@@ -32,18 +34,18 @@ ${VERSION_GO}: ./net/graphite/version.gen
 version: ${VERSION_GO}
 
 format:
-	gofmt -w ${PACKAGE_NAME}
+	gofmt -w ${PKG_NAME}
 
-package: format $(shell find ${PACKAGE_NAME}  -type f -name '*.go')
-	go build -v ${PACKAGES}
+vet: format
+	go vet ${PKG_ID}
 
-test: package
-	go test -v -cover ${PACKAGES}
+lint: vet
+	golangci-lint run ${PKG_SRCS}
 
-install: build
-	go install ${PACKAGES}
+test: lint
+	 go test -v -timeout 60s ${PKGS} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out
 
 clean:
 	rm ${PREFIX}/bin/*
 	rm -rf _obj
-	go clean -i ${PACKAGES}
+	go clean -i ${PKGS}
