@@ -70,12 +70,12 @@ func (self *Metrics) GetName() string {
 	return self.Name
 }
 
-// GetDataPointCount returns a count of the datapoints
+// GetDataPointCount returns a count of the datapoints.
 func (self *Metrics) GetDataPointCount() int {
 	return len(self.DataPoints)
 }
 
-// AddDataPoint add a new datapoint to the metrics
+// AddDataPoint add a new datapoint to the metrics.
 func (self *Metrics) AddDataPoint(dp *DataPoint) error {
 	self.DataPoints = append(self.DataPoints, dp)
 	return nil
@@ -89,7 +89,7 @@ func (self *Metrics) GetDataPoint(n int) (*DataPoint, error) {
 	return self.DataPoints[n], nil
 }
 
-// SortDataPoints sorts the current datapoints
+// SortDataPoints sorts the current datapoints.
 func (self *Metrics) SortDataPoints() error {
 	sort.Sort(DataPoints(self.DataPoints))
 	return nil

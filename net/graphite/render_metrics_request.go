@@ -47,8 +47,6 @@ func (render *Render) responseFindMetrics(httpWriter http.ResponseWriter, httpRe
 		render.responseFindJSONMetrics(httpWriter, httpReq, query, metrics)
 		return
 	}
-
-	render.responseBadRequest(httpWriter, httpReq)
 }
 
 func (render *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, httpReq *http.Request, query *Query, metrics []*Metrics) {
@@ -61,7 +59,6 @@ func (render *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, ht
 	mCount := len(metrics)
 
 	for i, m := range metrics {
-
 		paths := strings.Split(m.Name, renderMetricsDelim)
 		pathCount := len(paths)
 		if pathCount <= 0 {
@@ -71,7 +68,7 @@ func (render *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, ht
 		// Start bracket
 		httpWriter.Write([]byte("{\n"))
 
-		// Leaf infomation (static)
+		// Leaf information (static)
 		httpWriter.Write([]byte("\"is_leaf\": 1,\n"))
 
 		// Name and path

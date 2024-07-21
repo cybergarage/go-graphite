@@ -12,31 +12,31 @@ import (
 )
 
 const (
-	// QueryTargetRegexp is 'query' parameter identifier for Metrics API
+	// QueryTargetRegexp is 'query' parameter identifier for Metrics API.
 	QueryTargetRegexp string = "query"
-	// QueryTarget is 'target' parameter identifier for Render API
+	// QueryTarget is 'target' parameter identifier for Render API.
 	QueryTarget string = "target"
-	// QueryFrom is 'from' parameter identifier for Render API
+	// QueryFrom is 'from' parameter identifier for Render API.
 	QueryFrom string = "from"
-	// QueryUntil is 'until' parameter identifier for Render API
+	// QueryUntil is 'until' parameter identifier for Render API.
 	QueryUntil string = "until"
-	// QueryFormat is 'format' parameter identifier for Render API
+	// QueryFormat is 'format' parameter identifier for Render API.
 	QueryFormat string = "format"
-	// QueryFormatTypeCompleter is a format type for Metrics API
+	// QueryFormatTypeCompleter is a format type for Metrics API.
 	QueryFormatTypeCompleter string = "completer"
-	// QueryFormatTypeTreeJSON is a format type for Metrics API
+	// QueryFormatTypeTreeJSON is a format type for Metrics API.
 	QueryFormatTypeTreeJSON string = "treejson"
-	// QueryFormatTypeRaw is a format type for Render API
+	// QueryFormatTypeRaw is a format type for Render API.
 	QueryFormatTypeRaw string = "raw"
-	// QueryFormatTypeCSV is a format type for Render API
+	// QueryFormatTypeCSV is a format type for Render API.
 	QueryFormatTypeCSV string = "csv"
-	// QueryFormatTypeJSON is a format type for Render API
+	// QueryFormatTypeJSON is a format type for Render API.
 	QueryFormatTypeJSON string = "json"
-	// QueryContentTypeRaw is a content type for the CSV format
+	// QueryContentTypeRaw is a content type for the CSV format.
 	QueryContentTypeRaw string = "text/plain"
-	// QueryContentTypeCSV is a content type for the CSV format
+	// QueryContentTypeCSV is a content type for the CSV format.
 	QueryContentTypeCSV string = "text/csv"
-	// QueryContentTypeJSON is a content type for the JSON format
+	// QueryContentTypeJSON is a content type for the JSON format.
 	QueryContentTypeJSON string = "application/json"
 )
 

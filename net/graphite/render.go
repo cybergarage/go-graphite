@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	// DefaultRenderPort is the default port number for Render
+	// DefaultRenderPort is the default port number for Render.
 	DefaultRenderPort int = 8080
 	// DefaultRenderConnectionTimeout is a default timeout for Render.
 	DefaultRenderConnectionTimeout time.Duration = DefaultConnectionTimeout
