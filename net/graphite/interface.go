@@ -164,7 +164,7 @@ func HasMultipleAvailableInterfaces() bool {
 	return true
 }
 
-// GetAvailableAddresses retuns all available IPv4 addresses in the node.
+// GetAvailableAddresses returns all available IPv4 addresses in the node.
 func GetAvailableAddresses() ([]string, error) {
 	addrs := make([]string, 0)
 
