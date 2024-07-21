@@ -80,7 +80,7 @@ func (render *Render) SetRenderListener(listener RenderRequestListener) {
 
 // SetHTTPRequestListener sets a extra HTTP request listener.
 func (render *Render) SetHTTPRequestListener(path string, listener RenderHTTPRequestListener) error {
-	if len(path) <= 0 || listener == nil {
+	if len(path) == 0 || listener == nil {
 		return fmt.Errorf(errorInvalidHTTPRequestListener, path, listener)
 	}
 

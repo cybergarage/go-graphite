@@ -44,7 +44,7 @@ func NewMetricsWithPlainText(text string) ([]*Metrics, error) {
 	lines := strings.Split(text, carbonPlainTextLineSep)
 	ms := make([]*Metrics, 0)
 	for _, line := range lines {
-		if len(line) <= 0 {
+		if len(line) == 0 {
 			continue
 		}
 		m, err := NewMetricsWithPlainLine(line)

@@ -41,7 +41,7 @@ func NewManager() *Manager {
 
 // SetHTTPRequestListener sets a extra HTTP request listner.
 func (mgr *Manager) SetHTTPRequestListener(path string, listener RenderHTTPRequestListener) error {
-	if len(path) <= 0 || listener == nil {
+	if len(path) == 0 || listener == nil {
 		return fmt.Errorf(errorInvalidHTTPRequestListener, path, listener)
 	}
 	mgr.httpListeners[path] = listener
@@ -230,7 +230,7 @@ func (mgr *Manager) Stop() error {
 
 // Stop stops this server.
 func (mgr *Manager) getAppropriateServerForInterface(ifi *net.Interface) (*Server, error) {
-	if len(mgr.Servers) <= 0 {
+	if len(mgr.Servers) == 0 {
 		return nil, fmt.Errorf(errorManagerNotRunning)
 	}
 
@@ -248,7 +248,7 @@ func (mgr *Manager) getAppropriateServerForInterface(ifi *net.Interface) (*Serve
 
 // IsRunning returns true whether the local servers are running, otherwise false.
 func (mgr *Manager) IsRunning() bool {
-	if len(mgr.Servers) <= 0 {
+	if len(mgr.Servers) == 0 {
 		return false
 	}
 	return true
