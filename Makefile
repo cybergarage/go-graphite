@@ -13,10 +13,11 @@ GOPATH=$(shell pwd)
 
 MODULE_ROOT=github.com/cybergarage/go-graphite
 
-PKG_NAME=net/graphite
+PKG_PREFIX=net
+PKG_NAME=graphite
 PKG_COVER=${PKG_NAME}-cover
-PKG_ID=${MODULE_ROOT}/${PKG_NAME}
-PKG_SRC_DIR=${PKG_NAME}
+PKG_ID=${MODULE_ROOT}/${PKG_PREFIX}/${PKG_NAME}
+PKG_SRC_DIR=${PKG_PREFIX}/${PKG_NAME}
 PKG_SRCS=\
         ${PKG_SRC_DIR}
 PKGS=\
@@ -34,7 +35,7 @@ ${VERSION_GO}: ./net/graphite/version.gen
 version: ${VERSION_GO}
 
 format:
-	gofmt -w ${PKG_NAME}
+	gofmt -w ${PKG_PREFIX}/${PKG_NAME}
 
 vet: format
 	go vet ${PKG_ID}
