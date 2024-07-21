@@ -30,7 +30,7 @@ func (self *TestCarbon) InsertMetricsRequestReceived(ms []*Metrics, err error) {
 	if err != nil {
 		return
 	}
-	for _, _ = range ms {
+	for range ms {
 		self.MetricsCount++
 	}
 }

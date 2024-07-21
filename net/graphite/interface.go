@@ -21,7 +21,7 @@ const (
 	errorAvailableInterfaceFound  = "Available interface not found"
 )
 
-// IsIPv6Address retusn true whether the specified address is a IPv6 address
+// IsIPv6Address retusn true whether the specified address is a IPv6 address.
 func IsIPv6Address(addr string) bool {
 	if len(addr) <= 0 {
 		return false
@@ -33,7 +33,7 @@ func IsIPv6Address(addr string) bool {
 	return false
 }
 
-// IsIPv4Address retusn true whether the specified address is a IPv4 address
+// IsIPv4Address retusn true whether the specified address is a IPv4 address.
 func IsIPv4Address(addr string) bool {
 	if len(addr) <= 0 {
 		return false
@@ -42,7 +42,7 @@ func IsIPv4Address(addr string) bool {
 	return !IsIPv6Address(addr)
 }
 
-// IsLoopbackAddress retusn true whether the specified address is a local addresses
+// IsLoopbackAddress retusn true whether the specified address is a local addresses.
 func IsLoopbackAddress(addr string) bool {
 	localAddrs := []string{
 		"127.0.0.1",
@@ -71,7 +71,7 @@ func IsCommunicableAddress(addr string) bool {
 	return true
 }
 
-// IsBridgeInterface retuns true when the specified interface is a bridge interface, otherwise false.
+// IsBridgeInterface returns true when the specified interface is a bridge interface, otherwise false.
 func IsBridgeInterface(ifi *net.Interface) bool {
 	ifname := ifi.Name
 
@@ -82,7 +82,7 @@ func IsBridgeInterface(ifi *net.Interface) bool {
 	return false
 }
 
-// GetInterfaceAddress retuns a IPv4 address of the specivied interface.
+// GetInterfaceAddress returns a IPv4 address of the specivied interface.
 func GetInterfaceAddress(ifi *net.Interface) (string, error) {
 	if ifi == nil {
 		return "", fmt.Errorf(errorNullInterface)
@@ -111,7 +111,7 @@ func GetInterfaceAddress(ifi *net.Interface) (string, error) {
 	return "", errors.New(errorAvailableAddressNotFound)
 }
 
-// GetAvailableInterfaces retuns all available interfaces in the node.
+// GetAvailableInterfaces returns all available interfaces in the node.
 func GetAvailableInterfaces() ([]*net.Interface, error) {
 	useIfs := make([]*net.Interface, 0)
 
@@ -150,7 +150,7 @@ func GetAvailableInterfaces() ([]*net.Interface, error) {
 	return useIfs, err
 }
 
-// HasMultipleAvailableInterfaces retuns true when the system has multiple interfaces, otherwise false.
+// HasMultipleAvailableInterfaces returns true when the system has multiple interfaces, otherwise false.
 func HasMultipleAvailableInterfaces() bool {
 	ifes, err := GetAvailableInterfaces()
 	if err != nil {
@@ -164,7 +164,7 @@ func HasMultipleAvailableInterfaces() bool {
 	return true
 }
 
-// GetAvailableAddresses retuns all available IPv4 addresses in the node
+// GetAvailableAddresses retuns all available IPv4 addresses in the node.
 func GetAvailableAddresses() ([]string, error) {
 	addrs := make([]string, 0)
 

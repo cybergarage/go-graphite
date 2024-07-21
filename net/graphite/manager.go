@@ -114,7 +114,6 @@ func (mgr *Manager) GetBoundAddresses() ([]string, error) {
 
 // GetBoundInterfaces returns the listen interfaces.
 func (mgr *Manager) GetBoundInterfaces() ([]*net.Interface, error) {
-
 	if !mgr.IsRunning() {
 		return nil, fmt.Errorf(errorManagerNotRunning)
 	}

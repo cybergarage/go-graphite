@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	// DefaultHost is the default host for Carbon and Render servers
+	// DefaultHost is the default host for Carbon and Render servers.
 	DefaultHost string = "localhost"
-	// DefaultTimeoutSecond is the default request timeout for Carbon and Render servers
+	// DefaultTimeoutSecond is the default request timeout for Carbon and Render servers.
 	DefaultTimeoutSecond = 60
 )
 
@@ -132,7 +132,7 @@ func (self *Client) FeedStringWithConnection(conn net.Conn, m string) error {
 
 // FeedMetrics posts all metric datapoints to Carbon.
 func (self *Client) FeedMetrics(m *Metrics) error {
-	for n, _ := range m.DataPoints {
+	for n := range m.DataPoints {
 		err := self.feedMetricsDataPoint(m, n)
 		if err != nil {
 			return err

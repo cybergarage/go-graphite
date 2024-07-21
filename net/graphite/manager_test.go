@@ -36,7 +36,6 @@ func testManagerBinding(t *testing.T, conf *Config) {
 	if err != nil {
 		t.Error(err)
 	}
-
 }
 
 func TestManagerWithDefaultConfig(t *testing.T) {

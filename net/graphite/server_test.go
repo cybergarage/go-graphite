@@ -41,8 +41,8 @@ func (self *TestServer) InsertMetricsRequestReceived(ms []*Metrics, err error) {
 		return
 	}
 
-	for _, _ = range ms {
-		//fmt.Printf("InsertMetricsRequestReceived = %v\n", m)
+	for range ms {
+		// fmt.Printf("InsertMetricsRequestReceived = %v\n", m)
 		self.MetricsCount++
 	}
 }
