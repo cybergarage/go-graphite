@@ -20,15 +20,15 @@ func NewTestRender() *TestRender {
 	return render
 }
 
-func (self *TestRender) FindMetricsRequestReceived(query *Query, err error) ([]*Metrics, error) {
+func (render *TestRender) FindMetricsRequestReceived(query *Query, err error) ([]*Metrics, error) {
 	return nil, nil
 }
 
-func (self *TestRender) QueryMetricsRequestReceived(query *Query, err error) ([]*Metrics, error) {
+func (render *TestRender) QueryMetricsRequestReceived(query *Query, err error) ([]*Metrics, error) {
 	if err != nil {
 		return nil, nil
 	}
-	self.QueryCount++
+	render.QueryCount++
 	return nil, nil
 }
 

@@ -36,20 +36,20 @@ func newTestServer() *TestServer {
 	return server
 }
 
-func (self *TestServer) InsertMetricsRequestReceived(ms []*Metrics, err error) {
+func (server *TestServer) InsertMetricsRequestReceived(ms []*Metrics, err error) {
 	if err != nil {
 		return
 	}
 
 	for range ms {
 		// fmt.Printf("InsertMetricsRequestReceived = %v\n", m)
-		self.MetricsCount++
+		server.MetricsCount++
 	}
 }
 
-func (self *TestServer) HTTPRequestReceived(r *http.Request, w http.ResponseWriter) {
+func (server *TestServer) HTTPRequestReceived(r *http.Request, w http.ResponseWriter) {
 	w.WriteHeader(http.StatusOK)
-	self.HTTPRequestCount++
+	server.HTTPRequestCount++
 }
 
 func TestNewServer(t *testing.T) {

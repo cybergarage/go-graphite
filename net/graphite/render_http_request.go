@@ -24,24 +24,24 @@ const (
 )
 
 // ServeHTTP handles HTTP requests.
-func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Request) {
+func (render *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Request) {
 	path := httpReq.URL.Path
 
 	switch path {
 	case renderDefaultFindRequestPath:
-		self.handleFindRequest(httpWriter, httpReq)
+		render.handleFindRequest(httpWriter, httpReq)
 		return
 	case renderDefaultExpandRequestPath:
 		// TODO : Not implemented yet
 	case renderDefaultIndexRequestPath:
-		self.handleIndexRequest(httpWriter, httpReq)
+		render.handleIndexRequest(httpWriter, httpReq)
 		return
 	case renderDefaultQueryRequestPath:
-		self.handleRenderRequest(httpWriter, httpReq)
+		render.handleRenderRequest(httpWriter, httpReq)
 		return
 	}
 
-	httpListener, ok := self.extraHTTPListeners[path]
+	httpListener, ok := render.extraHTTPListeners[path]
 	if ok {
 		httpListener.HTTPRequestReceived(httpReq, httpWriter)
 		return
@@ -50,12 +50,12 @@ func (self *Render) ServeHTTP(httpWriter http.ResponseWriter, httpReq *http.Requ
 	http.NotFound(httpWriter, httpReq)
 }
 
-func (self *Render) responseBadRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
+func (render *Render) responseBadRequest(httpWriter http.ResponseWriter, httpReq *http.Request) {
 	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	http.Error(httpWriter, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 }
 
-func (self *Render) responseInternalServerError(httpWriter http.ResponseWriter, httpReq *http.Request) {
+func (render *Render) responseInternalServerError(httpWriter http.ResponseWriter, httpReq *http.Request) {
 	httpWriter.Header().Set(httpHeaderAccessControlAllowOrigin, httpHeaderAccessControlAllowOriginAll)
 	http.Error(httpWriter, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }

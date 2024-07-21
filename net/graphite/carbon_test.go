@@ -26,12 +26,12 @@ func NewTestCarbon() *TestCarbon {
 	return carbon
 }
 
-func (self *TestCarbon) InsertMetricsRequestReceived(ms []*Metrics, err error) {
+func (carbon *TestCarbon) InsertMetricsRequestReceived(ms []*Metrics, err error) {
 	if err != nil {
 		return
 	}
 	for range ms {
-		self.MetricsCount++
+		carbon.MetricsCount++
 	}
 }
 
