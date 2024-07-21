@@ -16,9 +16,9 @@ const (
 )
 
 const (
-	errorNullInterface            = "Null interface"
-	errorAvailableAddressNotFound = "Available address not found"
-	errorAvailableInterfaceFound  = "Available interface not found"
+	errorNullInterface            = "null interface"
+	errorAvailableAddressNotFound = "available address not found"
+	errorAvailableInterfaceFound  = "available interface not found"
 )
 
 // IsIPv6Address retusn true whether the specified address is a IPv6 address.

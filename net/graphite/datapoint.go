@@ -22,41 +22,41 @@ func NewDataPoint() *DataPoint {
 }
 
 // SetValue sets a value to the datapoint.
-func (self *DataPoint) SetValue(value float64) {
-	self.Value = value
+func (dp *DataPoint) SetValue(value float64) {
+	dp.Value = value
 }
 
 // GetValue returns the value of the datapoint.
-func (self *DataPoint) GetValue() float64 {
-	return self.Value
+func (dp *DataPoint) GetValue() float64 {
+	return dp.Value
 }
 
 // SetTimestamp sets a timestamp to the datapoint.
-func (self *DataPoint) SetTimestamp(value time.Time) {
-	self.Timestamp = value
+func (dp *DataPoint) SetTimestamp(value time.Time) {
+	dp.Timestamp = value
 }
 
 // GetTimestamp returns the timestamp of the datapoint.
-func (self *DataPoint) GetTimestamp() time.Time {
-	return self.Timestamp
+func (dp *DataPoint) GetTimestamp() time.Time {
+	return dp.Timestamp
 }
 
 // PlainTextString returns a string representation datapoint for the plaintext protocol.
-func (self *DataPoint) PlainTextString() string {
-	return fmt.Sprintf("%f %d", self.Value, self.UnixTimestamp())
+func (dp *DataPoint) PlainTextString() string {
+	return fmt.Sprintf("%f %d", dp.Value, dp.UnixTimestamp())
 }
 
 // RenderCSVString returns a string representation datapoint for the render CSV format.
-func (self *DataPoint) RenderCSVString() string {
-	return fmt.Sprintf("%s,%f", self.Timestamp.Format(metricsRenderCSVTimestampFormat), self.Value)
+func (dp *DataPoint) RenderCSVString() string {
+	return fmt.Sprintf("%s,%f", dp.Timestamp.Format(metricsRenderCSVTimestampFormat), dp.Value)
 }
 
 // TimestampString returns a string for the Render API format.
-func (self *DataPoint) TimestampString() string {
-	return self.Timestamp.Format(metricsRenderCSVTimestampFormat)
+func (dp *DataPoint) TimestampString() string {
+	return dp.Timestamp.Format(metricsRenderCSVTimestampFormat)
 }
 
 // UnixTimestampg returns a Unix timestamp value.
-func (self *DataPoint) UnixTimestamp() int64 {
-	return self.Timestamp.Unix()
+func (dp *DataPoint) UnixTimestamp() int64 {
+	return dp.Timestamp.Unix()
 }

@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	metricParseError                = "Invalid request : %s"
+	metricParseError                = "invalid request : %s"
 	metricsRenderCSVTimestampFormat = "20060102 15:04:05"
 )
 
@@ -61,44 +61,44 @@ func NewMetricsWithPlainText(text string) ([]*Metrics, error) {
 }
 
 // SetName sets a name to the metrics.
-func (self *Metrics) SetName(name string) {
-	self.Name = name
+func (m *Metrics) SetName(name string) {
+	m.Name = name
 }
 
 // GetName returns the metrics name.
-func (self *Metrics) GetName() string {
-	return self.Name
+func (m *Metrics) GetName() string {
+	return m.Name
 }
 
 // GetDataPointCount returns a count of the datapoints.
-func (self *Metrics) GetDataPointCount() int {
-	return len(self.DataPoints)
+func (m *Metrics) GetDataPointCount() int {
+	return len(m.DataPoints)
 }
 
 // AddDataPoint add a new datapoint to the metrics.
-func (self *Metrics) AddDataPoint(dp *DataPoint) error {
-	self.DataPoints = append(self.DataPoints, dp)
+func (m *Metrics) AddDataPoint(dp *DataPoint) error {
+	m.DataPoints = append(m.DataPoints, dp)
 	return nil
 }
 
 // GetDataPoint retur a datapoint of the specified index.
-func (self *Metrics) GetDataPoint(n int) (*DataPoint, error) {
-	if (n < 0) || (len(self.DataPoints) <= n) {
-		return nil, fmt.Errorf(errorInvalidRangeIndex, n, len(self.DataPoints))
+func (m *Metrics) GetDataPoint(n int) (*DataPoint, error) {
+	if (n < 0) || (len(m.DataPoints) <= n) {
+		return nil, fmt.Errorf(errorInvalidRangeIndex, n, len(m.DataPoints))
 	}
-	return self.DataPoints[n], nil
+	return m.DataPoints[n], nil
 }
 
 // SortDataPoints sorts the current datapoints.
-func (self *Metrics) SortDataPoints() error {
-	sort.Sort(DataPoints(self.DataPoints))
+func (m *Metrics) SortDataPoints() error {
+	sort.Sort(DataPoints(m.DataPoints))
 	return nil
 }
 
 // ParsePlainLine parses the specified line string of the following plain text protocol.
 // Feeding In Your Data — Graphite 0.10.0 documentation
 // http://graphite.readthedocs.io/en/latest/feeding-carbon.html
-func (self *Metrics) ParsePlainLine(line string) error {
+func (m *Metrics) ParsePlainLine(line string) error {
 	strs := strings.Split(strings.Trim(line, carbonPlainTextLineTrim), carbonPlainTextLineFieldSep)
 	if len(strs) != 3 {
 		return fmt.Errorf(metricParseError, line)
@@ -106,7 +106,7 @@ func (self *Metrics) ParsePlainLine(line string) error {
 
 	var err error
 
-	self.Name = strs[0]
+	m.Name = strs[0]
 
 	value, err := strconv.ParseFloat(strs[1], 64)
 	if err != nil {
@@ -122,7 +122,7 @@ func (self *Metrics) ParsePlainLine(line string) error {
 	dp.Value = value
 	dp.Timestamp = *ts
 
-	err = self.AddDataPoint(dp)
+	err = m.AddDataPoint(dp)
 	if err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func (self *Metrics) ParsePlainLine(line string) error {
 // ParseRenderCSV parses the specified line string of the following Render CSV protocol.
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
-func (self *Metrics) ParseRenderCSV(line string) error {
+func (m *Metrics) ParseRenderCSV(line string) error {
 	strs := strings.Split(line, ",")
 	if len(strs) != 3 {
 		return fmt.Errorf(metricParseError, line)
@@ -141,7 +141,7 @@ func (self *Metrics) ParseRenderCSV(line string) error {
 
 	var err error
 
-	self.Name = strings.TrimSpace(strs[0])
+	m.Name = strings.TrimSpace(strs[0])
 
 	ts, err := time.Parse(metricsRenderCSVTimestampFormat, strings.TrimSpace(strs[1]))
 	if err != nil {
@@ -157,7 +157,7 @@ func (self *Metrics) ParseRenderCSV(line string) error {
 	dp.Value = value
 	dp.Timestamp = ts
 
-	err = self.AddDataPoint(dp)
+	err = m.AddDataPoint(dp)
 	if err != nil {
 		return err
 	}
@@ -166,10 +166,10 @@ func (self *Metrics) ParseRenderCSV(line string) error {
 }
 
 // DataPointPlainTextString returns a string representation datapoint for the plaintext protocol.
-func (self *Metrics) DataPointPlainTextString(n int) (string, error) {
-	if len(self.DataPoints) < n {
-		return "", fmt.Errorf(errorInvalidRangeIndex, n, len(self.DataPoints))
+func (m *Metrics) DataPointPlainTextString(n int) (string, error) {
+	if len(m.DataPoints) < n {
+		return "", fmt.Errorf(errorInvalidRangeIndex, n, len(m.DataPoints))
 	}
-	dp := self.DataPoints[n]
-	return fmt.Sprintf("%s %s", self.Name, dp.PlainTextString()), nil
+	dp := m.DataPoints[n]
+	return fmt.Sprintf("%s %s", m.Name, dp.PlainTextString()), nil
 }

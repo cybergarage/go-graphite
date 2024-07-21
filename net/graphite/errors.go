@@ -5,9 +5,9 @@
 package graphite
 
 const (
-	errorInvalidRangeIndex = "Invalid Range Request : 0 <= %d < %d"
+	errorInvalidRangeIndex = "invalid Range Request : 0 <= %d < %d"
 
-	errorQueryInvalidTimeFormat = "Invalid time format : %s"
+	errorQueryInvalidTimeFormat = "invalid time format : %s"
 
-	errorInvalidHTTPRequestListener = "Invalid HTTPRequestListener : %s %v"
+	errorInvalidHTTPRequestListener = "invalid HTTPRequestListener : %s %v"
 )

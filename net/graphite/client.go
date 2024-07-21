@@ -24,9 +24,9 @@ const (
 )
 
 const (
-	errorPostMetric              = "Couldn't write metric [%d] : %v"
-	errorFindMetricsStatusCode   = "Bad status code (%d) : %s"
-	errorGetAllMetricsStatusCode = "Bad status code (%d)"
+	errorPostMetric              = "couldn't write metric [%d] : %v"
+	errorFindMetricsStatusCode   = "bad status code (%d) : %s"
+	errorGetAllMetricsStatusCode = "bad status code (%d)"
 )
 
 // Client is an instance for Graphite protocols.
@@ -51,49 +51,49 @@ func NewClient() *Client {
 }
 
 // SetHost sets a target host.
-func (self *Client) SetHost(host string) {
-	self.Host = host
+func (client *Client) SetHost(host string) {
+	client.Host = host
 }
 
 // GetHost returns a target host.
-func (self *Client) GetHost() string {
-	return self.Host
+func (client *Client) GetHost() string {
+	return client.Host
 }
 
 // SetCarbonPort sets a target Carbon port.
-func (self *Client) SetCarbonPort(port int) {
-	self.CarbonPort = port
+func (client *Client) SetCarbonPort(port int) {
+	client.CarbonPort = port
 }
 
 // GetCarbonPort returns a target Carbon port.
-func (self *Client) GetCarbonPort() int {
-	return self.CarbonPort
+func (client *Client) GetCarbonPort() int {
+	return client.CarbonPort
 }
 
 // SetRenderPort sets a target Carbon port.
-func (self *Client) SetRenderPort(port int) {
-	self.RenderPort = port
+func (client *Client) SetRenderPort(port int) {
+	client.RenderPort = port
 }
 
 // GetRenderPort returns a target Carbon port.
-func (self *Client) GetRenderPort() int {
-	return self.RenderPort
+func (client *Client) GetRenderPort() int {
+	return client.RenderPort
 }
 
 // SetTimeout sets a timeout for the request.
-func (self *Client) SetTimeout(d time.Duration) {
-	self.Timeout = d
+func (client *Client) SetTimeout(d time.Duration) {
+	client.Timeout = d
 }
 
 // GetTimeout return  the timeout for the request.
-func (self *Client) GetTimeout() time.Duration {
-	return self.Timeout
+func (client *Client) GetTimeout() time.Duration {
+	return client.Timeout
 }
 
 // Open connects to the specified host.
-func (self *Client) Open() (net.Conn, error) {
-	addr := net.JoinHostPort(self.Host, strconv.Itoa(self.CarbonPort))
-	dialer := net.Dialer{Timeout: self.Timeout}
+func (client *Client) Open() (net.Conn, error) {
+	addr := net.JoinHostPort(client.Host, strconv.Itoa(client.CarbonPort))
+	dialer := net.Dialer{Timeout: client.Timeout}
 	conn, err := dialer.Dial("tcp", addr)
 	if err != nil {
 		return nil, err
@@ -102,14 +102,14 @@ func (self *Client) Open() (net.Conn, error) {
 }
 
 // FeedString posts a specified string to Carbon.
-func (self *Client) FeedString(m string) error {
-	conn, err := self.Open()
+func (client *Client) FeedString(m string) error {
+	conn, err := client.Open()
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	err = self.FeedStringWithConnection(conn, m)
+	err = client.FeedStringWithConnection(conn, m)
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (self *Client) FeedString(m string) error {
 }
 
 // FeedStringWithConnection posts a specified string to the specified connection.
-func (self *Client) FeedStringWithConnection(conn net.Conn, m string) error {
+func (client *Client) FeedStringWithConnection(conn net.Conn, m string) error {
 	nWrote, err := fmt.Fprintf(conn, "%s", m)
 	if err != nil {
 		return err
@@ -131,9 +131,9 @@ func (self *Client) FeedStringWithConnection(conn net.Conn, m string) error {
 }
 
 // FeedMetrics posts all metric datapoints to Carbon.
-func (self *Client) FeedMetrics(m *Metrics) error {
+func (client *Client) FeedMetrics(m *Metrics) error {
 	for n := range m.DataPoints {
-		err := self.feedMetricsDataPoint(m, n)
+		err := client.feedMetricsDataPoint(m, n)
 		if err != nil {
 			return err
 		}
@@ -142,28 +142,28 @@ func (self *Client) FeedMetrics(m *Metrics) error {
 }
 
 // feedMetricsDataPoint posts a specified metric to Carbon.
-func (self *Client) feedMetricsDataPoint(m *Metrics, n int) error {
+func (client *Client) feedMetricsDataPoint(m *Metrics, n int) error {
 	dpData, err := m.DataPointPlainTextString(n)
 	if err != nil {
 		return err
 	}
 
-	return self.FeedString(dpData)
+	return client.FeedString(dpData)
 }
 
 // FindMetrics searches the specified metrics.
 // Graphite - The Metrics API
 // https://graphite-api.readthedocs.io/en/latest/api.html#the-metrics-api
-func (self *Client) FindMetrics(q *Query) ([]*Metrics, error) {
-	url, err := q.FindMetricsURL(self.Host, self.RenderPort)
+func (client *Client) FindMetrics(q *Query) ([]*Metrics, error) {
+	url, err := q.FindMetricsURL(client.Host, client.RenderPort)
 	if err != nil {
 		return nil, err
 	}
 
-	client := http.Client{
-		Timeout: self.Timeout,
+	httpClient := http.Client{
+		Timeout: client.Timeout,
 	}
-	resp, err := client.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -198,16 +198,16 @@ func (self *Client) FindMetrics(q *Query) ([]*Metrics, error) {
 // GetAllMetrics returns all metrics.
 // Graphite - The Metrics API
 // https://graphite-api.readthedocs.io/en/latest/api.html#the-metrics-api
-func (self *Client) GetAllMetrics() ([]*Metrics, error) {
+func (client *Client) GetAllMetrics() ([]*Metrics, error) {
 	url := fmt.Sprintf("http://%s:%d%s",
-		self.Host,
-		self.RenderPort,
+		client.Host,
+		client.RenderPort,
 		renderDefaultIndexRequestPath)
 
-	client := http.Client{
-		Timeout: self.Timeout,
+	httpClient := http.Client{
+		Timeout: client.Timeout,
 	}
-	resp, err := client.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -242,19 +242,19 @@ func (self *Client) GetAllMetrics() ([]*Metrics, error) {
 // QueryRender queries with the specified parameters to Render.
 // Graphite - The Render API
 // https://graphite-api.readthedocs.io/en/latest/api.html#the-render-api-render
-func (self *Client) QueryRender(q *Query) ([]*Metrics, error) {
+func (client *Client) QueryRender(q *Query) ([]*Metrics, error) {
 	// FIXME : Support other formats
 	q.Format = QueryFormatTypeCSV
 
-	url, err := q.RenderURLString(self.Host, self.RenderPort)
+	url, err := q.RenderURLString(client.Host, client.RenderPort)
 	if err != nil {
 		return nil, err
 	}
 
-	client := http.Client{
-		Timeout: self.Timeout,
+	httpClient := http.Client{
+		Timeout: client.Timeout,
 	}
-	resp, err := client.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, err
 	}

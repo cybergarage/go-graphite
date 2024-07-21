@@ -77,19 +77,19 @@ func NewQueryWithQuery(oq *Query) *Query {
 // ParseHTTPRequest parses the specified Render request.
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
-func (self *Query) ParseHTTPRequest(httpReq *http.Request) error {
+func (q *Query) ParseHTTPRequest(httpReq *http.Request) error {
 	err := httpReq.ParseForm()
 	if err != nil {
 		return err
 	}
 
-	return self.ParseURLValues(httpReq.Form)
+	return q.ParseURLValues(httpReq.Form)
 }
 
 // ParseURLValues parses the specified parameters in a Render request.
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
-func (self *Query) ParseURLValues(urlValues url.Values) error {
+func (q *Query) ParseURLValues(urlValues url.Values) error {
 	var err error
 
 	for key, values := range urlValues {
@@ -97,30 +97,30 @@ func (self *Query) ParseURLValues(urlValues url.Values) error {
 		// For Metrics API
 		case QueryTargetRegexp:
 			if 0 < len(values) {
-				self.Target = values[0]
+				q.Target = values[0]
 			}
 		// For Render API
 		case QueryTarget:
 			if 0 < len(values) {
-				self.Target = values[0]
+				q.Target = values[0]
 			}
 		case QueryFrom:
 			if 0 < len(values) {
-				self.From, err = self.parseTimeString(values[0])
+				q.From, err = q.parseTimeString(values[0])
 				if err != nil {
 					return err
 				}
 			}
 		case QueryUntil:
 			if 0 < len(values) {
-				self.Until, err = self.parseTimeString(values[0])
+				q.Until, err = q.parseTimeString(values[0])
 				if err != nil {
 					return err
 				}
 			}
 		case QueryFormat:
 			if 0 < len(values) {
-				self.Format = values[0]
+				q.Format = values[0]
 			}
 		}
 	}
@@ -128,7 +128,7 @@ func (self *Query) ParseURLValues(urlValues url.Values) error {
 	return nil
 }
 
-func (self *Query) parseTimeString(timeStr string) (*time.Time, error) {
+func (q *Query) parseTimeString(timeStr string) (*time.Time, error) {
 	if IsRelativeTimeString(timeStr) {
 		return RelativeTimeStringToTime(timeStr)
 	}
@@ -143,8 +143,8 @@ func (self *Query) parseTimeString(timeStr string) (*time.Time, error) {
 // FindMetricsURL returns a path for Metrics API
 // The Metrics API
 // https://graphite-api.readthedocs.io/en/latest/api.html
-func (self *Query) FindMetricsURL(host string, port int) (string, error) {
-	if len(self.Target) <= 0 {
+func (q *Query) FindMetricsURL(host string, port int) (string, error) {
+	if len(q.Target) <= 0 {
 		return "", fmt.Errorf("%s is not specified", QueryTarget)
 	}
 
@@ -153,7 +153,7 @@ func (self *Query) FindMetricsURL(host string, port int) (string, error) {
 		port,
 		renderDefaultFindRequestPath,
 		QueryTargetRegexp,
-		self.Target)
+		q.Target)
 
 	return url, nil
 }
@@ -161,25 +161,25 @@ func (self *Query) FindMetricsURL(host string, port int) (string, error) {
 // RenderURLString returns a path for Render API
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
-func (self *Query) RenderURLString(host string, port int) (string, error) {
-	if len(self.Target) <= 0 {
+func (q *Query) RenderURLString(host string, port int) (string, error) {
+	if len(q.Target) <= 0 {
 		return "", fmt.Errorf("%s is not specified", QueryTarget)
 	}
 
 	params := make(map[string]string)
 
-	params[QueryTarget] = self.Target
+	params[QueryTarget] = q.Target
 
-	if self.From != nil {
-		params[QueryFrom] = self.From.Format(queryAbsoluteTimeFormat)
+	if q.From != nil {
+		params[QueryFrom] = q.From.Format(queryAbsoluteTimeFormat)
 	}
 
-	if self.Until != nil {
-		params[QueryUntil] = self.Until.Format(queryAbsoluteTimeFormat)
+	if q.Until != nil {
+		params[QueryUntil] = q.Until.Format(queryAbsoluteTimeFormat)
 	}
 
-	if 0 < len(self.Format) {
-		params[QueryFormat] = self.Format
+	if 0 < len(q.Format) {
+		params[QueryFormat] = q.Format
 	} else {
 		params[QueryFormat] = QueryFormatTypeCSV
 	}
