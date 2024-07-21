@@ -42,7 +42,7 @@ vet: format
 lint: vet
 	golangci-lint run ${PKG_SRCS}
 
-test: lint
+test:
 	 go test -v -timeout 60s ${PKGS} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out
 
 clean:
