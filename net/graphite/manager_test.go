@@ -19,7 +19,7 @@ func testManagerBinding(t *testing.T, conf *Config) {
 
 	addrs, err := mgr.GetBoundAddresses()
 	if err == nil {
-		if len(addrs) <= 0 {
+		if len(addrs) == 0 {
 			t.Errorf("%d", len(addrs))
 		}
 

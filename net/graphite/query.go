@@ -144,7 +144,7 @@ func (q *Query) parseTimeString(timeStr string) (*time.Time, error) {
 // The Metrics API
 // https://graphite-api.readthedocs.io/en/latest/api.html
 func (q *Query) FindMetricsURL(host string, port int) (string, error) {
-	if len(q.Target) <= 0 {
+	if len(q.Target) == 0 {
 		return "", fmt.Errorf("%s is not specified", QueryTarget)
 	}
 
@@ -162,7 +162,7 @@ func (q *Query) FindMetricsURL(host string, port int) (string, error) {
 // The Render URL API
 // http://graphite.readthedocs.io/en/latest/render_api.html
 func (q *Query) RenderURLString(host string, port int) (string, error) {
-	if len(q.Target) <= 0 {
+	if len(q.Target) == 0 {
 		return "", fmt.Errorf("%s is not specified", QueryTarget)
 	}
 
