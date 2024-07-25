@@ -121,3 +121,13 @@ func (server *Server) Stop() error {
 
 	return nil
 }
+
+// Restart restarts the server.
+func (server *Server) Restart() error {
+	err := server.Stop()
+	if err != nil {
+		return err
+	}
+
+	return server.Start()
+}
