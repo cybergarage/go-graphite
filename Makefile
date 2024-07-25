@@ -17,7 +17,7 @@ PKG_PREFIX=net
 PKG_NAME=graphite
 PKG_COVER=${PKG_NAME}-cover
 PKG_ID=${MODULE_ROOT}/${PKG_PREFIX}/${PKG_NAME}
-PKG_SRC_DIR=${PKG_PREFIX}/${PKG_NAME}
+PKG_DIR=${PKG_PREFIX}/${PKG_NAME}
 PKGS=\
         ${PKG_ID}
 
@@ -45,13 +45,13 @@ ${VERSION_GO}: ./net/graphite/version.gen
 version: ${VERSION_GO}
 
 format:
-	gofmt -w ${PKG_SRC_DIR} ${TEST_PKG_DIR} ${BIN_DIR}
+	gofmt -w ${PKG_DIR} ${TEST_PKG_DIR} ${BIN_DIR}
 
 vet: format
 	go vet ${PKG_ID}
 
 lint: vet
-	golangci-lint run ${PKG_SRC_DIR}/... ${BIN_DIR}/... ${TEST_PKG_DIR}/...
+	golangci-lint run ${PKG_DIR}/... ${BIN_DIR}/... ${TEST_PKG_DIR}/...
 
 test:
 	go test -v -p 1 -timeout 60s ${PKGS} ${TEST_PKG} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out
