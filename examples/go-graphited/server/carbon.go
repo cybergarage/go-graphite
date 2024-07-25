@@ -18,17 +18,5 @@ import (
 	"github.com/cybergarage/go-graphite/net/graphite"
 )
 
-// Server represents an example server.
-type Server struct {
-	*graphite.Server
-}
-
-// NewServer returns an example server instance.
-func NewServer() *Server {
-	server := &Server{
-		Server: graphite.NewServer(),
-	}
-	server.SetCarbonListener(server)
-	server.SetRenderListener(server)
-	return server
+func (server *Server) InsertMetricsRequestReceived([]*graphite.Metrics, error) {
 }
