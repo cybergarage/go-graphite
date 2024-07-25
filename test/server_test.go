@@ -23,7 +23,7 @@ func TestServer(t *testing.T) {
 
 	err := server.Start()
 	if err != nil {
-		t.Skip(err)
+		t.Error(err)
 		return
 	}
 
