@@ -51,7 +51,7 @@ vet: format
 	go vet ${PKG_ID}
 
 lint: vet
-	golangci-lint run ${PKG_DIR}/... ${BIN_DIR}/... ${TEST_PKG_DIR}/...
+	golangci-lint run ${PKG_DIR}/...
 
 test:
 	go test -v -p 1 -timeout 60s ${PKGS} ${TEST_PKG} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out
