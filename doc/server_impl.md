@@ -26,7 +26,7 @@ func NewServer() *Server {
 ```
 ### STEP2: Implementing your Carbon command handler
 
-Next, implement your Carbon command handler according to the [CarbonListener (PlainTextRequestListener)](../net/graphite/carbon_lisetner.go) interface of the go-graphite as the following:
+Next, implement your Carbon command handler according to the [CarbonListener (PlainTextRequestListener)](../net/graphite/carbon_listener.go) interface of the go-graphite as the following:
 
 ```
 func (server *Server) InsertMetricsRequestReceived([]*Metrics, error) {
