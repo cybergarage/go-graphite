@@ -18,12 +18,22 @@ PKG_NAME=graphite
 PKG_COVER=${PKG_NAME}-cover
 PKG_ID=${MODULE_ROOT}/${PKG_PREFIX}/${PKG_NAME}
 PKG_SRC_DIR=${PKG_PREFIX}/${PKG_NAME}
-PKG_SRCS=\
-        ${PKG_SRC_DIR}
 PKGS=\
         ${PKG_ID}
 
-.PHONY: format vet lint cover clean
+TEST_PKG_NAME=test
+TEST_PKG_ID=${MODULE_ROOT}/${TEST_PKG_NAME}
+TEST_PKG_DIR=${TEST_PKG_NAME}
+TEST_PKG=${MODULE_ROOT}/${TEST_PKG_DIR}
+
+BIN_DIR=examples
+BIN_ID=${MODULE_ROOT}/${BIN_DIR}
+BIN_SERVER=go-graphited
+BIN_SERVER_ID=${BIN_ID}/${BIN_SERVER}
+BINS=\
+	${BIN_SERVER_ID}
+
+.PHONY: format vet lint cover clean test install
 
 all: test
 
@@ -35,16 +45,20 @@ ${VERSION_GO}: ./net/graphite/version.gen
 version: ${VERSION_GO}
 
 format:
-	gofmt -w ${PKG_PREFIX}/${PKG_NAME}
+	gofmt -w ${PKG_SRC_DIR} ${TEST_PKG_DIR} ${BIN_DIR}
 
 vet: format
 	go vet ${PKG_ID}
 
 lint: vet
-	golangci-lint run ${PKG_SRCS}
+	golangci-lint run ${PKG_SRC_DIR}/... ${BIN_DIR}/... ${TEST_PKG_DIR}/...
 
 test:
-	 go test -v -timeout 60s ${PKGS} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out
+	go test -v -timeout 60s ${PKGS} ${TEST_PKG} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out
+	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
+
+install: test
+	go install ${BINS}
 
 clean:
 	rm ${PREFIX}/bin/*
