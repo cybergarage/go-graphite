@@ -5,7 +5,6 @@
 package graphite
 
 import (
-	"bufio"
 	"io"
 	"net"
 	"strconv"
@@ -84,11 +83,9 @@ func (carbon *Carbon) SetCarbonListener(listener CarbonListener) {
 // FeedPlainTextString returns a metrics of the specified text.
 func (carbon *Carbon) FeedPlainTextString(reqString string) ([]*Metrics, error) {
 	ms, err := NewMetricsWithPlainText(reqString)
-
 	if carbon.carbonListener != nil {
 		carbon.carbonListener.InsertMetricsRequestReceived(ms, err)
 	}
-
 	return ms, err
 }
 
@@ -172,28 +169,32 @@ func (carbon *Carbon) serve() error {
 func (carbon *Carbon) receive(conn net.Conn) error {
 	defer conn.Close()
 
-	var readLines string
+	reqBytes := make([]byte, 0)
+	readBytes := make([]byte, 1024)
 	for {
 		conn.SetReadDeadline(time.Now().Add(carbon.connectionWaitTimeout))
-		reader := bufio.NewReader(conn)
-		line, _, err := reader.ReadLine()
+
+		n, err := conn.Read(readBytes)
 		if err == nil {
-			readLines += string(line)
-			readLines += "\n"
-		} else {
-			if 0 < len(readLines) {
-				carbon.FeedPlainTextBytes([]byte(readLines))
-				readLines = ""
-			}
-			if err == io.EOF {
-				break
-			}
-			netErr, ok := err.(net.Error)
-			if ok && netErr.Timeout() {
-				continue
-			}
-			return err
+			reqBytes = append(reqBytes, readBytes[:n]...)
+			continue
 		}
+
+		if 0 < len(reqBytes) {
+			carbon.FeedPlainTextBytes(reqBytes)
+		}
+
+		if err == io.EOF {
+			break
+		}
+
+		netErr, ok := err.(net.Error)
+		if ok && netErr.Timeout() {
+			continue
+		}
+
+		return err
 	}
+
 	return nil
 }
