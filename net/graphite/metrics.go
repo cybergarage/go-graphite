@@ -41,7 +41,10 @@ func NewMetricsWithPlainLine(line string) (*Metrics, error) {
 // NewMetricsWithPlainText parses the specified data and returns the new metrics.
 func NewMetricsWithPlainText(text string) ([]*Metrics, error) {
 	var firstErr error
-	lines := strings.Split(text, carbonPlainTextLineSep)
+	lines := strings.FieldsFunc(text,
+		func(r rune) bool {
+			return r == '\n' || r == '\r'
+		})
 	ms := make([]*Metrics, 0)
 	for _, line := range lines {
 		if len(line) == 0 {
