@@ -83,10 +83,13 @@ func (carbon *Carbon) SetCarbonListener(listener CarbonListener) {
 // FeedPlainTextString returns a metrics of the specified text.
 func (carbon *Carbon) FeedPlainTextString(reqString string) ([]*Metrics, error) {
 	ms, err := NewMetricsWithPlainText(reqString)
+	if err != nil {
+		return nil, err
+	}
 	if carbon.carbonListener != nil {
 		carbon.carbonListener.InsertMetricsRequestReceived(ms, err)
 	}
-	return ms, err
+	return ms, nil
 }
 
 // FeedPlainTextBytes returns a metrics of the specified bytes.
