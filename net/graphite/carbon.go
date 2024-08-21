@@ -86,6 +86,9 @@ func (carbon *Carbon) FeedPlainTextString(reqString string) ([]*Metrics, error) 
 	if err != nil {
 		return []*Metrics{}, err
 	}
+	if len(ms) == 0 {
+		return []*Metrics{}, nil
+	}
 	if carbon.carbonListener != nil {
 		carbon.carbonListener.InsertMetricsRequestReceived(ms, err)
 	}
