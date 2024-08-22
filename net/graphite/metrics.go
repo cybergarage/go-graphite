@@ -34,8 +34,7 @@ func NewMetrics() *Metrics {
 // NewMetricsWithPlainLine parses the specified line and returns the new metrics.
 func NewMetricsWithPlainLine(line string) (*Metrics, error) {
 	m := NewMetrics()
-	err := m.ParsePlainLine(line)
-	return m, err
+	return m, m.ParsePlainLine(line)
 }
 
 // NewMetricsWithPlainText parses the specified data and returns the new metrics.
