@@ -45,7 +45,7 @@ func NewMetricsWithPlainText(text string) ([]*Metrics, error) {
 		func(r rune) bool {
 			return r == '\n' || r == '\r'
 		})
-	ms := make([]*Metrics, 0)
+	ms := []*Metrics{}
 	for _, line := range lines {
 		if len(line) == 0 {
 			continue
