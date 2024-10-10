@@ -5,5 +5,5 @@
 package graphite
 
 const (
-	Version = "0.1"
+	Version = "v1.0.3"
 )
