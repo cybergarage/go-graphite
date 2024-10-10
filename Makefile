@@ -33,7 +33,8 @@ BIN_SERVER_ID=${BIN_ID}/${BIN_SERVER}
 BINS=\
 	${BIN_SERVER_ID}
 
-.PHONY: format vet lint cover clean test install
+.PHONY: format vet lint cover clean test install version
+.IGNORE: lint
 
 all: test
 
@@ -43,8 +44,9 @@ ${VERSION_GO}: ./net/graphite/version.gen
 	$< > $@
 
 version: ${VERSION_GO}
+	-git commit ${PKG_DIR}/version.go -m "Update version"
 
-format:
+format: version
 	gofmt -w ${PKG_DIR} ${TEST_PKG_DIR} ${BIN_DIR}
 
 vet: format
@@ -53,7 +55,7 @@ vet: format
 lint: vet
 	golangci-lint run ${PKG_DIR}/...
 
-test:
+test: lint
 	go test -v -p 1 -timeout 60s ${PKGS} ${TEST_PKG} -cover -coverpkg=${PKG_ID} -coverprofile=${PKG_COVER}.out
 	go tool cover -html=${PKG_COVER}.out -o ${PKG_COVER}.html
 
