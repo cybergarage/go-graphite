@@ -1,3 +1,7 @@
 module github.com/cybergarage/go-graphite
 
-go 1.25
+<<<<<<< HEAD
+go 1.22
+=======
+go 1.22
+>>>>>>> 53ca2c3 (Update go.mod)
