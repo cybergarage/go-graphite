@@ -6,8 +6,10 @@ package graphite
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -148,9 +150,9 @@ func (q *Query) FindMetricsURL(host string, port int) (string, error) {
 		return "", fmt.Errorf("%s is not specified", QueryTarget)
 	}
 
-	url := fmt.Sprintf("http://%s:%d%s?%s=%s",
-		host,
-		port,
+	hostPort := net.JoinHostPort(host, strconv.Itoa(port))
+	url := fmt.Sprintf("http://%s%s?%s=%s",
+		hostPort,
 		renderDefaultFindRequestPath,
 		QueryTargetRegexp,
 		q.Target)
@@ -192,7 +194,8 @@ func (q *Query) RenderURLString(host string, port int) (string, error) {
 		query += fmt.Sprintf("%s=%s", key, value)
 	}
 
-	url := fmt.Sprintf("http://%s:%d%s?%s", host, port, renderDefaultQueryRequestPath, query)
+	hostPort := net.JoinHostPort(host, strconv.Itoa(port))
+	url := fmt.Sprintf("http://%s%s?%s", hostPort, renderDefaultQueryRequestPath, query)
 
 	return url, nil
 }

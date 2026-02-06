@@ -199,10 +199,8 @@ func (client *Client) FindMetrics(q *Query) ([]*Metrics, error) {
 // Graphite - The Metrics API
 // https://graphite-api.readthedocs.io/en/latest/api.html#the-metrics-api
 func (client *Client) GetAllMetrics() ([]*Metrics, error) {
-	url := fmt.Sprintf("http://%s:%d%s",
-		client.Host,
-		client.RenderPort,
-		renderDefaultIndexRequestPath)
+	hostPort := net.JoinHostPort(client.Host, strconv.Itoa(client.RenderPort))
+	url := fmt.Sprintf("http://%s%s", hostPort, renderDefaultIndexRequestPath)
 
 	httpClient := http.Client{
 		Timeout: client.Timeout,
