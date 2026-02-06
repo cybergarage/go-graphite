@@ -56,7 +56,7 @@ func (dp *DataPoint) TimestampString() string {
 	return dp.Timestamp.Format(metricsRenderCSVTimestampFormat)
 }
 
-// UnixTimestampg returns a Unix timestamp value.
+// UnixTimestamp returns the timestamp as a unix timestamp.
 func (dp *DataPoint) UnixTimestamp() int64 {
 	return dp.Timestamp.Unix()
 }

@@ -7,7 +7,7 @@ package graphite
 // DataPoints is a slice of DataPoint.
 type DataPoints []*DataPoint
 
-// NewDataPoint returns a new datapoint slice.
+// NewDataPoints returns a new DataPoints slice.
 func NewDataPoints(size int) []*DataPoint {
 	return make([]*DataPoint, size)
 }
