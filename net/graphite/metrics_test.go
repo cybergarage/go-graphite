@@ -6,7 +6,7 @@ package graphite
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -51,7 +51,7 @@ func TestMetricsParsePlainLine(t *testing.T) {
 }
 
 func TestMetricsParsePlainText(t *testing.T) {
-	feedBytes, err := ioutil.ReadFile(carbonTestFeedDataFilename)
+	feedBytes, err := os.ReadFile(carbonTestFeedDataFilename)
 	if err != nil {
 		t.Error(err)
 		return

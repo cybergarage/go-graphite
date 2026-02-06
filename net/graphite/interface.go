@@ -70,11 +70,7 @@ func IsCommunicableAddress(addr string) bool {
 func IsBridgeInterface(ifi *net.Interface) bool {
 	ifname := ifi.Name
 
-	if ifname == libvirtInterfaceName {
-		return true
-	}
-
-	return false
+	return ifname == libvirtInterfaceName
 }
 
 // GetInterfaceAddress returns a IPv4 address of the specivied interface.

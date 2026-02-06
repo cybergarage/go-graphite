@@ -248,8 +248,5 @@ func (mgr *Manager) getAppropriateServerForInterface(ifi *net.Interface) (*Serve
 
 // IsRunning returns true whether the local servers are running, otherwise false.
 func (mgr *Manager) IsRunning() bool {
-	if len(mgr.Servers) == 0 {
-		return false
-	}
-	return true
+	return len(mgr.Servers) != 0
 }

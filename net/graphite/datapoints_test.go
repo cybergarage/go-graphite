@@ -61,7 +61,6 @@ func TestDataPointsReverseOrderSort(t *testing.T) {
 }
 
 func TestDataPointsReverseRandomSort(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
 	now := time.Now()
 
 	dps := NewDataPoints(testDataPointsSortSampleCount)

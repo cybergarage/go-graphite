@@ -118,8 +118,6 @@ func IsRelativeTimeString(timeStr string) bool {
 
 // RelativeTimeStringToTime returns a time based on the specified relative time string.
 func RelativeTimeStringToTime(timeStr string) (*time.Time, error) {
-	now := time.Now()
-
 	for n, regex := range getRelativeTimeRegexes() {
 		matched := regex.MatchString(timeStr)
 		if !matched {
@@ -133,7 +131,7 @@ func RelativeTimeStringToTime(timeStr string) (*time.Time, error) {
 			break
 		}
 
-		now = time.Now()
+		now := time.Now()
 		switch n {
 		case 0: // queryRelativeTimeSecondsRegex
 			time := now.Add(-(time.Duration(timeNum) * time.Second))

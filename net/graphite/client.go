@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"strconv"
@@ -175,7 +174,7 @@ func (client *Client) FindMetrics(q *Query) ([]*Metrics, error) {
 		return nil, fmt.Errorf(errorFindMetricsStatusCode, resp.StatusCode, q.Target)
 	}
 
-	jsonBytes, err := ioutil.ReadAll(resp.Body)
+	jsonBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -219,7 +218,7 @@ func (client *Client) GetAllMetrics() ([]*Metrics, error) {
 		return nil, fmt.Errorf(errorGetAllMetricsStatusCode, resp.StatusCode)
 	}
 
-	jsonBytes, err := ioutil.ReadAll(resp.Body)
+	jsonBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

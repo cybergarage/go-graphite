@@ -6,7 +6,7 @@ package graphite
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"strconv"
@@ -115,7 +115,7 @@ func TestServerHTTPRequest(t *testing.T) {
 		}
 		defer resp.Body.Close()
 
-		_, err = ioutil.ReadAll(resp.Body)
+		_, err = io.ReadAll(resp.Body)
 		if err != nil {
 			t.Error(err)
 		}

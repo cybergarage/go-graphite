@@ -6,7 +6,7 @@ package graphite
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 )
@@ -84,7 +84,7 @@ func TestCarbonParseMetrics(t *testing.T) {
 }
 
 func TestCarbonFeed(t *testing.T) {
-	feedBytes, err := ioutil.ReadFile(carbonTestFeedDataFilename)
+	feedBytes, err := os.ReadFile(carbonTestFeedDataFilename)
 	if err != nil {
 		t.Error(err)
 		return
@@ -112,7 +112,7 @@ func TestCarbonFeed(t *testing.T) {
 }
 
 func TestCarbonMultipleFeed(t *testing.T) {
-	feedBytes, err := ioutil.ReadFile(carbonTestFeedDataFilename)
+	feedBytes, err := os.ReadFile(carbonTestFeedDataFilename)
 	if err != nil {
 		t.Error(err)
 		return
@@ -143,7 +143,7 @@ func TestCarbonMultipleFeed(t *testing.T) {
 }
 
 func TestCarbonMultipleFeedWithKeepConnection(t *testing.T) {
-	feedBytes, err := ioutil.ReadFile(carbonTestFeedDataFilename)
+	feedBytes, err := os.ReadFile(carbonTestFeedDataFilename)
 	if err != nil {
 		t.Error(err)
 		return
