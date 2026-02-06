@@ -17,6 +17,8 @@ const (
 )
 
 func testDataPointsCheckOrder(t *testing.T, dps DataPoints) {
+	t.Helper()
+
 	sort.Sort(DataPoints(dps))
 
 	dpsSize := len(dps)

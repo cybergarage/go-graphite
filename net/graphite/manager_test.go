@@ -9,6 +9,8 @@ import (
 )
 
 func testManagerBinding(t *testing.T, conf *Config) {
+	t.Helper()
+
 	mgr := NewManager()
 	mgr.SetConfig(conf)
 
