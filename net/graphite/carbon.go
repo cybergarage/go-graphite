@@ -5,6 +5,7 @@
 package graphite
 
 import (
+	"errors"
 	"io"
 	"net"
 	"strconv"
@@ -157,10 +158,7 @@ func (carbon *Carbon) serve() error {
 	defer carbon.close()
 
 	l := carbon.tcpListener
-	for {
-		if l == nil {
-			break
-		}
+	for l != nil {
 		conn, err := l.Accept()
 		if err != nil {
 			return err
@@ -190,11 +188,12 @@ func (carbon *Carbon) receive(conn net.Conn) error {
 			carbon.FeedPlainTextBytes(reqBytes)
 		}
 
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 
-		netErr, ok := err.(net.Error)
+		var netErr net.Error
+		ok := errors.As(err, &netErr)
 		if ok && netErr.Timeout() {
 			continue
 		}

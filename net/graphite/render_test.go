@@ -47,7 +47,7 @@ func TestRenderQuery(t *testing.T) {
 	cli := NewClient()
 
 	loopCount := 0
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		q := NewQuery()
 		q.Target = fmt.Sprintf("path%d", n)
 		_, err := cli.QueryRender(q)
@@ -78,7 +78,7 @@ func TestRenderHTTPListener(t *testing.T) {
 	cli := NewClient()
 
 	loopCount := 0
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		q := NewQuery()
 		q.Target = fmt.Sprintf("path%d", n)
 		_, err := cli.QueryRender(q)

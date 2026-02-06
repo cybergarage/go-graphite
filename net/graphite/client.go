@@ -7,6 +7,7 @@ package graphite
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -267,7 +268,7 @@ func (client *Client) QueryRender(q *Query) ([]*Metrics, error) {
 	reader := bufio.NewReader(resp.Body)
 	for {
 		row, _, err := reader.ReadLine()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		} else if err != nil {
 			lastErr = err

@@ -80,8 +80,8 @@ func (render *Render) responseFindJSONMetrics(httpWriter http.ResponseWriter, ht
 			prefix = strings.Join(prefixes, renderMetricsDelim)
 		}
 
-		httpWriter.Write([]byte(fmt.Sprintf("\"name\": \"%s\",\n", name)))
-		httpWriter.Write([]byte(fmt.Sprintf("\"path\": \"%s\"\n", prefix)))
+		fmt.Fprintf(httpWriter, "\"name\": \"%s\",\n", name)
+		fmt.Fprintf(httpWriter, "\"path\": \"%s\"\n", prefix)
 
 		// End bracket
 		if i < (mCount - 1) {
@@ -124,9 +124,9 @@ func (render *Render) handleIndexRequest(httpWriter http.ResponseWriter, httpReq
 	mCount := len(metrics)
 	for i, m := range metrics {
 		if i < (mCount - 1) {
-			httpWriter.Write([]byte(fmt.Sprintf("\"%s\",\n", m.Name)))
+			fmt.Fprintf(httpWriter, "\"%s\",\n", m.Name)
 		} else {
-			httpWriter.Write([]byte(fmt.Sprintf("\"%s\"\n", m.Name)))
+			fmt.Fprintf(httpWriter, "\"%s\"\n", m.Name)
 		}
 	}
 

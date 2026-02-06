@@ -43,7 +43,7 @@ func TestCarbonParseMetrics(t *testing.T) {
 	carbon := NewTestCarbon()
 
 	loopCount := 0
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		path := fmt.Sprintf("path%d", n)
 		value := float64(n)
 		ts := time.Now().Unix() + int64(n)
@@ -128,7 +128,7 @@ func TestCarbonMultipleFeed(t *testing.T) {
 
 	cli := NewClient()
 
-	for n := 0; n < 10; n++ {
+	for range 10 {
 		err = cli.FeedString(string(feedBytes))
 		if err != nil {
 			t.Error(err)
@@ -169,7 +169,7 @@ func TestCarbonMultipleFeedWithKeepConnection(t *testing.T) {
 		return
 	}
 
-	for n := 0; n < 10; n++ {
+	for range 10 {
 		err = cli.FeedStringWithConnection(conn, string(feedBytes))
 		if err != nil {
 			t.Error(err)

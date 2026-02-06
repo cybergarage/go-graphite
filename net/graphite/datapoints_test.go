@@ -20,7 +20,7 @@ func testDataPointsCheckOrder(t *testing.T, dps DataPoints) {
 	sort.Sort(DataPoints(dps))
 
 	dpsSize := len(dps)
-	for n := 0; n < dpsSize; n++ {
+	for n := range dpsSize {
 		if n == 0 {
 			continue
 		}
@@ -34,7 +34,7 @@ func TestDataPointsNormalOrderSort(t *testing.T) {
 	now := time.Now()
 
 	dps := NewDataPoints(testDataPointsSortSampleCount)
-	for n := 0; n < testDataPointsSortSampleCount; n++ {
+	for n := range testDataPointsSortSampleCount {
 		dp := NewDataPoint()
 		dp.Value = 100
 		dp.Timestamp = time.Unix((now.Unix() + int64(n)), 0)
@@ -48,7 +48,7 @@ func TestDataPointsReverseOrderSort(t *testing.T) {
 	now := time.Now()
 
 	dps := NewDataPoints(testDataPointsSortSampleCount)
-	for n := 0; n < testDataPointsSortSampleCount; n++ {
+	for n := range testDataPointsSortSampleCount {
 		dp := NewDataPoint()
 		dp.Value = 100
 		dp.Timestamp = time.Unix((now.Unix() - int64(testDataPointsSortSampleCount-n)), 0)
@@ -63,7 +63,7 @@ func TestDataPointsReverseRandomSort(t *testing.T) {
 	now := time.Now()
 
 	dps := NewDataPoints(testDataPointsSortSampleCount)
-	for n := 0; n < testDataPointsSortSampleCount; n++ {
+	for n := range testDataPointsSortSampleCount {
 		dp := NewDataPoint()
 		dp.Value = 100
 		dp.Timestamp = time.Unix((rand.Int63n(now.Unix())), 0)

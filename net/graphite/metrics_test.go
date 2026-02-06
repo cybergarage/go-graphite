@@ -17,7 +17,7 @@ func TestNewMetrics(t *testing.T) {
 }
 
 func TestMetricsParsePlainLine(t *testing.T) {
-	for i := 0; i < 10; i++ {
+	for i := range 10 {
 		path := fmt.Sprintf("path%d", i)
 		value := float64(i) * 100
 		ts := time.Now().Unix() + int64(i)

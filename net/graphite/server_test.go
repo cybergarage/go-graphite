@@ -67,7 +67,7 @@ func TestServerQuery(t *testing.T) {
 	cli := NewClient()
 
 	loopCount := 0
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		m := NewMetrics()
 		m.Name = fmt.Sprintf("path%d", n)
 
@@ -106,7 +106,7 @@ func TestServerHTTPRequest(t *testing.T) {
 	}
 
 	loopCount := 0
-	for n := 0; n < 10; n++ {
+	for range 10 {
 		url := fmt.Sprintf("http://%s%s",
 			net.JoinHostPort(server.GetBoundAddress(), strconv.Itoa(server.Render.GetPort())), testServerHTTPRequestPath)
 		resp, err := http.Get(url)

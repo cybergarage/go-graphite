@@ -145,18 +145,18 @@ func (render *Render) responseQueryJSONMetrics(httpWriter http.ResponseWriter, h
 		httpWriter.Write([]byte("{\n"))
 
 		// Output the target name
-		httpWriter.Write([]byte(fmt.Sprintf("\"target\": \"%s\",\n", m.Name)))
+		fmt.Fprintf(httpWriter, "\"target\": \"%s\",\n", m.Name)
 
 		// Output the datapoint array
 		dpCount := m.GetDataPointCount()
 		httpWriter.Write([]byte("\"datapoints\": [\n"))
 		for j, dp := range m.DataPoints {
 			if !math.IsNaN(dp.Value) {
-				httpWriter.Write([]byte(fmt.Sprintf("[%f,", dp.Value)))
+				fmt.Fprintf(httpWriter, "[%f,", dp.Value)
 			} else {
 				httpWriter.Write([]byte("[null,"))
 			}
-			httpWriter.Write([]byte(fmt.Sprintf("%d", dp.UnixTimestamp())))
+			fmt.Fprintf(httpWriter, "%d", dp.UnixTimestamp())
 			if j < (dpCount - 1) {
 				httpWriter.Write([]byte("],\n"))
 			} else {
